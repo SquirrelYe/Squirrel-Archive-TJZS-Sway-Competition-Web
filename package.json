@@ -1,8 +1,8 @@
 {
-  "name": "plantmanagement",
+  "name": "sway_tjzs_vue",
   "version": "1.0.0",
   "description": "A vue project for TCU . maded by yexuan...",
-  "author": "yexuan <yexuan@yexuan.site>",
+  "author": "yexuan <ceo@yexuan.site>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

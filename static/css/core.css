@@ -21,7 +21,6 @@ body {
   background: #f5f5f5;
   font-family: 'Noto Sans', sans-serif;
   margin: 0;
-  padding-bottom: 65px;
 }
 html {
   overflow-x: hidden;
@@ -76,7 +75,7 @@ a:focus {
   text-decoration: none;
 }
 .container {
-  width: 94%;
+  width: auto;
 }
 .container-alt {
   margin-left: auto;
@@ -107,8 +106,7 @@ a:focus {
   top: 0;
 }
 .page-title {
-  margin-bottom: 27px;
-  margin-top: 7px;
+  margin-bottom: 24px;
 }
 .social-links li a {
   -webkit-border-radius: 50%;
@@ -442,8 +440,9 @@ a:focus {
   color: #333333 !important;
   cursor: pointer;
   line-height: 50px;
-  font-weight: 700;
-  padding: 0px 20px;
+  font-weight: 500;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .nav.nav-tabs > li > a:hover,
 .nav.tabs-vertical > li > a:hover {
@@ -502,15 +501,15 @@ a:focus {
 .modal .modal-dialog .modal-content .modal-header {
   border-bottom-width: 2px;
   margin: 0;
-  padding: 0;
   padding-bottom: 15px;
+  padding: 0;
 }
 .modal .modal-dialog .modal-content .modal-body {
   padding: 20px 0;
 }
 .modal .modal-dialog .modal-content .modal-footer {
-  padding: 0;
   padding-top: 15px;
+  padding: 0;
 }
 .modal-full {
   width: 98%;
@@ -528,7 +527,11 @@ a:focus {
   margin-bottom: 0px;
 }
 .table > thead > tr > td.middle-align,
-.table > tbody > tr > td.middle-align {
+.table > tbody > tr > td.middle-align,
+.table > tfood > tr > td.middle-align,
+.table > thead > tr > th.middle-align,
+.table > tbody > tr > th.middle-align,
+.table > tfood > tr > th.middle-align {
   vertical-align: middle;
 }
 .legendLabel {
@@ -856,6 +859,7 @@ a:focus {
   -ms-transform: translateZ(0);
   -o-transform: translateZ(0);
   transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(circle, white 100%, black 100%);
   text-align: center;
   width: 2.5em;
   height: 2.5em;
@@ -1173,32 +1177,26 @@ a:focus {
     transform: rotate(140deg);
   }
 }
-/* =============
-   Print css
-============= */
 @media print {
-  .page-title-box,
-  .topbar-left,
-  .hidden-print,
-  .breadcrumb,
-  .page-title,
-  .footer,
-  #topnav,
-  .btn-primary {
-    display: none;
-    margin: 0px;
-    padding: 0px;
+  .logo,.page-title,.breadcrumb,.footer {
+    display: none !important;
+    margin: 0px !important;
+    padding: 0px !important;
   }
-  .left,
+   
+  .left {
+    display: none;
+  }
   .right-bar {
-    display: none;
+    display: none !important;
   }
-  .wrapper {
-    margin-top: 0px !important;
+  .content {
+    margin-top: 0px;
     padding-top: 0px;
   }
   .content-page {
-    margin-left: 0px;
+    margin-left: 0px !important;
     margin-top: 0px;
   }
+  
 }

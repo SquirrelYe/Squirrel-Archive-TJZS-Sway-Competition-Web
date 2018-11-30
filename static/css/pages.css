@@ -8,7 +8,6 @@ File: Pages
   - Profile
   - Timeline-2
   - Pricing
-  - Notification
   - Sweet Alerts
   - Maps
   - Email
@@ -41,7 +40,7 @@ File: Pages
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  margin-top: -22px;
+  margin: -20px -25px 0px -25px;
   padding: 100px 0px;
   position: relative;
 }
@@ -67,8 +66,8 @@ File: Pages
 .user-tabs {
   background-color: #ffffff;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-  margin-left: 0;
-  margin-right: 0px;
+  margin-left: -35px;
+  padding-left: 25px;
 }
 .user-tabs .nav.nav-tabs {
   box-shadow: none !important;
@@ -282,59 +281,6 @@ button.confirm {
 }
 .pr-button {
   margin-top: 30px;
-}
-/* ==============
-  Notification
-===================*/
-.notifyjs-metro-base {
-  position: relative;
-  min-height: 52px;
-  min-width: 250px;
-  color: #444;
-  border-radius: 3px;
-  -webkit-border-radius: 3px;
-  box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.2);
-  -webkit-animation: dropdownOpen 0.3s ease-out;
-  -o-animation: dropdownOpen 0.3s ease-out;
-  animation: dropdownOpen 0.3s ease-out;
-}
-.notifyjs-metro-base .image {
-  display: table;
-  position: absolute;
-  height: auto;
-  width: auto;
-  left: 25px;
-  top: 50%;
-  font-size: 24px;
-  -moz-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
-.notifyjs-metro-base .text-wrapper {
-  display: inline-block;
-  vertical-align: top;
-  text-align: left;
-  margin: 10px 10px 10px 52px;
-  clear: both;
-}
-.notifyjs-metro-base .title {
-  font-size: 15px;
-  line-height: 20px;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-.notifyjs-metro-base .text {
-  font-size: 12px;
-  font-weight: normal;
-  max-width: 360px;
-  vertical-align: middle;
-}
-.notifyjs-metro-cool {
-  color: #fafafa !important;
-  background-color: #4A525F;
-  border: 1px solid #4A525F;
 }
 /* ==============
   Timeline
