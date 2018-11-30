@@ -4,9 +4,9 @@
         <div class="panel panel-color panel-primary panel-pages">
             <div class="panel-heading bg-img">
                 <div class="bg-overlay"></div>
-                <h3 class="text-center m-t-10 text-white"> 天津城建大学 </h3>
+                <h3 class="text-center m-t-10 text-white"> AESEN 青年领袖联盟 </h3>
                 <br>
-                <h3 class="text-center text-white" style="font-size:30px;">校园植物信息管理系统</h3> 
+                <h3 class="text-center text-white" style="font-size:30px;">Sway 商业模拟挑战赛</h3> 
             </div>
 
             <div class="panel-body" >

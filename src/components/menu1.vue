@@ -148,8 +148,9 @@
         </div>
       </div>
       <!-- Top Bar End -->
+
       <!-- ========== Left Sidebar Start ========== -->
-      <div class="left side-menu">
+      <div class="left side-menu leftfixed">
         <div class="sidebar-inner slimscrollleft">
           <div class="user-details">
             <div class="pull-left">
@@ -192,14 +193,14 @@
           <div id="sidebar-menu">
             <ul>
               <li>
-                <a href="index.html" class="waves-effect waves-light active">
+                <a href="./#/menu/index" class="waves-effect waves-light active">
                   <i class="md md-home"></i>
                   <span>首页</span>
                 </a>
               </li>
 
               <li class="has_sub">
-                <a href="#" class="waves-effect waves-light">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
                   <i class="md md-mail"></i>
                   <span>竞拍</span>
                   <span class="pull-right">
@@ -208,19 +209,19 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="inbox.html">矿区</a>
+                    <a href="javascript:void(0)">矿区</a>
                   </li>
                   <li>
-                    <a href="email-compose.html">工业用地</a>
+                    <a href="javascript:void(0)">工业用地</a>
                   </li>
                   <li>
-                    <a href="email-read.html">商业用地</a>
+                    <a href="javascript:void(0)">商业用地</a>
                   </li>
                 </ul>
               </li>
 
               <li class="has_sub">
-                <a href="#" class="waves-effect waves-light">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
                   <i class="md md-palette"></i>
                   <span>资产</span>
                   <span class="pull-right">
@@ -229,22 +230,22 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="typography.html">建造研究所</a>
+                    <a href="javascript:void(0)">建造研究所</a>
                   </li>
                   <li>
-                    <a href="buttons.html">购买工厂</a>
+                    <a href="javascript:void(0)">购买工厂</a>
                   </li>
                   <li>
-                    <a href="panels.html">引进生产线</a>
+                    <a href="javascript:void(0)">引进生产线</a>
                   </li>
                   <li>
-                    <a href="checkbox-radio.html">购买挖掘机</a>
+                    <a href="javascript:void(0)">购买挖掘机</a>
                   </li>
                 </ul>
               </li>
 
               <li class="has_sub">
-                <a href="#" class="waves-effect waves-light">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
                   <i class="md md-invert-colors-on"></i>
                   <span>运营</span>
                   <span class="pull-right">
@@ -253,19 +254,19 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="grid.html">研发</a>
+                    <a href="javascript:void(0)">研发</a>
                   </li>
                   <li>
-                    <a href="portlets.html">生产</a>
+                    <a href="javascript:void(0)">生产</a>
                   </li>
                   <li>
-                    <a href="widgets.html">开采</a>
+                    <a href="javascript:void(0)">开采</a>
                   </li>
                 </ul>
               </li>
 
               <li class="has_sub">
-                <a href="#" class="waves-effect waves-light">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
                   <i class="md md-redeem"></i>
                   <span>库存</span>
                   <span class="pull-right">
@@ -274,19 +275,19 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="material-icon.html">公司产品</a>
+                    <a href="javascript:void(0)">公司产品</a>
                   </li>
                   <li>
-                    <a href="ion-icons.html">产品库存</a>
+                    <a href="javascript:void(0)">产品库存</a>
                   </li>
                   <li>
-                    <a href="font-awesome.html">原料库存</a>
+                    <a href="javascript:void(0)">原料库存</a>
                   </li>
                 </ul>
               </li>
 
               <li class="has_sub">
-                <a href="#" class="waves-effect waves-light">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
                   <i class="md md-now-widgets"></i>
                   <span>交易</span>
                   <span class="pull-right">
@@ -295,44 +296,44 @@
                 </a>
                 <ul class="list-unstyled">
                   <li class="has_sub">
-                    <a href="form-elements.html">定向公司</a>
+                    <a href="javascript:void(0)">定向公司</a>
                     <ul class="list-unstyled">
                       <li>
-                        <a href="form-validation.html">产品订单</a>
+                        <a href="javascript:void(0)">产品订单</a>
                       </li>
                       <li>
-                        <a href="form-validation.html">原料订单</a>
+                        <a href="javascript:void(0)">原料订单</a>
                       </li>
                       <li>
-                        <a href="form-validation.html">代工订单</a>
+                        <a href="javascript:void(0)">代工订单</a>
                       </li>
                     </ul>
                   </li>
                   <li class="has_sub">
-                    <a href="form-elements.html">市场</a>
+                    <a href="javascript:void(0)">市场</a>
                     <ul class="list-unstyled">
                       <li>
-                        <a href="form-validation.html">产品订单</a>
+                        <a href="javascript:void(0)">产品订单</a>
                       </li>
                       <li>
-                        <a href="form-validation.html">原料订单</a>
+                        <a href="javascript:void(0)">原料订单</a>
                       </li>
                       <li>
-                        <a href="form-validation.html">代工订单</a>
+                        <a href="javascript:void(0)">代工订单</a>
                       </li>
                     </ul>
                   </li>
                   <li class="has_sub">
-                    <a href="form-elements.html">贷款</a>
+                    <a href="javascript:void(0)">贷款</a>
                     <ul class="list-unstyled">
                       <li>
-                        <a href="form-validation.html">授信额度</a>
+                        <a href="javascript:void(0)">授信额度</a>
                       </li>
                       <li>
-                        <a href="form-validation.html">贷款期限</a>
+                        <a href="javascript:void(0)">贷款期限</a>
                       </li>
                       <li>
-                        <a href="form-validation.html">未还贷款</a>
+                        <a href="javascript:void(0)">未还贷款</a>
                       </li>
                     </ul>
                   </li>
@@ -344,13 +345,14 @@
           <div class="clearfix"></div>
         </div>
       </div>
-
       <!-- Left Sidebar End -->
+
       <div class="content-page">
         <!-- Start content -->
         <div class="content">
           <div class="container">
             <!-- 内容展示处 -->
+            <router-view></router-view>
           </div>
         </div>
 
@@ -377,10 +379,115 @@
         </footer>
         <!-- End Footer -->
       </div>
-    </div>
-
-    <!-- jQuery  -->
-    
+      <!-- Right Sidebar -->
+        <div class="side-bar right-bar nicescroll">
+            <h4 class="text-center">联系</h4>
+            <div class="contact-list nicescroll">
+                <ul class="list-group contacts-list">
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-1.jpg" alt="">
+                            </div>
+                            <span class="name">Chadengle</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-2.jpg" alt="">
+                            </div>
+                            <span class="name">Tomaslau</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-3.jpg" alt="">
+                            </div>
+                            <span class="name">Stillnotdavid</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-4.jpg" alt="">
+                            </div>
+                            <span class="name">Kurafire</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-5.jpg" alt="">
+                            </div>
+                            <span class="name">Shahedk</span>
+                            <i class="fa fa-circle away"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-6.jpg" alt="">
+                            </div>
+                            <span class="name">Adhamdannaway</span>
+                            <i class="fa fa-circle away"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-7.jpg" alt="">
+                            </div>
+                            <span class="name">Ok</span>
+                            <i class="fa fa-circle away"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-8.jpg" alt="">
+                            </div>
+                            <span class="name">Arashasghari</span>
+                            <i class="fa fa-circle offline"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-9.jpg" alt="">
+                            </div>
+                            <span class="name">Joshaustin</span>
+                            <i class="fa fa-circle offline"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-10.jpg" alt="">
+                            </div>
+                            <span class="name">Sortino</span>
+                            <i class="fa fa-circle offline"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>    
     <!-- App js -->
     <remote src="static/js/jquery.app.js"></remote>
   </div>
@@ -428,5 +535,8 @@ export default {
 </script>
 
 <style scoped>
+.leftfixed{
+  position:fixed;
 
+}
 </style>
