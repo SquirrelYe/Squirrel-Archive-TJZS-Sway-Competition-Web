@@ -26,11 +26,11 @@
                         <span class="mini-stat-icon"><i class="ion-ios7-location"></i></span>
                         <div class="mini-stat-info text-right">
                             <span class="counter">521</span>
-                            总共植物数量
+                            总共参赛人数数量
                         </div>
                         <div class="tiles-progress">
                             <div class="m-t-20">
-                                <h5 class="text-uppercase text-white m-0"> 上周新增植株 <span class="pull-right">23</span></h5>
+                                <h5 class="text-uppercase text-white m-0"> 上周新增人数 <span class="pull-right">23</span></h5>
                             </div>
                         </div>
                     </div>
@@ -40,11 +40,11 @@
                         <span class="mini-stat-icon"><i class="md md-aspect-ratio"></i></span>
                         <div class="mini-stat-info text-right">
                             <span class="counter">956</span>
-                            总共校园风景
+                            总共参赛人数
                         </div>
                         <div class="tiles-progress">
                             <div class="m-t-20">
-                                <h5 class="text-uppercase text-white m-0">上周新增风景<span class="pull-right">59</span></h5>
+                                <h5 class="text-uppercase text-white m-0">上周新增赛事<span class="pull-right">59</span></h5>
                             </div>
                         </div>
                     </div>
@@ -55,11 +55,11 @@
                         <span class="mini-stat-icon"><i class="md md-invert-colors-on"></i></span>
                         <div class="mini-stat-info text-right">
                             <span class="counter">5210</span>
-                            植物养护次数
+                            线下交流次数
                         </div>
                         <div class="tiles-progress">
                             <div class="m-t-20">
-                                <h5 class="text-uppercase text-white m-0">上周养护次数 <span class="pull-right">136</span></h5>
+                                <h5 class="text-uppercase text-white m-0">上周交流次数 <span class="pull-right">136</span></h5>
                             </div>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                     <div class="portlet"><!-- /portlet heading -->
                         <div class="portlet-heading">
                             <h3 class="portlet-title text-dark text-uppercase">
-                                校园植物位置图
+                                赛事分布位置图
                             </h3>
                             <div class="portlet-widgets">
                                 <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
@@ -135,7 +135,7 @@
                     <div class="portlet"><!-- /portlet heading -->
                         <div class="portlet-heading">
                             <h3 class="portlet-title text-dark text-uppercase">
-                                校园植物位置图
+                                参赛者分布示意图
                             </h3>
                             <div class="portlet-widgets">
                                 <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>

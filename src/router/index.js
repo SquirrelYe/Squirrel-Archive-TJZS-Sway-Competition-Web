@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import login from '@/components/login'
 import register from '@/components/register'
 import recoverypw from '@/components/recoverypw'
-import menu from '@/components/menu1'
+import menu from '@/components/menu'
 import resetpwd from '@/components/resetPwd'
 //test
 import init from '@/components/test/init'

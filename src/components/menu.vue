@@ -1,24 +1,48 @@
 <template>
-    <div>
-      <!-- 头部 -->
-      <header id="topnav">
-        <div class="topbar-main">
+  <div>
+    <!-- Begin page -->
+    <div id="wrapper">
+      <!-- Top Bar Start -->
+      <div class="topbar">
+        <!-- LOGO -->
+        <div class="topbar-left">
+          <div class="text-center" style="background-color:white">
+            <a href="javascript:void(0)" class="logo">
+              <i class="md md-terrain"></i>
+              <span>Sway 商业模拟挑战赛</span>
+            </a>
+          </div>
+        </div>
+        <!-- Button mobile view to collapse sidebar menu -->
+        <div class="navbar navbar-default" role="navigation">
           <div class="container">
-            <div class="topbar-left">
-              <a href="#/menu" class="logo"><i class="md md-terrain"></i> <span><router-link to="/menu/index" class="router">天津城建大学植物信息管理系统</router-link> </span></a>
-            </div>
-            <div class="menu-extras">
+            <div class>
+              <div class="pull-left">
+                <button class="button-menu-mobile open-left">
+                  <i class="fa fa-bars"></i>
+                </button>
+                <span class="clearfix"></span>
+              </div>
+              <form class="navbar-form pull-left" role="search">
+                <div class="form-group">
+                  <input type="text" class="form-control search-bar" placeholder="搜索">
+                </div>
+                <button type="submit" class="btn btn-search">
+                  <i class="fa fa-search"></i>
+                </button>
+              </form>
+
               <ul class="nav navbar-nav navbar-right pull-right">
-                <li>
-                  <form role="search" class="navbar-left app-search pull-left hidden-xs">
-                    <input type="text" placeholder="搜索..." class="form-control">
-                    <a href=""><i class="fa fa-search"></i></a>
-                  </form>
-                </li>
                 <li class="dropdown hidden-xs">
-                  <a href="#" data-target="#" class="dropdown-toggle waves-effect waves-light" data-toggle="dropdown"
-                    aria-expanded="true">
-                    <i class="md md-notifications"></i> <span class="badge badge-xs badge-danger">3</span>
+                  <a
+                    href="#"
+                    data-target="#"
+                    class="dropdown-toggle waves-effect"
+                    data-toggle="dropdown"
+                    aria-expanded="true"
+                  >
+                    <i class="md md-notifications"></i>
+                    <span class="badge badge-xs badge-danger">3</span>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-lg">
                     <li class="text-center notifi-title">通知</li>
@@ -30,9 +54,9 @@
                             <em class="fa fa-user-plus fa-2x text-info"></em>
                           </div>
                           <div class="media-body clearfix">
-                            <div class="media-heading">新用户申请</div>
+                            <div class="media-heading">新的好友消息</div>
                             <p class="m-0">
-                              <small>You have 10 unread messages</small>
+                              <small>您有10条未读消息</small>
                             </p>
                           </div>
                         </div>
@@ -44,226 +68,429 @@
                             <em class="fa fa-diamond fa-2x text-primary"></em>
                           </div>
                           <div class="media-body clearfix">
-                            <div class="media-heading">新设置</div>
+                            <div class="media-heading">新的参赛信息</div>
                             <p class="m-0">
-                              <small>There are new settings available</small>
+                              <small>暂未组委会发布新信息</small>
                             </p>
                           </div>
                         </div>
                       </a>
+                      <!-- list item-->
                       <a href="javascript:void(0);" class="list-group-item">
                         <div class="media">
                           <div class="pull-left">
                             <em class="fa fa-bell-o fa-2x text-danger"></em>
                           </div>
                           <div class="media-body clearfix">
-                            <div class="media-heading">更新</div>
+                            <div class="media-heading">系统通知</div>
                             <p class="m-0">
-                              <small>There are
-                                <span class="text-primary">2</span> new updates available</small>
+                              <small>
+                                您还有
+                                <span class="text-primary">10</span> 分钟提交选择
+                              </small>
                             </p>
                           </div>
                         </div>
                       </a>
+                      <!-- last list item -->
                       <a href="javascript:void(0);" class="list-group-item">
-                        <small>显示所有的通知</small>
+                        <small>查看所有通知</small>
                       </a>
                     </li>
                   </ul>
                 </li>
-
-                <li class="dropdown user-box">
-                  <a href="" class="dropdown-toggle waves-effect waves-light profile " data-toggle="dropdown"
-                    aria-expanded="true">
-                    <img :src=icon_src alt="user-img" class="img-circle user-img">
-                    <div class="user-status away"><i class="zmdi zmdi-dot-circle"></i></div>
+                <li class="hidden-xs">
+                  <a href="#" id="btn-fullscreen" class="waves-effect">
+                    <i class="md md-crop-free"></i>
                   </a>
-
+                </li>
+                <li class="hidden-xs">
+                  <a href="#" class="right-bar-toggle waves-effect">
+                    <i class="md md-chat"></i>
+                  </a>
+                </li>
+                <li class="dropdown">
+                  <a
+                    href
+                    class="dropdown-toggle profile"
+                    data-toggle="dropdown"
+                    aria-expanded="true"
+                  >
+                    <img :src="icon_src" alt="user-img" class="img-circle">
+                  </a>
                   <ul class="dropdown-menu">
-                    <li><a href="javascript:void(0)"><i class="md md-face-unlock"></i> 简介</a></li>
-                    <li><a href="javascript:void(0)"><i class="md md-settings"></i> 设置</a></li>
-                    <li><a href="javascript:void(0)"><i class="md md-lock"></i> 锁屏</a></li>
-                    <li @click="logout()"><a><i class="md md-settings-power"></i> 注销</a></li>
+                    <li>
+                      <a href="javascript:void(0)">
+                        <i class="md md-face-unlock"></i> 个人简介
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0)">
+                        <i class="md md-settings"></i> 设置
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0)">
+                        <i class="md md-lock"></i> 锁屏
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0)">
+                        <i class="md md-settings-power"></i> 注销
+                      </a>
+                    </li>
                   </ul>
                 </li>
               </ul>
-              <div class="menu-item">
-                <a class="navbar-toggle">
-                  <div class="lines">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </a>
-              </div>
             </div>
+            <!--/.nav-collapse -->
           </div>
         </div>
-        <div class="navbar-custom">
-          <div class="container">
-            <div id="navigation">
-              <ul class="navigation-menu">
-                <li class="active">
-                  <a href="#/menu"><i class="md md-home"></i> <span> 首页 </span> </a>
-                </li>
-
-
-                <li class="has-submenu">
-                  <a href="#"><i class="md md-palette "></i><span> 植物管理 </span> </a>
-                  <ul class="submenu">
-                    <li><a href="javascript:void(0);">科类管理</a></li>
-                    <li><a href="javascript:void(0);">属类管理</a></li>
-                    <li><a href="javascript:void(0);">种类管理</a></li>
-                    <li><a href="javascript:void(0);">植物列表</a></li>
-                  </ul>
-                </li>
-
-                <li class="has-submenu">
-                  <a href="#"><i class="md md-description "></i><span> 档案管理 </span> </a>
-                  <ul class="submenu">
-                    <li><a href="#/menu/doccreate">档案建立</a></li>
-                    <li><a href="#/menu/docsupport">档案维护</a></li>
-                    <li><a href="#/menu/docSearch">档案查询</a></li>
-                    <li><a href="#/menu/doclist">档案列表</a></li>
-                  </ul>
-                </li>
-
-                <li class="has-submenu">
-                  <a href="#"><i class="md md-invert-colors-on"></i> <span> 养护管理 </span> </a>
-                  <ul class="submenu">
-                    <li><a href="grid.html">灌水与排水</a></li>
-                    <li><a href="portlets.html">施肥</a></li>
-                    <li><a href="widgets.html">苗木整形与修剪</a></li>
-                    <li><a href="nestable-list.html">防治病虫害</a></li>
-                    <li><a href="ui-sliders.html">Sliders </a></li>
-                  </ul>
-                </li>
-                <li class="has-submenu">
-                  <a href="#"><i class="md md-turned-in-not"></i> <span> 植物分类 </span> </a>
-                  <ul class="submenu">
-                    <li class="has-submenu">
-                      <a href="#">茎的形态</a>
-                      <ul class="submenu">
-                        <li><a href="material-icon.html">乔木</a></li>
-                        <li><a href="ion-icons.html">灌木</a></li>
-                        <li><a href="font-awesome.html">亚灌木</a></li>
-                        <li><a href="font-awesome.html">草本植物</a></li>
-                        <li><a href="font-awesome.html">藤本植物</a></li>
-                      </ul>
-                    </li>
-
-                    <li class="has-submenu">
-                      <a href="#">生态习性</a>
-                      <ul class="submenu">
-                        <li><a href="gmap.html">陆生植物</a></li>
-                        <li><a href="vector-map.html">水生植物</a></li>
-                        <li><a href="font-awesome.html">附生植物</a></li>
-                        <li><a href="font-awesome.html">寄生植物</a></li>
-                        <li><a href="font-awesome.html">腐生植物</a></li>
-                      </ul>
-                    </li>
-
-                    <li class="has-submenu">
-                      <a href="#">生活周期</a>
-                      <ul class="submenu">
-                        <li><a href="inbox.html">一年生植物</a></li>
-                        <li><a href="email-compose.html">二年生植物</a></li>
-                        <li><a href="email-read.html">多年生植物</a></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-
-                <li class="has-submenu">
-                  <a href="#"><i class="md md-aspect-ratio"></i> <span> 校园风景 </span> </a>
-                  <ul class="submenu">
-                    <li class="has-submenu">
-                      <a href="#">中心湖附近</a>
-                      <ul class="submenu">
-                        <li><a href="material-icon.html">中心湖</a></li>
-                        <li><a href="ion-icons.html">鸭子湖</a></li>
-                        <li><a href="font-awesome.html">Font awesome</a></li>
-                      </ul>
-                    </li>
-
-                    <li class="has-submenu">
-                      <a href="#">体育馆附近</a>
-                      <ul class="submenu">
-                        <li><a href="gmap.html"> 西门</a></li>
-                        <li><a href="vector-map.html"> 体育馆</a></li>
-                      </ul>
-                    </li>
-
-                    <li class="has-submenu">
-                      <a href="#">滨湖道附近</a>
-                      <ul class="submenu">
-                        <li><a href="inbox.html">滨湖道</a></li>
-                        <li><a href="email-compose.html">二餐门口</a></li>
-                        <li><a href="email-read.html">小树林</a></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-
-                <li class="has-submenu">
-                  <a href="#"><i class="md md-pages"></i><span>关于我们 </span> </a>
-                  <ul class="submenu megamenu">
-                    <li>
-                      <ul>
-                        <li><a href="profile.html">系统简介</a></li>
-                        <li><a href="timeline.html">部门介绍</a></li>
-                        <li><a href="invoice.html">功能介绍</a></li>
-                        <li><a href="email-template.html">反馈信息</a></li>
-                      </ul>
-                    </li>
-                    <li>
-                      <ul>
-                        <li><a href="http://www.tcu.edu.cn/">学校主页</a></li>
-                        <li><a href="http://cwc.tcu.edu.cn/">财务处</a></li>
-                        <li><a href="http://jwc.tcu.edu.cn/">教务处</a></li>
-                        <li><a href="http://kyc.tcu.edu.cn/">科技处</a></li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-
-              </ul>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Content Part-->
-      <div class="content">      
-        <router-view></router-view>
       </div>
-      <!-- End Content Part-->
+      <!-- Top Bar End -->
 
-      <!-- Footer -->
-      <footer class="footer text-right yxfoot">
-          <div class="container">
-              <div class="row">
-                  <div class="col-xs-6">
-                      2018 © Yexuan.
-                  </div>
-                  <div class="col-xs-6">
-                      <ul class="pull-right list-inline m-b-0">
-                          <li>
-                              <a href="#">关于</a>
-                          </li>
-                          <li>
-                              <a href="#">帮助</a>
-                          </li>
-                          <li>
-                              <a href="#">联系</a>
-                          </li>
-                      </ul>
-                  </div>
+      <!-- ========== Left Sidebar Start ========== -->
+      <div class="left side-menu leftfixed">
+        <div class="sidebar-inner slimscrollleft">
+          <div class="user-details">
+            <div class="pull-left">
+              <img :src="icon_src" alt class="thumb-md img-circle">
+            </div>
+            <div class="user-info">
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  朱顺
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-face-unlock"></i> 个人简介
+                    </a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-settings"></i> 设置
+                    </a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-lock"></i> 锁屏
+                    </a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-settings-power"></i> 注销
+                    </a>
+                  </li>
+                </ul>
               </div>
+
+              <p class="text-muted m-0">管理员</p>
+            </div>
           </div>
-      </footer>
-    </div>
-    
+          <!--- Divider -->
+          <div id="sidebar-menu">
+            <ul>
+              <li>
+                <a href="./#/menu/index" class="waves-effect waves-light active">
+                  <i class="md md-home"></i>
+                  <span>首页</span>
+                </a>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-mail"></i>
+                  <span>竞拍</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">矿区</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">工业用地</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">商业用地</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-palette"></i>
+                  <span>资产</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">建造研究所</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">购买工厂</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">引进生产线</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">购买挖掘机</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-invert-colors-on"></i>
+                  <span>运营</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">研发</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">生产</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">开采</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-redeem"></i>
+                  <span>库存</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">公司产品</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">产品库存</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">原料库存</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-now-widgets"></i>
+                  <span>交易</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li class="has_sub">
+                    <a href="javascript:void(0)">定向公司</a>
+                    <ul class="list-unstyled">
+                      <li>
+                        <a href="javascript:void(0)">产品订单</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">原料订单</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">代工订单</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="has_sub">
+                    <a href="javascript:void(0)">市场</a>
+                    <ul class="list-unstyled">
+                      <li>
+                        <a href="javascript:void(0)">产品订单</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">原料订单</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">代工订单</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="has_sub">
+                    <a href="javascript:void(0)">贷款</a>
+                    <ul class="list-unstyled">
+                      <li>
+                        <a href="javascript:void(0)">授信额度</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">贷款期限</a>
+                      </li>
+                      <li>
+                        <a href="javascript:void(0)">未还贷款</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      <!-- Left Sidebar End -->
+
+      <div class="content-page">
+        <!-- Start content -->
+        <div class="content">
+          <div class="container">
+            <!-- 内容展示处 -->
+            <router-view></router-view>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer text-right footer">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-6">2018 © 天津智识教育科技有限公司.</div>
+              <div class="col-xs-6">
+                <ul class="pull-right list-inline m-b-0">
+                  <li>
+                    <a href="#">关于</a>
+                  </li>
+                  <li>
+                    <a href="#">帮助</a>
+                  </li>
+                  <li>
+                    <a href="#">联系</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </footer>
+        <!-- End Footer -->
+      </div>
+      <!-- Right Sidebar -->
+        <div class="side-bar right-bar nicescroll">
+            <h4 class="text-center">联系</h4>
+            <div class="contact-list nicescroll">
+                <ul class="list-group contacts-list">
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-1.jpg" alt="">
+                            </div>
+                            <span class="name">Chadengle</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-2.jpg" alt="">
+                            </div>
+                            <span class="name">Tomaslau</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-3.jpg" alt="">
+                            </div>
+                            <span class="name">Stillnotdavid</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-4.jpg" alt="">
+                            </div>
+                            <span class="name">Kurafire</span>
+                            <i class="fa fa-circle online"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-5.jpg" alt="">
+                            </div>
+                            <span class="name">Shahedk</span>
+                            <i class="fa fa-circle away"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-6.jpg" alt="">
+                            </div>
+                            <span class="name">Adhamdannaway</span>
+                            <i class="fa fa-circle away"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-7.jpg" alt="">
+                            </div>
+                            <span class="name">Ok</span>
+                            <i class="fa fa-circle away"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-8.jpg" alt="">
+                            </div>
+                            <span class="name">Arashasghari</span>
+                            <i class="fa fa-circle offline"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-9.jpg" alt="">
+                            </div>
+                            <span class="name">Joshaustin</span>
+                            <i class="fa fa-circle offline"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#">
+                            <div class="avatar">
+                                <img src="assets/images/users/avatar-10.jpg" alt="">
+                            </div>
+                            <span class="name">Sortino</span>
+                            <i class="fa fa-circle offline"></i>
+                        </a>
+                        <span class="clearfix"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+    <!-- App js -->
+    <remote src="static/js/jquery.app.js"></remote>
+  </div>
 </template>
 
 <script>
@@ -285,39 +512,31 @@ export default {
       this.$router.push("/menu/index");
     }
   },
-  beforeRouteUpdate(to, from, next) {
-    if (window.sessionStorage.data) {
-      next();
-    } else {
-      s_alert.basic("登录会话过期，请重新登录！");
-      setTimeout(function() {
-        next("/");
-      }, 2000);
-    }
-  },
-  methods: {
-    logout() {
-      window.sessionStorage.removeItem("data");
-      s_alert.basic("注销成功！");
-      setTimeout(function() {
-        window.location.reload();
-      }, 2000);
+  components: {
+    remote: {
+      render: function(createElement) {
+        var self = this;
+        return createElement("script", {
+          attrs: {
+            type: "text/javascript",
+            src: this.src
+          }
+        });
+      },
+      props: {
+        src: {
+          type: String,
+          required: true
+        }
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-.yxfoot {
-  position: fixed;
-  bottom: 0;
-}
-.content {
-  margin-top: 150px;
-  height: 100px;
-}
-.router {
-  color: white;
-  font-weight: normal;
+.leftfixed{
+  position:fixed;
+
 }
 </style>
