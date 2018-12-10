@@ -35,11 +35,11 @@ export default {
   name: "recoverypw",
   data() {
     return {
-      eMail: "",
+      eMail: '',
       sendCodeComplete: false,
-      condition: "",
-      code: "",
-      judge: ""
+      condition: '',
+      code: '',
+      judge: ''
     };
   },
   mounted() {

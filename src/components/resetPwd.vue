@@ -54,7 +54,7 @@ export default {
         passWord1:'',
         repassWord:'',
         email:''
-    };
+    }; 
   },
   mounted() {
     //xxx
@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     setmail(mail){
-        this.email=mail;
+        this.email=mail.replace(/\"/g,"");;
     },
     //点击重置按钮，进行逻辑操作
     reset() {
@@ -73,9 +73,7 @@ export default {
     var that=this;
     that.axios({
         method: "post",
-        url: `${app.data().globleUrl}/users?judge=4&password=${
-        that.repassWord
-        }&email=${that.email}`
+        url: `${app.data().globleUrl}/sway?judge=4&email=${that.email}&pass=${that.repassWord}` 
     })
         .then(res => {
             console.log(res.data)

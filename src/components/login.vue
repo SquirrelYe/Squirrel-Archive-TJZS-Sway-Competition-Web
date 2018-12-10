@@ -66,6 +66,7 @@
 const cookie = require("../utils/cookie");
 const s_alert = require("../utils/alert");
 import app from '../App.vue'
+var App = app;
 
 export default {
   name: "logging",
@@ -91,26 +92,69 @@ export default {
       if (this.userName == "" || this.passWord == "") {
           s_alert.basic("用户名或密码为空");
       } else {
+          //判断用户为 管理员
         this.axios({
           method: "post",
-          url: `${app.data().globleUrl}/users?judge=0&username=${this.userName}&password=${this.passWord}`
+          url: `${app.data().globleUrl}/admin?judge=0&name=${this.userName}&pass=${this.passWord}`
         })
           .then(res => {
             this.content = res.data;
             if (res.data.length > 0) {
-                if(this.check){
+                if(this.check){                
                     var ses = window.sessionStorage;
                     var d = JSON.stringify(res.data);
-                    ses.setItem("data", d);
-                    cookie.setCookie(this.userName, this.passWord, 7);            
-                    s_alert.Success("登录成功","正在加载……","success");
-                    this.$router.push("/menu");
-                }else{
-                    s_alert.Success("登录成功","正在加载……","success");
-                    this.$router.push("/menu");
+                    ses.setItem("userinfo", d);
+                    ses.setItem("name", this.userName);
+                    ses.setItem("pass", this.passWord);
+                    ses.setItem("type", '1');
+                    //cookie.setCookie(this.userName, this.passWord,'1', 7);            
+                    s_alert.Success("保存状态成功，你的身份是管理员","正在加载……","success");
+                    this.$router.push({name: 'menu', params: {type: '1'}})
+                }else{                
+                    var ses = window.sessionStorage;
+                    var d = JSON.stringify(res.data);
+                    ses.setItem("userinfo", d);
+                    ses.setItem("name", this.userName);
+                    ses.setItem("pass", this.passWord);
+                    ses.setItem("type", '1');    
+                    //cookie.setCookie(this.userName, this.passWord,'1', 7);  
+                    s_alert.Success("登录成功，你的身份是管理员","正在加载……","success");
+                    this.$router.push({name:'menu'});
                 }
             } else {
-                s_alert.Timer("登录失败","用户名或密码有误");
+                //判断用户为 参赛者
+                this.axios({
+                method: "post",
+                url: `${app.data().globleUrl}/sway?judge=0&name=${this.userName}&pass=${this.passWord}`
+                })
+                .then(res => {
+                this.content = res.data;
+                if (res.data.length > 0) {
+                    if(this.check){
+                        var ses = window.sessionStorage;
+                        var d = JSON.stringify(res.data);
+                        ses.setItem("userinfo", d);
+                        ses.setItem("name", this.userName);
+                        ses.setItem("pass", this.passWord);
+                        ses.setItem("type", '0');
+                        //cookie.setCookie(this.userName, this.passWord,'0', 7);            
+                        s_alert.Success("保存状态成功，你的身份是参赛者","正在加载……","success");
+                        this.$router.push("/menu");
+                    }else{
+                        var ses = window.sessionStorage;
+                        var d = JSON.stringify(res.data);
+                        ses.setItem("userinfo", d);
+                        ses.setItem("name", this.userName);
+                        ses.setItem("pass", this.passWord);
+                        ses.setItem("type", '0');
+                        //cookie.setCookie(this.userName, this.passWord,'0', 7); 
+                        s_alert.Success("登录成功，你的身份是参赛者","正在加载……","success");
+                        this.$router.push("/menu");
+                    }
+                } else {
+                    s_alert.Timer("登录失败","用户名或密码有误");
+                }
+                })
             }
           })
           .catch(error => console.log(error));

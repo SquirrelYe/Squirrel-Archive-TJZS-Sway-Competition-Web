@@ -5,12 +5,12 @@
 </template>
 
 <script>
-
 export default {
   name: "App",
   data() {
     return {
       globleUrl: "http://localhost:11111",
+      globleUrl1: "http://10.0.53.241:11111",
       name: "yexuan"
     };
   },
@@ -26,7 +26,6 @@ export default {
       this.$router.push({ path: `/login/${uid}` });
     },
     setGlobleUrlq(url){
-      //console.log('-->',url)
       this.globleUrl=url;
       console.log(this.globleUrl)
       return this.globleUrl

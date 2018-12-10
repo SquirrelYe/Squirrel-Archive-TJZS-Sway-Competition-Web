@@ -26,4 +26,39 @@ const producePlants=function(){
     }
     return article;
 }
+//mock一组数据
+const produceCompany=function(){
+    let article=[]
+    for (let i = 0; i < 6; i++) {
+        let plants={
+            id:Random.integer(0,10),
+            name:Random.cname(),
+            office:Random.cname(),
+            time:Random.datetime()
+        }
+        article.push(plants);
+    }
+    return article;
+}
+const produceCompanyList=function(){
+    let article=[]
+    for (let i = 0; i < 66; i++) {
+        let plants={
+            
+            plantid:Random.integer(0,200),
+            aname:Random.cword(5,8),
+            alias:Random.cname(),
+            lname:Random.guid(),
+            family:Random.cword(1,3),
+            genera:Random.integer(1,6),
+            specie:'正常',
+            morphology:Random.datetime()
+        }
+        article.push(plants);
+    }
+    return article;
+}
+
 Mock.mock('/news/api','post',producePlants);
+Mock.mock('/company/api','post',produceCompany);
+Mock.mock('/companylist/api','post',produceCompanyList);

@@ -148,9 +148,8 @@
         </div>
       </div>
       <!-- Top Bar End -->
-
       <!-- ========== Left Sidebar Start ========== -->
-      <div class="left side-menu leftfixed">
+      <div class="left side-menu leftfixed" v-if="judgeUserType==1">
         <div class="sidebar-inner slimscrollleft">
           <div class="user-details">
             <div class="pull-left">
@@ -159,7 +158,7 @@
             <div class="user-info">
               <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  朱顺
+                  {{userinfo[0].cname}}
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
@@ -201,7 +200,192 @@
 
               <li class="has_sub">
                 <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-account-child"></i>
+                  <span>用户管理</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)" @click="test()">参赛者管理</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">管理员管理</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">公司审核</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-palette"></i>
+                  <span>赛事管理</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">新建比赛</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">矿区初始化</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">工业用地初始化</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">商业用地初始化</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-invert-colors-on"></i>
+                  <span>赛事运营</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">竞拍管理</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">交易管理</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">赛事数据</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
                   <i class="md md-mail"></i>
+                  <span>消息通知</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">全员广播</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">定向广播</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">定时广播</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-assignment"></i>
+                  <span>后期反馈</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)">漏洞提交</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">体验反馈</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">联系我们</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+
+      <!-- 参赛者端 -->
+      <div class="left side-menu leftfixed" v-if="judgeUserType==0">
+        <div class="sidebar-inner slimscrollleft">
+          <div class="user-details">
+            <div class="pull-left">
+              <img :src="icon_src" alt class="thumb-md img-circle">
+            </div>
+            <div class="user-info">
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                  {{userinfo[0].cname}}
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-face-unlock"></i> 个人简介
+                    </a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-settings"></i> 设置
+                    </a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-lock"></i> 锁屏
+                    </a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)">
+                      <i class="md md-settings-power"></i> 注销
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <p class="text-muted m-0">参赛者</p>
+            </div>
+          </div>
+          <!--- Divider -->
+          <div id="sidebar-menu">
+            <ul>
+              <li>
+                <a href="./#/menu/index" class="waves-effect waves-light active">
+                  <i class="md md-home"></i>
+                  <span>首页</span>
+                </a>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-extension"></i>
+                  <span>公司</span>
+                  <span class="pull-right">
+                    <i class="md md-add"></i>
+                  </span>
+                </a>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)" @click="creatCompany()">组建公司</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)" @click="joinCompany()">加入公司</a>
+                  </li>
+                  <li>
+                    <a href="javascript:void(0)" @click="infoCompany()">公司信息</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="has_sub">
+                <a href="javascript:void(0)" class="waves-effect waves-light">
+                  <i class="md md-my-library-books"></i>
                   <span>竞拍</span>
                   <span class="pull-right">
                     <i class="md md-add"></i>
@@ -209,13 +393,10 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)">矿区</a>
+                    <a href="javascript:void(0)" @click="doCompete()">竞拍资产</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">工业用地</a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">商业用地</a>
+                    <a href="javascript:void(0)" @click="infoCompete()">竞拍情况</a>
                   </li>
                 </ul>
               </li>
@@ -230,16 +411,13 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)">建造研究所</a>
+                    <a href="javascript:void(0)" @click="mine()">矿区配置</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">购买工厂</a>
+                    <a href="javascript:void(0)" @click="industry()">工业用地配置</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">引进生产线</a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">购买挖掘机</a>
+                    <a href="javascript:void(0)" @click="commer()">商业用地配置</a>
                   </li>
                 </ul>
               </li>
@@ -254,13 +432,13 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)">研发</a>
+                    <a href="javascript:void(0)" @click="exploit()">开采</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">生产</a>
+                    <a href="javascript:void(0)" @click="research()">研发</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">开采</a>
+                    <a href="javascript:void(0)" @click="product()">生产</a>
                   </li>
                 </ul>
               </li>
@@ -275,13 +453,13 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)">公司产品</a>
+                    <a href="javascript:void(0)" @click="goods()">公司产品</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">产品库存</a>
+                    <a href="javascript:void(0)" @click="stock()">产品库存</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">原料库存</a>
+                    <a href="javascript:void(0)" @click="resource()">原料库存</a>
                   </li>
                 </ul>
               </li>
@@ -296,36 +474,14 @@
                 </a>
                 <ul class="list-unstyled">
                   <li class="has_sub">
-                    <a href="javascript:void(0)">定向公司</a>
-                    <ul class="list-unstyled">
-                      <li>
-                        <a href="javascript:void(0)">产品订单</a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">原料订单</a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">代工订单</a>
-                      </li>
-                    </ul>
+                    <a href="javascript:void(0)" @click="tocompany()">定向公司</a>
                   </li>
                   <li class="has_sub">
-                    <a href="javascript:void(0)">市场</a>
-                    <ul class="list-unstyled">
-                      <li>
-                        <a href="javascript:void(0)">产品订单</a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">原料订单</a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">代工订单</a>
-                      </li>
-                    </ul>
+                    <a href="javascript:void(0)" @click="tomarket()">市场</a>
                   </li>
                   <li class="has_sub">
-                    <a href="javascript:void(0)">贷款</a>
-                    <ul class="list-unstyled">
+                    <a href="javascript:void(0)" @click="loan()">贷款</a>
+                    <!-- <ul class="list-unstyled">
                       <li>
                         <a href="javascript:void(0)">授信额度</a>
                       </li>
@@ -335,7 +491,7 @@
                       <li>
                         <a href="javascript:void(0)">未还贷款</a>
                       </li>
-                    </ul>
+                    </ul> -->
                   </li>
                 </ul>
               </li>
@@ -346,7 +502,6 @@
         </div>
       </div>
       <!-- Left Sidebar End -->
-
       <div class="content-page">
         <!-- Start content -->
         <div class="content">
@@ -380,137 +535,176 @@
         <!-- End Footer -->
       </div>
       <!-- Right Sidebar -->
-        <div class="side-bar right-bar nicescroll">
-            <h4 class="text-center">联系</h4>
-            <div class="contact-list nicescroll">
-                <ul class="list-group contacts-list">
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-1.jpg" alt="">
-                            </div>
-                            <span class="name">Chadengle</span>
-                            <i class="fa fa-circle online"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-2.jpg" alt="">
-                            </div>
-                            <span class="name">Tomaslau</span>
-                            <i class="fa fa-circle online"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-3.jpg" alt="">
-                            </div>
-                            <span class="name">Stillnotdavid</span>
-                            <i class="fa fa-circle online"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-4.jpg" alt="">
-                            </div>
-                            <span class="name">Kurafire</span>
-                            <i class="fa fa-circle online"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-5.jpg" alt="">
-                            </div>
-                            <span class="name">Shahedk</span>
-                            <i class="fa fa-circle away"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-6.jpg" alt="">
-                            </div>
-                            <span class="name">Adhamdannaway</span>
-                            <i class="fa fa-circle away"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-7.jpg" alt="">
-                            </div>
-                            <span class="name">Ok</span>
-                            <i class="fa fa-circle away"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-8.jpg" alt="">
-                            </div>
-                            <span class="name">Arashasghari</span>
-                            <i class="fa fa-circle offline"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-9.jpg" alt="">
-                            </div>
-                            <span class="name">Joshaustin</span>
-                            <i class="fa fa-circle offline"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">
-                            <div class="avatar">
-                                <img src="assets/images/users/avatar-10.jpg" alt="">
-                            </div>
-                            <span class="name">Sortino</span>
-                            <i class="fa fa-circle offline"></i>
-                        </a>
-                        <span class="clearfix"></span>
-                    </li>
-                </ul>
-            </div>
+      <div class="side-bar right-bar nicescroll">
+        <h4 class="text-center">联系</h4>
+        <div class="contact-list nicescroll">
+          <ul class="list-group contacts-list">
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-1.jpg" alt>
+                </div>
+                <span class="name">Chadengle</span>
+                <i class="fa fa-circle online"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-2.jpg" alt>
+                </div>
+                <span class="name">Tomaslau</span>
+                <i class="fa fa-circle online"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-3.jpg" alt>
+                </div>
+                <span class="name">Stillnotdavid</span>
+                <i class="fa fa-circle online"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-4.jpg" alt>
+                </div>
+                <span class="name">Kurafire</span>
+                <i class="fa fa-circle online"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-5.jpg" alt>
+                </div>
+                <span class="name">Shahedk</span>
+                <i class="fa fa-circle away"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-6.jpg" alt>
+                </div>
+                <span class="name">Adhamdannaway</span>
+                <i class="fa fa-circle away"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-7.jpg" alt>
+                </div>
+                <span class="name">Ok</span>
+                <i class="fa fa-circle away"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-8.jpg" alt>
+                </div>
+                <span class="name">Arashasghari</span>
+                <i class="fa fa-circle offline"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-9.jpg" alt>
+                </div>
+                <span class="name">Joshaustin</span>
+                <i class="fa fa-circle offline"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+            <li class="list-group-item">
+              <a href="#">
+                <div class="avatar">
+                  <img src="assets/images/users/avatar-10.jpg" alt>
+                </div>
+                <span class="name">Sortino</span>
+                <i class="fa fa-circle offline"></i>
+              </a>
+              <span class="clearfix"></span>
+            </li>
+          </ul>
         </div>
-    </div>    
+      </div>
+    </div>
     <!-- App js -->
     <remote src="static/js/jquery.app.js"></remote>
   </div>
 </template>
 
 <script>
+const cookie = require("../utils/cookie");
 const s_alert = require("../utils/alert");
+import app from "../App.vue";
+var App = app;
+
 export default {
   name: "menus",
   data() {
     return {
-      icon_src:
-        "http://ww3.sinaimg.cn/thumb300/005NL6H7gw1ew1tp2et08j30cj0dl0tq.jpg"
+      icon_src:"http://ww3.sinaimg.cn/thumb300/005NL6H7gw1ew1tp2et08j30cj0dl0tq.jpg",
+      userinfo:'',
+      judgeUserType: '' //0.参赛者、1.管理员
     };
   },
+  beforeMount() {
+    var ses = window.sessionStorage;
+    this.userinfo =JSON.parse(ses.getItem("userinfo"));    
+  },
   mounted() {
-    if (window.sessionStorage.data == null) {
+    var ses = window.sessionStorage;
+    if (ses.getItem("userinfo")== null) {
       s_alert.basic("登录会话过期，请重新登录！");
       this.$router.push("/");
     } else {
       //默认加载 index
       this.$router.push("/menu/index");
+      if (ses.getItem("type") && this.userinfo!='') {
+        console.log("用户类别：-->", ses.getItem("type"));
+        this.judgeUserType = ses.getItem("type");
+      }
     }
+  },
+  methods: {
+    test() {
+      var ses = window.sessionStorage;
+      console.log(ses.getItem("type"));
+      console.log(this.userinfo)
+    },
+    // 页面跳转
+    creatCompany(){this.$router.push({name:'creatcompany'})},//公司
+    joinCompany(){this.$router.push({name:'joincompany'})},
+    infoCompany(){ this.$router.push({name:'infocompany'})},
+    doCompete(){ this.$router.push({name:'docompete'})},//竞拍
+    infoCompete(){ this.$router.push({ name:'infocompete'})},
+    mine(){ this.$router.push({ name:'mine'})},//资产
+    industry(){ this.$router.push({ name:'industry'})},
+    commer(){ this.$router.push({ name:'commer'})},
+    exploit(){ this.$router.push({ name:'exploit'})},//运营
+    research(){ this.$router.push({ name:'research'})},
+    product(){ this.$router.push({ name:'product'})},
+    goods(){ this.$router.push({ name:'goods'})}, //库存
+    resource(){ this.$router.push({ name:'resource'})},
+    stock(){ this.$router.push({ name:'stock'})},
+    tocompany(){ this.$router.push({ name:'tocompany'})},   //交易
+    tomarket(){ this.$router.push({ name:'tomarket'})},
+    loan(){ this.$router.push({ name:'loan'})},
   },
   components: {
     remote: {
@@ -535,8 +729,7 @@ export default {
 </script>
 
 <style scoped>
-.leftfixed{
-  position:fixed;
-
+.leftfixed {
+  position: fixed;
 }
 </style>

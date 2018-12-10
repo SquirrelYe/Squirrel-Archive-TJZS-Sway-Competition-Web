@@ -5,7 +5,7 @@
       <div class="panel panel-color panel-primary panel-pages">
           <div class="panel-heading bg-img"> 
               <div class="bg-overlay"></div>
-              <h3 class="text-center m-t-10 text-white"> 创建新用户 </h3>
+              <h3 class="text-center m-t-10 text-white"> 注册 </h3>
           </div> 
 
           <div class="panel-body">
@@ -13,19 +13,25 @@
               
               <div class="form-group">
                   <div class="col-xs-12">
-                      <input class="form-control input-lg" type="text" required="" placeholder="用户名" v-model="userName">
+                      <input class="form-control input-lg" type="text" required="" placeholder="用户名(字母、下划线、数字)" v-model="name" @blur="judgeName()">
                   </div>
               </div>
 
               <div class="form-group">
                   <div class="col-xs-12">
-                      <input class="form-control input-lg" type="password" required="" placeholder="密码" v-model="passWord">
+                      <input class="form-control input-lg" type="text" required="" placeholder="中文名" v-model="cname">
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <div class="col-xs-12">
+                      <input class="form-control input-lg" type="password" required="" placeholder="密码（字母、下划线、数字）" v-model="pass">
                   </div>
               </div>
 
               <div class="form-group">
                     <div class="col-xs-12">
-                      <input class="form-control input-lg" type="email" required="" placeholder="邮箱" v-model="eMail" @blur="sendcodeRegister()">
+                      <input class="form-control input-lg" type="email" required="" placeholder="邮箱" v-model="email" @blur="sendcodeRegister()">
                     </div>
               </div>
 
@@ -41,7 +47,7 @@
                       <div class="checkbox checkbox-primary">
                           <input id="checkbox-signup" type="checkbox" v-model="check">
                           <label for="checkbox-signup">
-                              接受 <a href="#">天津城建大学 校园植物信息管理系统 条例</a>
+                              接受 <a href="#">Sway商战大赛 条例</a>
                           </label>
                       </div>
                       
@@ -76,13 +82,16 @@ export default {
   data() {
     return {
       content: "",
-      userName: "",
-      passWord: "",
-      eMail: "",
+      name: "",
+      cname: "",
+      pass: "",
+      email: "",
       judge: "",
       code: "",
       check: true,
-      sendCodeComplete: false
+      sendCodeComplete: false,
+      judgeNameFirst:false,
+      judgeMail:false
     };
   },
   mounted() {
@@ -91,20 +100,24 @@ export default {
   methods: {
     //点击注册按钮，进行逻辑操作
     register() {
-      if (this.userName == "" || this.passWord == "" || this.eMail == "") {
+      if (this.name == "" || this.pass == "" || this.email == ""|| this.cname == "") {
         s_alert.basic("不能有空哦");
-      } else {
+      } else if(!this.judgeNameFirst){
+        s_alert.basic("用户名未通过验证！");
+      }else if(!this.judgeMail){
+        s_alert.basic("邮箱未通过验证！");
+      }
+      else {
         if (this.check) {
           if (this.judge == this.code) {
             //判断验证码是否验证
             this.axios({
               method: "post",
-              url: `${app.data().globleUrl}/users?judge=2&username=${
-                this.userName
-              }&password=${this.passWord}&email=${this.eMail}`
+              url: `${app.data().globleUrl}/sway?judge=3&name=${this.name}&pass=${this.pass}&cname=${this.cname}&email=${this.email}`
             })
               .then(res => {
-                if (JSON.stringify(res.data.affectedRows) == 1) {
+                console.log(res);
+                if (JSON.stringify(res.data)) {
                   s_alert.Success("注册成功", "正在加载……", "success");
                   this.$router.push("/");
                 }
@@ -118,9 +131,31 @@ export default {
         }
       }
     },
+    //判断用户名是否重复
+    judgeName(){
+      var that = this;
+      this.axios({
+          method: "post",
+          url: `${app.data().globleUrl}/sway?judge=1&name=${that.name}`
+        })
+        .then(res => {
+          var jf = JSON.stringify(res.data.success);
+          if (jf.indexOf("true") != -1) {
+            s_alert.basic("用户名可以使用！");
+            that.judgeNameFirst=true
+          } else if (jf.indexOf("oversize") != -1) {
+            s_alert.basic("此用户名已经被使用过啦！");
+            that.judgeNameFirst=false
+          } else {
+            s_alert.basic("验证第一次注册失败！");
+            that.judgeNameFirst=false
+          }
+        })
+        .catch(error => console.log(error));
+    },
     //邮箱输入框 失去焦点 进行邮箱验证
     sendcodeRegister() {
-      if (this.eMail) {
+      if (this.email) {
         this.judgeFirst();
       } else {
         s_alert.basic("邮箱不能输入空哦");
@@ -130,18 +165,21 @@ export default {
     judgeFirst() {
       var that = this;
       this.axios({
-        method: "post",
-        url: `${app.data().globleUrl}/users?judge=3&email=${this.eMail}`
-      })
+          method: "post",
+          url: `${app.data().globleUrl}/sway?judge=2&email=${that.email}`
+        })
         .then(res => {
           var jf = JSON.stringify(res.data.success);
           if (jf.indexOf("true") != -1) {
-            s_alert.basic("验证第一次注册成功！");
+            s_alert.basic("邮箱可以使用！");
+            that.judgeMail=true
             this.sendcode();        //验证成功，发送验证信息
           } else if (jf.indexOf("oversize") != -1) {
             s_alert.basic("此邮箱已经被使用过啦！");
+            that.judgeMail=false
           } else {
             s_alert.basic("验证第一次注册失败！");
+            that.judgeMail=false
           }
         })
         .catch(error => console.log(error));
@@ -158,17 +196,17 @@ export default {
       this.axios({
         method: "post",
         url: `${app.data().globleUrl}/mail?judge=0&mail_address=${
-          this.eMail
+          this.email
         }&code=${num}`
       })
         .then(res => {
           that.condition = JSON.stringify(res.data.success);
           if (that.condition.indexOf("true") != -1) {
-            s_alert.Success("发送成功", "正在加载……", "success");
+            s_alert.Success("验证邮件发送成功", "正在加载……", "success");
             that.sendCodeComplete = true;
             //that.$router.push('/')
           } else {
-            s_alert.basic("发送失败");
+            s_alert.basic("验证邮件发送失败");
           }
         })
         .catch(error => console.log(error));
