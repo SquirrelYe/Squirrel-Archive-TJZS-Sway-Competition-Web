@@ -7,9 +7,12 @@
         </div>
       </div>
 
-      <div class="panel">
+      <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sway商战大赛-已有公司列表</h3>
+          </div>
         <!-- 外层div 判断是否隐藏 主list -->
-        <div v-if="mainList">
+        <div v-if="mainList" style="margin-top:20px">
           <table class="table table-bordered table-striped" style id="datatable-editable">
             <thead>
               <tr>
@@ -117,7 +120,7 @@ export default {
   },
   filters:{
     formatTime(val){
-      console.log(val)
+      //console.log(val)
       return moment(val).format('YYYY-MM-DD HH:mm:ss')
     }
   },
@@ -253,4 +256,8 @@ export default {
 };
 </script>
 <style scoped>
+  th{
+      text-align:center;/** 设置水平方向居中 */
+      vertical-align:middle/** 设置垂直方向居中 */
+    }
 </style>

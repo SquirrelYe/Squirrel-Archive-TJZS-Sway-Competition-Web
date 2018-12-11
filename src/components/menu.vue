@@ -31,6 +31,7 @@
                   <i class="fa fa-search"></i>
                 </button>
               </form>
+               
 
               <ul class="nav navbar-nav navbar-right pull-right">
                 <li class="dropdown hidden-xs">
@@ -208,13 +209,13 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)" @click="test()">参赛者管理</a>
+                    <a href="javascript:void(0)" @click="sway()">参赛者管理</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">管理员管理</a>
+                    <a href="javascript:void(0)" @click="admin()">管理员管理</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">公司审核</a>
+                    <a href="javascript:void(0)" @click="company()">公司审核</a>
                   </li>
                 </ul>
               </li>
@@ -229,16 +230,10 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)">新建比赛</a>
+                    <a href="javascript:void(0)" @click="creatgame()">新建比赛</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">矿区初始化</a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">工业用地初始化</a>
-                  </li>
-                  <li>
-                    <a href="javascript:void(0)">商业用地初始化</a>
+                    <a href="javascript:void(0)" @click="listgame()">赛事列表</a>
                   </li>
                 </ul>
               </li>
@@ -253,13 +248,13 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)">竞拍管理</a>
+                    <a href="javascript:void(0)" @click="scompete()">竞拍管理</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">交易管理</a>
+                    <a href="javascript:void(0)" @click="stransation()">交易管理</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)">赛事数据</a>
+                    <a href="javascript:void(0)" @click="sstastics()">赛事数据</a>
                   </li>
                 </ul>
               </li>
@@ -309,6 +304,8 @@
             <div class="clearfix"></div>
           </div>
           <div class="clearfix"></div>
+          <!-- 计时器 -->
+          <h4 class="time">{{startTime}}</h4>
         </div>
       </div>
 
@@ -496,9 +493,12 @@
                 </ul>
               </li>
             </ul>
-            <div class="clearfix"></div>
+            <div class="clearfix">
+            </div>
           </div>
           <div class="clearfix"></div>
+          <!-- 计时器 -->
+          <h4 class="time">{{startTime}}</h4>
         </div>
       </div>
       <!-- Left Sidebar End -->
@@ -660,7 +660,8 @@ export default {
     return {
       icon_src:"http://ww3.sinaimg.cn/thumb300/005NL6H7gw1ew1tp2et08j30cj0dl0tq.jpg",
       userinfo:'',
-      judgeUserType: '' //0.参赛者、1.管理员
+      judgeUserType: '', //0.参赛者、1.管理员
+      startTime:'', //格式 2018-12-11 11:17:16
     };
   },
   beforeMount() {
@@ -680,14 +681,35 @@ export default {
         this.judgeUserType = ses.getItem("type");
       }
     }
+    //定义计时器
+    let i=setInterval(() => {
+      const formatNumber = n => {
+        n = n.toString()
+        return n[1] ? n : '0' + n
+      }
+      let date=new Date()
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      const hour = date.getHours()
+      const minute = date.getMinutes()
+      const second = date.getSeconds()
+      //console.log('计时器开始',[year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':'))
+      this.startTime=[year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
+    }, 1000);
+    //清除计时器
+    setTimeout(() => {
+      // clearInterval(i)
+    }, 10000);
   },
   methods: {
+    
     test() {
       var ses = window.sessionStorage;
       console.log(ses.getItem("type"));
       console.log(this.userinfo)
     },
-    // 页面跳转
+    // 页面跳转 用户端
     creatCompany(){this.$router.push({name:'creatcompany'})},//公司
     joinCompany(){this.$router.push({name:'joincompany'})},
     infoCompany(){ this.$router.push({name:'infocompany'})},
@@ -705,6 +727,15 @@ export default {
     tocompany(){ this.$router.push({ name:'tocompany'})},   //交易
     tomarket(){ this.$router.push({ name:'tomarket'})},
     loan(){ this.$router.push({ name:'loan'})},
+    // 页面跳转 管理员端
+    sway(){this.$router.push({name:'sway'})},//用户管理
+    admin(){this.$router.push({name:'admin'})},
+    company(){this.$router.push({name:'company'})},
+    creatgame(){this.$router.push({name:'creatgame'})},//赛事管理
+    listgame(){this.$router.push({name:'listgame'})},
+    scompete(){this.$router.push({name:'scompete'})},//赛事运营
+    stransation(){this.$router.push({name:'stransation'})},
+    sstastics(){this.$router.push({name:'sstastics'})},
   },
   components: {
     remote: {
@@ -731,5 +762,9 @@ export default {
 <style scoped>
 .leftfixed {
   position: fixed;
+}
+.time{
+  color: aliceblue;
+  margin-left: 30px
 }
 </style>

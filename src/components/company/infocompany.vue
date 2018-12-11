@@ -11,7 +11,7 @@
       <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">公司组成管理</h3>
+            <h3 class="panel-title">Sway商战大赛-公司组成管理</h3>
           </div>
           <div class="panel-body">
             <div class="row">
@@ -160,4 +160,8 @@ export default {
 </script>
 
 <style scoped>
+ th{
+      text-align:center;/** 设置水平方向居中 */
+      vertical-align:middle/** 设置垂直方向居中 */
+    }
 </style>

@@ -10,7 +10,7 @@
         <div class="row">
         <div class="col-sm-12">
             <div class="panel panel-default">
-                <div class="panel-heading"><h3 class="panel-title">Sway商战大赛-工业用地配置</h3></div>
+                <div class="panel-heading"><h3 class="panel-title">Sway商战大赛-管理员管理</h3></div>
                 <div class="panel-body">
                     
                 </div> 
@@ -25,7 +25,7 @@ const s_alert = require("../../utils/alert");
 import app from "../../App.vue";
 
 export default {
-  name: " ",
+  name: "docompete",
   data() {
     return {
         

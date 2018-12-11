@@ -16,6 +16,7 @@ import map from '@/components/mange/map'
 import docCreate from '@/components/document/docCreate'
 import docSupport from '@/components/document/docSupport'
 import docList from '@/components/document/docList'
+// -------------------------------用户端-------------------------------------
 // company
 import creatCompany from '@/components/company/creatcompany'
 import joinCompany from '@/components/company/joincompany'
@@ -39,6 +40,18 @@ import resource from '@/components/stock/resource'
 import toCompany from '@/components/transaction/tocompany'
 import toMarket from '@/components/transaction/tomarket'
 import loan from '@/components/transaction/loan'
+// ---------------------------------管理员端-----------------------------------
+// users
+import sway from '@/adminComponents/users/sway'
+import admin from '@/adminComponents/users/admin'
+import company from '@/adminComponents/users/company'
+// game
+import creatgame from '@/adminComponents/game/creatgame' 
+import listgame from '@/adminComponents/game/listgame'
+// run
+import scompete from '@/adminComponents/run/scompete' 
+import stransation from '@/adminComponents/run/stransation'
+import sstastics from '@/adminComponents/run/sstastics'
 
 Vue.use(Router)
 
@@ -187,21 +200,47 @@ export default new Router({
           name:'loan',
           component:loan
         },
-        // ----------------------------------
-
-
+        // -----------------------------------管理员端---------------------------------
         {
-          path:'doccreate',
-          component:docCreate
+          path:'sway',    //参赛者管理
+          name:'sway',
+          component:sway
         },
         {
-          path:'docsupport',
-          component:docSupport
+          path:'admin',    //管理员管理
+          name:'admin',
+          component:admin
         },
         {
-          path:'doclist',
-          component:docList
-        }
+          path:'company',    //公司管理
+          name:'company',
+          component:company
+        },
+        {
+          path:'creatgame',    //新建比赛
+          name:'creatgame',
+          component:creatgame
+        },
+        {
+          path:'listgame',   //赛事列表
+          name:'listgame',
+          component:listgame
+        },
+        {
+          path:'scompete',   //竞拍管理
+          name:'scompete',
+          component:scompete
+        },
+        {
+          path:'stransation',   //交易管理
+          name:'stransation',
+          component:stransation
+        },
+        {
+          path:'sstastics',   //赛事数据
+          name:'sstastics',
+          component:sstastics
+        },
       ]
     }
   ]
