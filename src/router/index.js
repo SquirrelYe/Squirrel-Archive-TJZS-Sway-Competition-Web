@@ -40,6 +40,7 @@ import resource from '@/components/stock/resource'
 import toCompany from '@/components/transaction/tocompany'
 import toMarket from '@/components/transaction/tomarket'
 import loan from '@/components/transaction/loan'
+import showtransaction from '@/components/transaction/showtransaction'
 // ---------------------------------管理员端-----------------------------------
 // users
 import sway from '@/adminComponents/users/sway'
@@ -199,6 +200,11 @@ export default new Router({
           path:'loan',    //贷款
           name:'loan',
           component:loan
+        },
+        {
+          path:'showtransaction',    //订单详情
+          name:'showtransaction',
+          component:showtransaction
         },
         // -----------------------------------管理员端---------------------------------
         {

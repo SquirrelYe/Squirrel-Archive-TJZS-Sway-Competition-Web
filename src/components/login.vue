@@ -77,6 +77,7 @@ export default {
       username: "",
       password: "",
       judge: "",
+      Sid:'001',
       check: true
     };
   },
@@ -107,6 +108,7 @@ export default {
                     ses.setItem("name", this.userName);
                     ses.setItem("pass", this.passWord);
                     ses.setItem("type", '1');
+                    ses.setItem("Sid", this.Sid);    
                     //cookie.setCookie(this.userName, this.passWord,'1', 7);            
                     s_alert.Success("保存状态成功，你的身份是管理员","正在加载……","success");
                     this.$router.push({name: 'menu', params: {type: '1'}})
@@ -117,6 +119,7 @@ export default {
                     ses.setItem("name", this.userName);
                     ses.setItem("pass", this.passWord);
                     ses.setItem("type", '1');    
+                    ses.setItem("Sid", this.Sid);    
                     //cookie.setCookie(this.userName, this.passWord,'1', 7);  
                     s_alert.Success("登录成功，你的身份是管理员","正在加载……","success");
                     this.$router.push({name:'menu'});
@@ -137,6 +140,7 @@ export default {
                         ses.setItem("name", this.userName);
                         ses.setItem("pass", this.passWord);
                         ses.setItem("type", '0');
+                        ses.setItem("Sid", this.Sid);    
                         //cookie.setCookie(this.userName, this.passWord,'0', 7);            
                         s_alert.Success("保存状态成功，你的身份是参赛者","正在加载……","success");
                         this.$router.push("/menu");
@@ -147,6 +151,7 @@ export default {
                         ses.setItem("name", this.userName);
                         ses.setItem("pass", this.passWord);
                         ses.setItem("type", '0');
+                        ses.setItem("Sid", this.Sid);    
                         //cookie.setCookie(this.userName, this.passWord,'0', 7); 
                         s_alert.Success("登录成功，你的身份是参赛者","正在加载……","success");
                         this.$router.push("/menu");

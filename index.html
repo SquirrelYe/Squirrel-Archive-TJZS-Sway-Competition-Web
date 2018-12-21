@@ -6,10 +6,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title> SWAY 商业模拟挑战赛</title>
   <link rel="shortcut icon" href="static/images/favicon_1.ico">
+  <!-- Plugins css -->
+  <link href="static/plugins/modal-effect/css/component.css" rel="stylesheet" type="text/css">
 
   <link href="static/plugins/sweetalert/dist/sweetalert.css" rel="stylesheet" type="text/css">
   <link href="static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
   <link href="static/css/core.css" rel="stylesheet" type="text/css">
+  <link href="static/css/animate.css" rel="stylesheet" type="text/css">
   <link href="static/css/icons.css" rel="stylesheet" type="text/css">
   <link href="static/css/components.css" rel="stylesheet" type="text/css">
   <link href="static/css/pages.css" rel="stylesheet" type="text/css">
@@ -21,10 +24,14 @@
 </head>
 
 <body>
-  
+
   <div id="app">
     <!-- built files will be auto injected -->
   </div>
+
+  <script>
+    var resizefunc = [];
+  </script>
   <!-- jQuery  -->
   <script src="static/js/jquery.min.js"></script>
   <script src="static/js/bootstrap.min.js"></script>
@@ -40,9 +47,13 @@
   <script src="static/js/jquery.app.js"></script>
   <!-- sweet alert  -->
   <script src="static/plugins/sweetalert/dist/sweetalert.min.js"></script>
-  <script>
-      var resizefunc = [];
-  </script>
+  <!-- Modal-Effect -->
+  <script src="static/plugins/modal-effect/js/classie.js"></script>
+  <script src="static/plugins/modal-effect/js/modalEffects.js"></script>
+  <!-- notifications -->
+  <script src="static/js/bootstrap_notify.js"></script>
+
+
 </body>
 
 <style>

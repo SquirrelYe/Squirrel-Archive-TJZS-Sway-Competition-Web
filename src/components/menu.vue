@@ -377,6 +377,9 @@
                   <li>
                     <a href="javascript:void(0)" @click="infoCompany()">公司信息</a>
                   </li>
+                  <li>
+                    <a href="javascript:void(0)" @click="goods()">公司产品</a>
+                  </li>
                 </ul>
               </li>
 
@@ -450,9 +453,6 @@
                 </a>
                 <ul class="list-unstyled">
                   <li>
-                    <a href="javascript:void(0)" @click="goods()">公司产品</a>
-                  </li>
-                  <li>
                     <a href="javascript:void(0)" @click="stock()">产品库存</a>
                   </li>
                   <li>
@@ -471,13 +471,13 @@
                 </a>
                 <ul class="list-unstyled">
                   <li class="has_sub">
-                    <a href="javascript:void(0)" @click="tocompany()">定向公司</a>
+                    <a href="javascript:void(0)" @click="tomarket()">交易市场</a>
+                  </li>
+                  <!-- <li class="has_sub">
+                    <a href="javascript:void(0)" @click="tocompany()">公司代工</a>
                   </li>
                   <li class="has_sub">
-                    <a href="javascript:void(0)" @click="tomarket()">市场</a>
-                  </li>
-                  <li class="has_sub">
-                    <a href="javascript:void(0)" @click="loan()">贷款</a>
+                    <a href="javascript:void(0)" @click="loan()">政府贷款</a> -->
                     <!-- <ul class="list-unstyled">
                       <li>
                         <a href="javascript:void(0)">授信额度</a>
@@ -489,6 +489,9 @@
                         <a href="javascript:void(0)">未还贷款</a>
                       </li>
                     </ul> -->
+                  <!-- </li> -->
+                  <li class="has_sub">
+                    <a href="javascript:void(0)" @click="showTransaction()">订单列表</a>
                   </li>
                 </ul>
               </li>
@@ -578,67 +581,7 @@
                 <i class="fa fa-circle online"></i>
               </a>
               <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-5.jpg" alt>
-                </div>
-                <span class="name">Shahedk</span>
-                <i class="fa fa-circle away"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-6.jpg" alt>
-                </div>
-                <span class="name">Adhamdannaway</span>
-                <i class="fa fa-circle away"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-7.jpg" alt>
-                </div>
-                <span class="name">Ok</span>
-                <i class="fa fa-circle away"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-8.jpg" alt>
-                </div>
-                <span class="name">Arashasghari</span>
-                <i class="fa fa-circle offline"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-9.jpg" alt>
-                </div>
-                <span class="name">Joshaustin</span>
-                <i class="fa fa-circle offline"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-10.jpg" alt>
-                </div>
-                <span class="name">Sortino</span>
-                <i class="fa fa-circle offline"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
+            </li>            
           </ul>
         </div>
       </div>
@@ -727,6 +670,7 @@ export default {
     tocompany(){ this.$router.push({ name:'tocompany'})},   //交易
     tomarket(){ this.$router.push({ name:'tomarket'})},
     loan(){ this.$router.push({ name:'loan'})},
+    showTransaction(){ this.$router.push({ name:'showtransaction'}) },
     // 页面跳转 管理员端
     sway(){this.$router.push({name:'sway'})},//用户管理
     admin(){this.$router.push({name:'admin'})},
@@ -762,6 +706,7 @@ export default {
 <style scoped>
 .leftfixed {
   position: fixed;
+  z-index: 100
 }
 .time{
   color: aliceblue;

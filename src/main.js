@@ -20,6 +20,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
 Vue.component('remote-script', {
   render: function (createElement) {
     // var self = this
@@ -30,7 +31,6 @@ Vue.component('remote-script', {
       }
     })
   },
-
   props: {
     src: {
       type: String,

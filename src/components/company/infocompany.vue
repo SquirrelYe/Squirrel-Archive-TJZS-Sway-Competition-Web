@@ -39,7 +39,7 @@
                         <td>{{item.name}}</td>
                         <td>{{item.office}}</td>
                         <td>{{item.time}}</td>
-                        <td class="actions">
+                        <td class="actions" align='center'>
                           <a class="on-default edit-row" @click="editItem(index)">
                             <i class="fa fa-pencil"></i>
                           </a>
@@ -112,6 +112,11 @@
 </template>
 
 <script>
+const s_alert = require("../../utils/alert");
+import app from "../../App.vue";
+const moment = require('moment');
+var App = app;
+
 export default {
   name: "infocompany",
   data() {
@@ -127,8 +132,9 @@ export default {
   methods: {
     mocks() {
       var that = this;
+      //let sql=`${app.data().globleUrl}/officer?judge=1&Sid=${window.sessionStorage.Sid}&Cid=${com.Cid}&Pid=${ses[0].Pid}&office=0`
       that.axios
-        .post("/company/api", { withCredentials: true })
+        .post("/company/api")
         .then(res => {
           console.log(res.data);
           that.showItems = res.data;

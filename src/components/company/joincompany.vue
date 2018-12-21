@@ -202,18 +202,23 @@ export default {
       }
     },
     editItem(index) {
-      console.log("edit", JSON.stringify(this.showItems[index]));
-      s_alert.Success("信息发送成功，等待对方接收", "正在加载……", "success");
-      //   this.axios
-      //     .post("/companylist/api", { withCredentials: true })
-      //     .then(res => {
-      //       console.log(res.data)
-      //       this.items = res.data;
-      //       this.show();
-      //     })
-      //     .catch(err => {
-      //       console.log(err);
-      //     });
+      let com=this.showItems[index];
+      let ses=JSON.parse(window.sessionStorage.userinfo);
+      let sql=`${app.data().globleUrl}/officer?judge=1&Sid=${window.sessionStorage.Sid}&Cid=${com.Cid}&Pid=${ses[0].Pid}&office=0`
+      console.log(sql)
+      // this.axios
+      //   .post(sql)
+      //   .then(res => {
+      //     console.log(res.data)
+      //     if(res.data[1]){
+      //       s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
+      //     }else{
+      //       s_alert.Timer("加入失败，只能加入一个公司……");
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     },
     deleteItem(index) {
       // alert('delete'+index)

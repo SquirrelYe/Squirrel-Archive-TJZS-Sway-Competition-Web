@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h4 class="pull-left page-title">公司管理</h4>
+        <h4 class="pull-left page-title">交易管理</h4>
       </div>
     </div>
 
@@ -10,7 +10,7 @@
       <div class="col-sm-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Sway商战大赛-竞拍情况</h3>
+            <h3 class="panel-title">Sway商战大赛-公司代工交易情况</h3>
           </div>
           <div class="panel-body">
             <div class="table-responsive">
@@ -19,22 +19,34 @@
                   <tr>
                     <th>#</th>
                     <th>财年</th>
-                    <th>物品种类</th>
-                    <th>物品id</th>
-                    <th>竞拍价</th>
-                    <th>状态</th>
-                    <th>创建时间</th>
+                    <th>资金出入</th>
+                    <th>交易类型</th>
+                    <th>订单类型</th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>交易明细</th>
+                    <th>己方</th>
+                    <th>对方</th>
+                    <th>交易原料id</th>
+                    <th>交易产品id</th>
+                    <th>创建日期</th>
                     <th>操作</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showCompete" :key="item.name">
+                  <tr class="gradeX" v-for="(item,index) in showTransaction" :key="item.name">
                     <td>{{index}}</td>
                     <td>{{item.yearid}}</td>
+                    <td>{{item.judge}}</td>
                     <td>{{item.type}}</td>
-                    <td>{{item.thingid}}</td>
-                    <td>{{item.auction}}</td>
-                    <td>{{item.condition}}</td>
+                    <td>{{item.kind}}</td>
+                    <td>{{item.price}}</td>
+                    <td>{{item.number}}</td>
+                    <td>{{item.detail}}</td>
+                    <td>{{item.me}}</td>
+                    <td>{{item.other}}</td>
+                    <td>{{item.source_id}}</td>
+                    <td>{{item.commerresearch_id}}</td>
                     <td>{{item.created_at}}</td>
                     <td class="actions" align="center">
                       <a
@@ -54,15 +66,7 @@
       </div>
     </div>
     <!-- model -->
-    <div
-      id="con-close-modal"
-      class="modal fade"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="myModalLabel"
-      aria-hidden="true"
-      style="display: none"
-    >
+    <div id="con-close-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -116,12 +120,8 @@
               <div class="col-md-12">
                 <div class="form-group no-margin">
                   <label for="field-7" class="control-label">Personal Info</label>
-                  <textarea
-                    class="form-control autogrow"
-                    id="field-7"
-                    placeholder="Write something about yourself"
-                    style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px"
-                  ></textarea>
+                  <textarea class="form-control autogrow" id="field-7" placeholder="Write something about yourself"
+                    style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px">                                                        </textarea>
                 </div>
               </div>
             </div>
@@ -133,6 +133,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -143,10 +144,10 @@ const moment = require("moment");
 var App = app;
 
 export default {
-  name: "infocompete",
+  name: "showtransaction",
   data() {
     return {
-      showCompete: ""
+      showTransaction: "",
     };
   },
   beforeMount() {
@@ -154,21 +155,21 @@ export default {
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
   },
   mounted() {
-    this.showMyCompete();
+      this.showMyCompete()
   },
   methods: {
     showMyCompete() {
-      //获取自己公司竞拍情况
-      this.axios
-        .post("/compete/api")
-        .then(res => {
-          console.log(res.data);
-          this.showCompete = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    //获取自己公司竞拍情况
+    this.axios
+    .post("/showtransaction/api")
+    .then(res => {
+        console.log(res.data);
+        this.showTransaction = res.data;
+    })
+    .catch(err => {
+        console.log(err);
+    });
+},
   }
 };
 </script>
