@@ -92,7 +92,8 @@ export default {
     login() {
       if (this.userName == "" || this.passWord == "") {
           s_alert.basic("用户名或密码为空");
-      } else {
+      } 
+      else {
           //判断用户为 管理员
         this.axios({
           method: "post",
@@ -124,11 +125,12 @@ export default {
                     s_alert.Success("登录成功，你的身份是管理员","正在加载……","success");
                     this.$router.push({name:'menu'});
                 }
-            } else {
+            } 
+            else {
                 //判断用户为 参赛者
                 this.axios({
                 method: "post",
-                url: `${app.data().globleUrl}/sway?judge=0&name=${this.userName}&pass=${this.passWord}`
+                url: `${app.data().globleUrl}/sway?judge=3&name=${this.userName}&pass=${this.passWord}`
                 })
                 .then(res => {
                 this.content = res.data;

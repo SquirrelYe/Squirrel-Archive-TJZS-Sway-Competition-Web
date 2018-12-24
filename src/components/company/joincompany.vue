@@ -33,7 +33,7 @@
             <tbody>
               <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                 <td>{{index}}</td>
-                <td>{{item.Cid}}</td>
+                <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
                 <td>{{item.legal}}</td>
                 <td>{{item.code}}</td>
@@ -42,7 +42,7 @@
                 <td>{{item.condition}}</td>
                 <td>{{item.created_at | formatTime}}</td>
                 <td class="actions" align="center">
-                  <a class="on-default edit-row" @click="editItem(index)">
+                  <a class="on-default edit-row" @click="joinCompany(index)">
                     <i class="fa fa-paper-plane-o"></i>
                   </a>
                 </td>
@@ -78,9 +78,6 @@
                   <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
                     <a href="javascript:void(0)" @click="nextPage()">下一页</a>
                   </li>
-                  <li>
-                    <a href="javascript:void(0)" @click="cs()">测试</a>
-                  </li>
                 </ul>
               </div>
             </div>
@@ -107,7 +104,7 @@ export default {
       searchItems: [],
       select: [],
       isSelectedAll: false,
-      PageShowSum: 10,
+      PageShowSum: 3,
       currentPage: "0",
       sumPage: null,
       doSearchText: null,
@@ -116,7 +113,9 @@ export default {
     };
   },
   mounted() {
-    this.mocks();
+    // setInterval(() => {
+      this.getCompany();
+    // }, 5000);
   },
   filters:{
     formatTime(val){
@@ -128,19 +127,7 @@ export default {
     toDocCreate() {
       this.$router.push("doccreate");
     },
-    selcetAll() {
-      //$('[name="jc"]').prop('checked',true);
-      if (!this.isSelectedAll) {
-        this.items.forEach(item => {
-          this.select.push(item.plantid);
-          this.isSelectedAll = true;
-        });
-      } else if (this.isSelectedAll) {
-        this.select = [];
-        this.isSelectedAll = false;
-      }
-    },
-    mocks() {
+    getCompany() {
       this.axios
         // .post("/companylist/api", { withCredentials: true })
         .post(`${app.data().globleUrl}/company?judge=0`)
@@ -201,24 +188,45 @@ export default {
         this.showEachPage(p + 1);
       }
     },
-    editItem(index) {
+    joinCompany(index) {
       let com=this.showItems[index];
-      let ses=JSON.parse(window.sessionStorage.userinfo);
-      let sql=`${app.data().globleUrl}/officer?judge=1&Sid=${window.sessionStorage.Sid}&Cid=${com.Cid}&Pid=${ses[0].Pid}&office=0`
+      let ses=JSON.parse(window.sessionStorage.getItem('userinfo'));
+      console.log(ses)
+      //查询是否已属于公司
+      let sql=`${app.data().globleUrl}/sway?judge=9&sway_id=${ses[0].id}`
       console.log(sql)
-      // this.axios
-      //   .post(sql)
-      //   .then(res => {
-      //     console.log(res.data)
-      //     if(res.data[1]){
-      //       s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
-      //     }else{
-      //       s_alert.Timer("加入失败，只能加入一个公司……");
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
+      this.axios
+        .post(sql)
+        .then(res => {
+          console.log(res.data)
+          if(res.data.success){
+
+              //加入公司
+              let that=this
+              let ses=JSON.parse(window.sessionStorage.getItem('userinfo'));
+              let sql=`${app.data().globleUrl}/ass/company_sway?judge=0&sway_id=${ses[0].id}&company_id=${com.id}`
+              console.log(sql)
+              that.axios
+              .post(sql)
+              .then(res => {
+                console.log(res.data)
+                if(res.data.success){
+                  s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
+                }else{
+                  s_alert.Timer("加入失败，只能加入一个公司……");
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              });
+            
+          }else{
+            s_alert.Timer("加入失败，只能加入一个公司……");
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     deleteItem(index) {
       // alert('delete'+index)
@@ -251,18 +259,10 @@ export default {
           }
         }
       }
-    },
-    cs() {
-      //测试跨页面传值，调用
-      let random = Math.random();
-      alert(App.methods.setGlobleUrlq(random));
     }
   }
 };
 </script>
 <style scoped>
-  th{
-      text-align:center;/** 设置水平方向居中 */
-      vertical-align:middle/** 设置垂直方向居中 */
-    }
+
 </style>

@@ -63,7 +63,8 @@ const produceCompanyList=function(){
 const mcompete=function(){
     let article=[]
     for (let i = 0; i < 6; i++) {
-        let s={            
+        let s={   
+            id:Random.integer(0,5),         
             star:Random.integer(0,5),
             source_id:Random.integer(1,100),
             reserve:Random.integer(1,100),
@@ -86,6 +87,7 @@ const icompete=function(){
     let article=[]
     for (let i = 0; i < 6; i++) {
         let s={            
+            id:Random.integer(0,5), 
             model:Random.integer(0,5),
             measure:Random.integer(1,100),
             efficient:Random.integer(1,100),
@@ -107,7 +109,8 @@ const icompete=function(){
 const ccompete=function(){
     let article=[]
     for (let i = 0; i < 6; i++) {
-        let s={            
+        let s={     
+            id:Random.integer(0,5),        
             level:Random.integer(0,5),
             brand:Random.integer(1,100),
             increment:Random.integer(1,100),            
@@ -133,7 +136,7 @@ const compete=function(){
             type:Random.integer(0,2),
             thingid:Random.integer(1,100),
             auction:Random.integer(1,100),
-            condition:Random.integer(0,3),
+            condition:Random.integer(0,2),
             created_at:Random.datetime(),
             updated_at:Random.datetime(),
             company_id:Random.integer(1,100),
@@ -269,6 +272,7 @@ const digger=function(){
     let article=[]
     for (let i = 0; i < 6; i++) {
         let s={            
+            condition:Random.integer(0,2),
             id:Random.integer(0,10),
             model:Random.integer(1,100),
             price:Random.integer(1,100),
@@ -286,6 +290,7 @@ const factory=function(){
     let article=[]
     for (let i = 0; i < 6; i++) {
         let s={            
+            condition:Random.integer(0,2),
             id:Random.integer(0,10),
             model:Random.integer(1,100),
             measure:Random.integer(1,100),
@@ -301,8 +306,9 @@ const factory=function(){
 // 研究所列表
 const commer=function(){
     let article=[]
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 1; i++) {
         let s={            
+            condition:Random.integer(0,2),
             id:Random.integer(0,10),
             model:Random.integer(1,100),
             brand:Random.integer(1,100),
@@ -311,6 +317,18 @@ const commer=function(){
             conrequire:Random.integer(1,100),
             created_at:Random.datetime(),
             updated_at:Random.datetime()
+        }
+        article.push(s);
+    }
+    return article;
+}
+// 原料列表
+const source=function(){
+    let article=[]
+    for (let i = 0; i < 5; i++) {
+        let s={            
+            id:Random.integer(0,10),
+            name:Random.integer(0,2)
         }
         article.push(s);
     }
@@ -332,3 +350,4 @@ Mock.mock('/trangoods/api','post',tranGoods); // 测试交易产品
 Mock.mock('/digger/api','post',digger); // 测试挖掘机列表
 Mock.mock('/factory/api','post',factory); // 测试厂房列表
 Mock.mock('/commer/api','post',commer); // 测试研究所列表
+Mock.mock('/source/api','post',source); // 测试研究所列表

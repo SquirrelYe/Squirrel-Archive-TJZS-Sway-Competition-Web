@@ -21,27 +21,52 @@
                       
                       <div class="row">
                             <div class="col-lg-4" v-for="(item,index) in showCompeteMining" :key="index">
-                                <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-primary' : index%3==1,'panel-success' : index%3==2}">
+                                <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-purple' : index%3==1,'panel-success' : index%3==2}">
                                     <div class="panel-heading" style="height:40px"> 
                                         <h3 class="panel-title" style="float:left">矿区编号  {{item.id}}</h3> 
-                                        <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting()">配置</i>
+                                        <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(index)">配置</i>
                                     </div> 
                                     <div class="panel-body"> 
-                                      <p>
+                                      <!-- <p>
                                         暂未配置挖掘机
-                                      </p>                                    
+                                      </p>-->
+                                      <div class="row">       
+                                        挖掘机信息如下：<br>        
+                                        <div class="col-lg-12">
+                                          <div class="btn-group" v-for="(item,index) in showCompeteMining[index].diggers" :key="index">
+                                              <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
+                                                {{item.id}} 
+                                                <span class="caret"></span>
+                                              </button>
+                                              <ul class="dropdown-menu" role="menu">
+                                                  <li>
+                                                    <a>
+                                                      <div align='center'>
+                                                        <p>
+                                                          <strong>挖掘机型号：</strong>{{item.id}}<br>
+                                                          <strong>购置价格：</strong>{{item.id}}<br>
+                                                          <strong>挖掘效率：</strong>{{item.id}}<br>
+                                                          <strong>价值折旧：</strong>{{item.id}}<br>
+                                                        </p>  
+                                                      </div>
+                                                    </a>
+                                                  </li>
+                                              </ul>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div> 
                                 </div>
                             </div>
-                        </div>
+                        </div>                 
 
-                      
                       <div class="panel-body">
                         <a
-                          class="btn btn-info waves-effect waves-light"
+                          class="btn btn-success waves-effect waves-light"
                           href="javascript:;"
                           @click="info"
                         >Info</a>
+
                       </div>
                     </div>
                   </div>
@@ -66,7 +91,7 @@
           <div class="modal-content p-0">
               <div class="panel-group panel-group-joined" id="accordion-test"> 
 
-                  <div class="panel  panel-color" v-for="(item,index) in showDiggerItems" :key="index" :class="{'panel-info' : index%3==0,'panel-purple' : index%3==1,'panel-pink' : index%3==2}"> 
+                  <div class="panel  panel-default" v-for="(item,index) in showDiggerItems" :key="index" > 
                     <div class="panel-heading"> 
                         <h4 class="panel-title"> 
                             <a data-toggle="collapse" data-parent="#accordion-test" :href="'#'+index" class="collapsed">
@@ -104,7 +129,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPrice()"
+                            @click="sendPrice(index)"
                             v-if="number!='' && number>0"
                           >提交订单</button>
                         </div>
@@ -132,7 +157,9 @@ export default {
     return {
       showCompeteMining:'',
       showDiggerItems:'',
+      //购买挖掘机
       number: "",
+      temp:''
     };
   },
   beforeMount() {
@@ -163,28 +190,62 @@ export default {
         },
         {
           // settings
-          type: "danger"
+          type: "success"
         }
       );
     },
     openSetting(index) {
       this.number=''
+      this.temp=this.showCompeteMining[index]
+      console.log(this.temp)
+      this.showDigger()
     },
-    sendPrice() {
-      s_alert.Success("下单成功", "正在加载……", "success");
+    sendPrice(index) {
+      //购买挖掘机 绑定 到矿区
+      let that=this
+      let s=`${app.data().globleUrl}/ass/mining_digger?judge=1&mining_id=${this.temp.id}&digger_id=${this.showDiggerItems[index].id}&number=${this.number}`
+        console.log(s)
+        that.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {          
+          // s_alert.Success("下单成功", "正在加载……", "success");
+          that.sendNumber(index)
+        })
+        .catch(err => {
+          // s_alert.Success("下单失败", "正在加载……", "success");
+        });
+
     },
+    sendNumber(index) {
+      //购买挖掘机 绑定 到矿区
+      let s=`${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${this.temp.id}&digger_id=${this.showDiggerItems[index].id}&number=${this.number}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {          
+          s_alert.Success("下单成功", "正在加载……", "success");
+        })
+        .catch(err => {
+          // s_alert.Success("下单失败", "正在加载……", "success");
+        });
+
+    }
+    ,
     showMyMining() {
       //显示已购 矿区
-      this.axios
-        .post("/compete/api")
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/ass/mining_digger?judge=5&company_id=${userinfo[0].company_id}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
-          let arr=[]
-          res.data.forEach(element => {
-              if(element.type==0){
-                  arr.push(element);
-              }
-          });
-          this.showCompeteMining=arr;
+          this.showCompeteMining=res.data;
           console.log(this.showCompeteMining)
         })
         .catch(err => {
@@ -193,8 +254,12 @@ export default {
     },
     showDigger() {
       //显示 挖掘机 信息
-      this.axios
-        .post("/digger/api")
+      let s=`${app.data().globleUrl}/digger?judge=0`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
           console.log(res.data);
           this.showDiggerItems = res.data;

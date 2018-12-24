@@ -56,9 +56,8 @@
                             <th>元素储量</th>
                             <th>折旧减免</th>
                             <th>回购价值</th>
-                            <th>状态</th>
                             <th>起拍价</th>
-                            <th>所属公司</th>
+                            <th>状态</th>
                             <th>成交价</th>
                             <th>出现财年</th>
                             <th>操作</th>
@@ -72,13 +71,12 @@
                             <td>{{item.reserve}}</td>
                             <td>{{item.deprelief}}</td>
                             <td>{{item.repurchase}}</td>
-                            <td>{{item.condition}}</td>
                             <td>{{item.startprice}}</td>
-                            <td>{{item.company_id}}</td>
+                            <td>{{item.condition|formatCondition}}</td>
                             <td>{{item.price}}</td>
-                            <td>{{item.yearid}}</td>
+                            <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index)">
+                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index,1)">
                                 <i class="fa  fa-tags"></i>
                               </a>
                             </td>
@@ -105,7 +103,6 @@
                             <th>改良花费</th>
                             <th>起拍价</th>
                             <th>状态</th>
-                            <th>所属公司</th>
                             <th>成交价</th>
                             <th>出现财年</th>
                             <th>操作</th>
@@ -120,12 +117,11 @@
                             <td>{{item.repurchase}}</td>
                             <td>{{item.improve}}</td>
                             <td>{{item.startprice}}</td>
-                            <td>{{item.condition}}</td>
-                            <td>{{item.company_id}}</td>
+                            <td>{{item.condition|formatCondition}}</td>
                             <td>{{item.price}}</td>
-                            <td>{{item.yearid}}</td>
+                            <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index)">
+                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal1" @click="m(index,2)">
                                 <i class="fa  fa-tags"></i>
                               </a>
                             </td>
@@ -150,7 +146,6 @@
                             <th>增值空间</th>
                             <th>起拍价</th>
                             <th>状态</th>
-                            <th>所属公司</th>
                             <th>成交价</th>
                             <th>出现财年</th>
                             <th>操作</th>
@@ -163,12 +158,11 @@
                             <td>{{item.brand}}</td>
                             <td>{{item.increment}}</td>
                             <td>{{item.startprice}}</td>
-                            <td>{{item.condition}}</td>
-                            <td>{{item.company_id}}</td>
+                            <td>{{item.condition|formatCondition}}</td>
                             <td>{{item.price}}</td>
-                            <td>{{item.yearid}}</td>
+                            <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index)">
+                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal2" @click="m(index,3)">
                                 <i class="fa  fa-tags"></i>
                               </a>
                             </td>
@@ -187,54 +181,9 @@
       </div>
     </div>
 
-    <!-- <div class="row">
-      <div class="col-sm-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Sway商战大赛-竞拍资产</h3>
-          </div>
-            
-          <div class="panel-body">
-            <div class="col-lg-12">
-                <div class="table-responsive">
-                  <table class="table table-striped" style id="datatable-editable">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>财年</th>
-                        <th>物品种类</th>
-                        <th>物品id</th>
-                        <th>竞拍价</th>
-                        <th>状态</th>
-                        <th>创建时间</th>
-                        <th>操作</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="gradeX" v-for="(item,index) in showCompete" :key="item.name">
-                        <td>{{index}}</td>
-                        <td>{{item.yearid}}</td>
-                        <td>{{item.type}}</td>
-                        <td>{{item.thingid}}</td>
-                        <td>{{item.auction}}</td>
-                        <td>{{item.condition}}</td>
-                        <td>{{item.created_at}}</td>
-                        <td class="actions" align="center">
-                          <a class="waves-effect waves-light" data-toggle="modal" data-target="#con-close-modal" >
-                            <i class="fa fa-pencil"></i>
-                          </a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-        </div>
-      </div>
-    </div> -->
 
-    <!-- StandardModal -->
+
+    <!-- mining -->
     <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -252,95 +201,123 @@
                 <strong>元素储量:</strong>{{model.reserve}}<br> 
                 <strong>折旧减免:</strong>{{model.deprelief}}<br> 
                 <strong>回购价值:</strong>{{model.repurchase}}<br> <hr>
-                <div v-if="model.condition==0">
+                <div v-if="model.condition==-2">
                   <h4 style="color:#00b300">竞拍还没有开始</h4>
                 </div>
+                <div v-if="model.condition==-1">
+                  <h4 style="color:#00b300">该商品已流拍</h4>
+                </div>
+                <div v-if="model.condition==0">
+                  <h4 style="color:#00b300">商品竞拍中</h4><br>
+                  <strong style="color:#00b300" v-if="price!=null">前一次出价为{{price}}</strong><br>
+                  <strong>请输入你的出价:</strong><input type="number" v-model="givePrice"><strong>万元</strong>
+                </div>
                 <div v-if="model.condition==1">
-                  <strong>请输入你的出价:</strong><input type="number" v-model="price"><strong>万元</strong>
+                  <h4 style="color:#00b300">商品竞拍结束</h4>
+                  <strong>你的出价为:</strong> {{price}} 万元
                 </div>
                 <div v-if="model.condition==2">
-                  <strong>你的出价为:</strong> {{price}} 万元
+                  <h4 style="color:#00b300">商品定向公司分配</h4>
                 </div>
               </address>             
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="model.condition==1">提交出价</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(1)" v-if="model.condition==0">提交出价</button>
             </div>
-        </div>
-        </div>
-    </div>
-    <!-- <button class="btn btn-primary waves-effect waves-light" data-toggle="modal" data-target="#myModal">StandardModal</button> -->
-    <!-- Modal Content is Responsive -->
-    <div id="con-close-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title">Modal Content is Responsive</h4>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field-1" class="control-label">Name</label>
-                  <input type="text" class="form-control" id="field-1" placeholder="John">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field-2" class="control-label">Surname</label>
-                  <input type="text" class="form-control" id="field-2" placeholder="Doe">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="field-3" class="control-label">Address</label>
-                  <input type="text" class="form-control" id="field-3" placeholder="Address">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="field-4" class="control-label">City</label>
-                  <input type="text" class="form-control" id="field-4" placeholder="Boston">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="field-5" class="control-label">Country</label>
-                  <input type="text" class="form-control" id="field-5" placeholder="United States">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="field-6" class="control-label">Zip</label>
-                  <input type="text" class="form-control" id="field-6" placeholder="123456">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group no-margin">
-                  <label for="field-7" class="control-label">Personal Info</label>
-                  <textarea class="form-control autogrow" id="field-7" placeholder="Write something about yourself"
-                    style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px">                                                        </textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-info waves-effect waves-light">Save changes</button>
-          </div>
         </div>
       </div>
-    </div><!-- /.modal -->
-    <!-- <button class="btn btn-primary waves-effect waves-light" data-toggle="modal" data-target="#con-close-modal">ResponsiveModal</button> -->
+    </div>
 
+    <!-- indusland -->
+    <div id="myModal1" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">竞拍单</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <h4>工业用地情况介绍</h4>  
+              <!-- <h5> {{model}}</h5> -->
+              <address class="ng-scope">
+                <strong>工地型号:</strong>{{model.model}}<br>
+                <strong>工地面积:</strong>{{model.measure}}<br> 
+                <strong>效率提升:</strong>{{model.efficient}}<br> 
+                <strong>折旧减免:</strong>{{model.repurchase}}<br> 
+                <strong>改良花费:</strong>{{model.improve}}<br> <hr>
+                <div v-if="model.condition==-2">
+                  <h4 style="color:#00b300">竞拍还没有开始</h4>
+                </div>
+                <div v-if="model.condition==-1">
+                  <h4 style="color:#00b300">该商品已流拍</h4>
+                </div>
+                <div v-if="model.condition==0">
+                  <h4 style="color:#00b300">商品竞拍中</h4><br>
+                  <strong style="color:#00b300" v-if="price!=null">前一次出价为{{price}}</strong><br>
+                  <strong>请输入你的出价:</strong><input type="number" v-model="givePrice"><strong>万元</strong>
+                </div>
+                <div v-if="model.condition==1">
+                  <h4 style="color:#00b300">商品竞拍结束</h4>
+                  <strong>你的出价为:</strong> {{price}} 万元
+                </div>
+                <div v-if="model.condition==2">
+                  <h4 style="color:#00b300">商品定向公司分配</h4>
+                </div>
+              </address>             
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(2)" v-if="model.condition==0">提交出价</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- commerland -->
+    <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">竞拍单</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <h4>矿区情况介绍</h4>  
+              <!-- <h5> {{model}}</h5> -->
+              <address class="ng-scope">
+                <strong>商地等级:</strong>{{model.level}}<br>
+                <strong>品牌提升:</strong>{{model.brand}}<br> 
+                <strong>增值空间:</strong>{{model.increment}}<br> <hr>
+                <div v-if="model.condition==-2">
+                  <h4 style="color:#00b300">竞拍还没有开始</h4>
+                </div>
+                <div v-if="model.condition==-1">
+                  <h4 style="color:#00b300">该商品已流拍</h4>
+                </div>
+                <div v-if="model.condition==0">
+                  <h4 style="color:#00b300">商品竞拍中</h4><br>
+                  <strong style="color:#00b300" v-if="price!=null">前一次出价为{{price}}</strong><br>
+                  <strong>请输入你的出价:</strong><input type="number" v-model="givePrice"><strong>万元</strong>
+                </div>
+                <div v-if="model.condition==1">
+                  <h4 style="color:#00b300">商品竞拍结束</h4>
+                  <strong>你的出价为:</strong> {{price}} 万元
+                </div>
+                <div v-if="model.condition==2">
+                  <h4 style="color:#00b300">商品定向公司分配</h4>
+                </div>
+              </address>               
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(3)" v-if="model.condition==0">提交出价</button>
+            </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -360,6 +337,7 @@ export default {
       showCompete: "",
       model:"",
       price:'',
+      givePrice:''
     };
   },
   beforeMount() {
@@ -376,15 +354,71 @@ export default {
     formatTime(val) {
       //console.log(val)
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
+    },
+    formatCondition(val){
+      if(val==-2) return '竞拍未开始'
+      if(val==-1) return '产品流拍'
+      if(val==0) return '竞拍中'
+      if(val==1) return '竞拍已结束'
+      if(val==2) return '定向公司发送'
     }
   },
   //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
   methods: {
-    m(index){
-      this.model=this.showMiningItems[index]
+    m(index,judge){
+      this.givePrice=0
+      //矿区
+      if(judge==1){
+        this.model=this.showMiningItems[index]
+        console.log('model',this.model)
+        this.getMaxPrice(this.model,judge)
+      }
+      //工业用地
+      if(judge==2){
+        this.model=this.showInduslandItems[index]
+        console.log('model',this.model)
+        this.getMaxPrice(this.model,judge)
+      }
+      //商业用地
+      if(judge==3){
+        this.model=this.showCommerlandItems[index]
+        console.log('model',this.model)
+        this.getMaxPrice(this.model,judge)
+      }
     },
-    sendPrice(){
-      s_alert.Success(this.price, "正在加载……", "success");
+    getMaxPrice(m,type){
+      //获取竞拍时某一商品已出价
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/compete?judge=5&type=${type}&thingid=${m.id}&company_id=${userinfo[0].company_id}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {
+          console.log(res.data);
+          this.price = res.data.auction;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    sendPrice(type){
+      //出价
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/compete?judge=4&type=${type}&thingid=${this.model.id}&company_id=${userinfo[0].company_id}&auction=${this.givePrice}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {
+          console.log(res.data);
+          s_alert.Success(`你的此次出价为：${this.givePrice}`, "正在加载……", "success");
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     showMyCompete() {
       //获取自己公司竞拍情况
@@ -400,8 +434,12 @@ export default {
     },
     showMining() {
       //获取政府矿区竞拍汇总表
-      this.axios
-        .post("/mcompete/api")
+      let s=`${app.data().globleUrl}/mining?judge=0`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
           console.log(res.data);
           this.showMiningItems = res.data;
@@ -412,8 +450,12 @@ export default {
     },
     showIndus() {
       //获取政府工业用地竞拍汇总表
-      this.axios
-        .post("/icompete/api")
+      let s=`${app.data().globleUrl}/indusland?judge=0`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
           console.log(res.data);
           this.showInduslandItems = res.data;
@@ -424,8 +466,12 @@ export default {
     },
     showCommer() {
       //获取政府商业用地竞拍汇总表
-      this.axios
-        .post("/ccompete/api")
+      let s=`${app.data().globleUrl}/commerland?judge=0`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
           console.log(res.data);
           this.showCommerlandItems = res.data;

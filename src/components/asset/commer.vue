@@ -27,9 +27,35 @@
                                         <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting()">配置</i>
                                     </div> 
                                     <div class="panel-body"> 
-                                      <p>
+                                      <!-- <p>
                                         暂未配置研究所
-                                      </p>                                    
+                                      </p>-->
+                                      <div class="row">       
+                                        研究所信息如下：<br>        
+                                        <div class="col-lg-12">
+                                          <div class="btn-group" v-for="(item,index) in showCompeteCommer" :key="index">
+                                              <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
+                                                {{item.id}} 
+                                                <span class="caret"></span>
+                                              </button>
+                                              <ul class="dropdown-menu" role="menu">
+                                                  <li>
+                                                    <a>
+                                                      <div align='center'>
+                                                        <p>
+                                                          <strong>研究所类型：</strong>{{item.id}}<br>
+                                                          <strong>品牌提升：</strong>{{item.id}}<br>
+                                                          <strong>配方工艺：</strong>{{item.id}}<br>
+                                                          <strong>购置价值：</strong>{{item.id}}<br>
+                                                          <strong>建设要求：</strong>{{item.id}}<br>
+                                                        </p>  
+                                                      </div>
+                                                    </a>
+                                                  </li>
+                                              </ul>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div> 
                                 </div>
                             </div>

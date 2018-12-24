@@ -73,11 +73,11 @@ export default {
     var that=this;
     that.axios({
         method: "post",
-        url: `${app.data().globleUrl}/sway?judge=4&email=${that.email}&pass=${that.repassWord}` 
+        url: `${app.data().globleUrl}/sway?judge=5&email=${that.email}&pass=${that.repassWord}` 
     })
         .then(res => {
             console.log(res.data)
-        if (JSON.stringify(res.data.affectedRows) == 1) {
+        if (res.data[0] == 1) {
             s_alert.Success("密码重置成功", "正在返回登录界面……", "success");
             setTimeout(function(){
                 that.$router.push("/");
@@ -91,7 +91,7 @@ export default {
     compare2pwd() {
         console.log(this.passWord1,this.repassWord)
       if (this.passWord1==this.repassWord) {
-        s_alert.basic("密码验证通过");
+        //s_alert.basic("密码验证通过");
         var that=this;
         setTimeout(function(){
             that.reset();

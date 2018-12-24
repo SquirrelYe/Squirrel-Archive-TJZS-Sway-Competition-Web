@@ -113,7 +113,7 @@ export default {
             //判断验证码是否验证
             this.axios({
               method: "post",
-              url: `${app.data().globleUrl}/sway?judge=3&name=${this.name}&pass=${this.pass}&cname=${this.cname}&email=${this.email}`
+              url: `${app.data().globleUrl}/sway?judge=4&name=${this.name}&pass=${this.pass}&cname=${this.cname}&email=${this.email}`
             })
               .then(res => {
                 console.log(res);
@@ -134,7 +134,8 @@ export default {
     //判断用户名是否重复
     judgeName(){
       var that = this;
-      this.axios({
+      if(this.name!=''){
+        this.axios({
           method: "post",
           url: `${app.data().globleUrl}/sway?judge=1&name=${that.name}`
         })
@@ -152,6 +153,10 @@ export default {
           }
         })
         .catch(error => console.log(error));
+      }else{
+        s_alert.basic("用户名不能输入空哦");
+      }
+      
     },
     //邮箱输入框 失去焦点 进行邮箱验证
     sendcodeRegister() {

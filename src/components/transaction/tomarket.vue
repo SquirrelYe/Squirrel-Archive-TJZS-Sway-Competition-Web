@@ -129,28 +129,54 @@
                 </div>
                 <!-- 政府贷款展示处 -->
                 <div class="tab-pane" id="messages">
-                  <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                      <div class="panel-body"> 
-                        <a class="btn btn-info waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('info','top left', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Info</a>
-                        <a class="btn btn-success waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('success','top left','Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Success</a>
-                        <a class="btn btn-warning waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('warning','top left','Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Warning</a>
-                        <a class="btn btn-danger waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('error','top left', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Error</a>
-                        <a class="btn btn-inverse waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('black','top left', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Black</a>
-                        <a class="btn btn-default waves-effect" href="javascript:;" onclick="$.Notification.notify('white','top left', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">White</a>
-                    </div>
-                    <div class="panel-body"> 
-                        <a class="btn btn-info waves-effect waves-light" href="javascript:;" @click="info">Info</a>
-                        <a class="btn btn-success waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('success', 'top right', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Success</a>
-                        <a class="btn btn-warning waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('warning', 'top right', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Warning</a>
-                        <a class="btn btn-danger waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('error', 'top right', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Error</a>
-                        <a class="btn btn-inverse waves-effect waves-light" href="javascript:;" onclick="$.Notification.notify('black', 'top right', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">Black</a>
-                        <a class="btn btn-default waves-effect" href="javascript:;" onclick="$.Notification.notify('white', 'top right', 'Sample Notification', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vitae orci ut dolor scelerisque aliquam.')">White</a>
-                    </div>
-                    </div>
-                  </div>
+                  <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">公司名称</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" placeholder="xxx" v-model="name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="example-email" >贷款金额</label>
+                            <div class="col-md-10">
+                                <input class="form-control" placeholder="xxx" v-model="money">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="example-email">贷款年限</label>
+                            <div class="col-md-10">
+                                <input type="number" class="form-control" placeholder="0" v-model="year" @input="getRate()">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="example-email">贷款利率</label>
+                            <div class="col-md-10">
+                                <input class="form-control " type="number" disabled v-model="rate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">备注</label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" v-model="other" rows="5" placeholder=""></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                            <button type="button" class="btn btn-block btn-lg btn-success waves-effect waves-light" @click="submitForm()">申请贷款</button>
+                            </div>
+                        </div>
+                    </form>
+                </div> 
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p>
+                    <strong>注意：</strong><br>
+                    贷款额度为公司固定资产的80%，公司品牌价值超过100的部分对可贷上限有百分比提升。<br>
+                    <strong>可贷额度</strong>=<strong>(固定资产 - 已贷资金)*0.8*（品牌价值）/100</strong><br>
+                    利率：一年8%、两年12%、三年16%，利息计算方法为单利计算<br>
+                  
+                  </p>
                 </div>
               </div>
             </div>            
@@ -280,6 +306,12 @@ export default {
       showCompete: "",
       model:"",
       number:'',
+      //贷款信息
+      name:'xx公司',
+      money:0,
+      year:0,
+      rate:0,
+      other:'',
     };
   },
   beforeMount() {
@@ -301,6 +333,15 @@ export default {
   },
   //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
   methods: {
+    submitForm(){
+      $.notify({
+        // options
+        message: '提交贷款信息成功！' 
+      },{
+        // settings
+        type: 'success'
+      });
+    },
     info(){
       // $.Notification.notify('info', 'top right', '简单', '加入成功，请去公司信息查看，正在加载……')
       $.notify({
@@ -364,6 +405,17 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    getRate(){
+      if(this.year==0) this.rate=0;
+      if(this.year==1) this.rate=0.08;
+      if(this.year==2) this.rate=0.12;
+      if(this.year==3) this.rate=0.16;
+      if(this.year>3||this.year<0) {
+        s_alert.Warning('贷款年限输入有误','贷款年限不能小于0或者大于3，请改正后重试……')
+        this.year=0;
+        this.rate=0;
+      }
     }
   }
 };

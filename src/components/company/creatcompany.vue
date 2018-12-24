@@ -50,6 +50,12 @@
                             </div>
                         </div>
                     </form>
+                    
+                    <label class="col-md-1 control-label"></label>
+                    <div class="col-md-11">
+                        注意：<br>
+                        <strong>公司由选出的公司CEO创建，公司创建完成之后，公司其他成员通过 公司->加入公司 找到并加入公司。</strong>
+                    </div>
                 </div> 
             </div> 
         </div> 
@@ -87,25 +93,25 @@ export default {
       }
     },
     submitcom(){
-        let sql=`${app.data().globleUrl}/company?judge=1&name=${this.name}&legal=${this.legal}&code=${this.code}&area=${this.area}&others=${this.others}&Pid=${this.userinfo[0].Pid}`
-        console.log(sql)
+        let url=`${app.data().globleUrl}/company?judge=1&id=0&name=${this.name}&legal=${this.legal}&code=${this.code}&area=${this.area}&condition=0`
+        console.log(url)
         this.axios({
           method: "post",
-          url: sql
+          url: url
         })
           .then(res => {
             if (res.data.success) {
-                s_alert.Success("档案添加成功", "正在加载……", "success"); 
+                s_alert.Success("公司创建成功", "正在加载……", "success"); 
                 setTimeout(() => {
                     this.$router.push({name:'infocompany'})
                 }, 2000);           
             } else {
-              s_alert.Timer("档案添加失败", "。。。");
+              s_alert.Timer("公司创建失败", "。。。");
             }
           })
           .catch(error => {
             console.log(error);
-            s_alert.Timer("档案添加失败", "请检查网络状况");
+            s_alert.Timer("公司创建失败", "请检查网络状况");
           });
     }
   }

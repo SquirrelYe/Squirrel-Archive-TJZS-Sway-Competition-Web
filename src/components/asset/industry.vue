@@ -20,18 +20,58 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">                      
                       <div class="row">
                             <div class="col-lg-6" v-for="(item,index) in showCompeteIndusland" :key="index">
-                                <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-primary' : index%3==1,'panel-success' : index%3==2}">
-                                    <div class="panel-heading" style="height:40px"> 
-                                        <h3 class="panel-title" style="float:left">工业用地编号  {{item.id}}</h3> 
-                                        <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting()">配置</i>
-                                    </div> 
-                                    <div class="panel-body"> 
-                                      <p>
-                                        暂未配置工厂
-                                        暂未配置生产线
-                                      </p>                                    
-                                    </div> 
-                                </div>
+                              <div class="panel panel-fill panel-inverse">
+                                  <div class="panel-heading" style="height:40px"> 
+                                      <h3 class="panel-title" style="float:left">工业用地编号  {{item.id}}</h3> 
+                                      <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting()">配置</i>
+                                  </div> 
+                                  <div class="panel-body"> 
+                                    <!-- <p>
+                                      暂未配置工厂
+                                    </p> -->
+                                    <div class="col-lg-4" v-for="(item,index) in showCompeteIndusland" :key="index">
+                                      <div class="panel panel-fill panel-default">
+                                          <div class="panel-heading" style="height:40px"> 
+                                              <h3 class="panel-title" style="float:left">工厂编号  {{item.id}}</h3> 
+                                              <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting()">配置</i>
+                                          </div> 
+                                          <div class="panel-body"> 
+                                            <!-- <p>
+                                              暂未配置生产线
+                                            </p>  -->
+                                            <div class="row">       
+                                              生产线信息如下：<br>        
+                                              <div class="col-lg-12">
+                                                <div class="btn-group" v-for="(item,index) in showCompeteIndusland" :key="index">
+                                                    <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
+                                                      {{item.id}} 
+                                                      <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li>
+                                                          <a>
+                                                            <div align='center'>
+                                                              <p>
+                                                                <strong>生产线型号：</strong>{{item.id}}<br>
+                                                                <strong>产能：</strong>{{item.id}}<br>
+                                                                <strong>产线价值折旧：</strong>{{item.id}}<br>
+                                                                <strong>良品率：</strong>{{item.id}}<br>
+                                                                <strong>购置价格：</strong>{{item.id}}<br>
+                                                                <strong>建设要求：</strong>{{item.id}}<br>
+                                                              </p>  
+                                                            </div>
+                                                          </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div> 
+                                      </div>
+                                    </div>
+
+                                  </div> 
+                              </div>
                             </div>
                         </div>                      
                       <div class="panel-body">

@@ -644,8 +644,32 @@ export default {
     setTimeout(() => {
       // clearInterval(i)
     }, 10000);
+
+    // setInterval(() => { //实时更新个人信息
+    //   this.refreshUserinfo()
+    // }, 5000);
   },
   methods: {
+    refreshUserinfo(){
+      //重新获取个人信息
+      var ses = window.sessionStorage;
+      if(ses.getItem('name')==null||ses.getItem('pass')==null){
+
+      }else{
+        let s=`${app.data().globleUrl}/sway?judge=3&name=${ses.getItem('name')}&pass=${ses.getItem('pass')}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {
+          var d = JSON.stringify(res.data);
+          ses.setItem("userinfo", d);
+          // console.log(d)
+        })
+      }
+      
+    },
     
     test() {
       var ses = window.sessionStorage;
