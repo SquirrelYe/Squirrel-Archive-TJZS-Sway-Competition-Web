@@ -10,7 +10,7 @@ export default {
   data() {
     return {
       globleUrl1: "http://localhost:11111",
-      globleUrl: "http://192.168.43.131:11111",
+      globleUrl: "http://10.5.66.248:11111",
       name: "yexuan"
     };
   },

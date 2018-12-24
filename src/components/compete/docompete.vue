@@ -214,7 +214,6 @@
                 </div>
                 <div v-if="model.condition==1">
                   <h4 style="color:#00b300">商品竞拍结束</h4>
-                  <strong>你的出价为:</strong> {{price}} 万元
                 </div>
                 <div v-if="model.condition==2">
                   <h4 style="color:#00b300">商品定向公司分配</h4>
@@ -260,7 +259,6 @@
                 </div>
                 <div v-if="model.condition==1">
                   <h4 style="color:#00b300">商品竞拍结束</h4>
-                  <strong>你的出价为:</strong> {{price}} 万元
                 </div>
                 <div v-if="model.condition==2">
                   <h4 style="color:#00b300">商品定向公司分配</h4>
@@ -304,10 +302,9 @@
                 </div>
                 <div v-if="model.condition==1">
                   <h4 style="color:#00b300">商品竞拍结束</h4>
-                  <strong>你的出价为:</strong> {{price}} 万元
                 </div>
                 <div v-if="model.condition==2">
-                  <h4 style="color:#00b300">商品定向公司分配</h4>
+                  <h4 style="color:#00b300">商品已定向公司分配</h4>
                 </div>
               </address>               
             </div>

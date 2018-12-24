@@ -11,7 +11,7 @@
       <div class="col-sm-12">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h3 class="panel-title">Sway商战大赛-矿区配置</h3>
+            <h3 class="panel-title">Sway商战大赛-商业用地配置</h3>
           </div>
 
           <div class="panel-body">
@@ -20,22 +20,24 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                       
                       <div class="row">
-                            <div class="col-lg-4" v-for="(item,index) in showCompeteCommer" :key="index">
-                                <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-primary' : index%3==1,'panel-success' : index%3==2}">
+                            <div class="col-lg-4" v-for="(item,index) in showCompeteCommerland" :key="index">
+                                <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-purple' : index%3==1,'panel-success' : index%3==2}">
                                     <div class="panel-heading" style="height:40px"> 
-                                        <h3 class="panel-title" style="float:left">商业用地编号  {{item.id}}</h3> 
-                                        <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting()">配置</i>
+                                        <h3 class="panel-title" style="float:left">研究所编号  {{item.id}}</h3> 
+                                        <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(index)" v-if="showCompeteCommerland[index].research==null">配置</i>
                                     </div> 
                                     <div class="panel-body"> 
-                                      <!-- <p>
-                                        暂未配置研究所
-                                      </p>-->
-                                      <div class="row">       
+                                      <div class='row' v-if="showCompeteCommerland[index].research==null">
+                                        <p>
+                                          暂未配置研究所
+                                        </p>
+                                      </div>
+                                      <div class="row" v-else>       
                                         研究所信息如下：<br>        
                                         <div class="col-lg-12">
-                                          <div class="btn-group" v-for="(item,index) in showCompeteCommer" :key="index">
+                                          <div class="btn-group">
                                               <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
-                                                {{item.id}} 
+                                                {{showCompeteCommerland[index].research.id}} 
                                                 <span class="caret"></span>
                                               </button>
                                               <ul class="dropdown-menu" role="menu">
@@ -43,11 +45,11 @@
                                                     <a>
                                                       <div align='center'>
                                                         <p>
-                                                          <strong>研究所类型：</strong>{{item.id}}<br>
-                                                          <strong>品牌提升：</strong>{{item.id}}<br>
-                                                          <strong>配方工艺：</strong>{{item.id}}<br>
-                                                          <strong>购置价值：</strong>{{item.id}}<br>
-                                                          <strong>建设要求：</strong>{{item.id}}<br>
+                                                          <strong>研究所类型：</strong>{{showCompeteCommerland[index].research.model}}<br>
+                                                          <strong>品牌提升：</strong>{{showCompeteCommerland[index].research.brand}}<br>
+                                                          <strong>配方工艺：</strong>{{showCompeteCommerland[index].research.formula}}<br>
+                                                          <strong>购置价值：</strong>{{showCompeteCommerland[index].research.price}}<br>
+                                                          <strong>建设要求：</strong>{{showCompeteCommerland[index].research.conrequire}}<br>
                                                         </p>  
                                                       </div>
                                                     </a>
@@ -59,15 +61,15 @@
                                     </div> 
                                 </div>
                             </div>
-                        </div>
+                        </div>                 
 
-                      
                       <div class="panel-body">
                         <a
-                          class="btn btn-info waves-effect waves-light"
+                          class="btn btn-success waves-effect waves-light"
                           href="javascript:;"
                           @click="info"
                         >Info</a>
+
                       </div>
                     </div>
                   </div>
@@ -92,7 +94,7 @@
           <div class="modal-content p-0">
               <div class="panel-group panel-group-joined" id="accordion-test"> 
 
-                  <div class="panel panel-default" v-for="(item,index) in showResearchItems" :key="index"> 
+                  <div class="panel  panel-default" v-for="(item,index) in judgeShowResearch" :key="index" > 
                     <div class="panel-heading"> 
                         <h4 class="panel-title"> 
                             <a data-toggle="collapse" data-parent="#accordion-test" :href="'#'+index" class="collapsed">
@@ -105,11 +107,10 @@
                           <table class="table table-bordered table-striped" style id="datatable-editable">
                             <thead>
                               <tr>
-                                <th>研究所型号</th>
+                                <th>研究所类型</th>
                                 <th>品牌提升</th>
                                 <th>配方工艺</th>
                                 <th>价格</th>
-                                <th>建设要求</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -118,12 +119,10 @@
                                 <td>{{item.brand}}</td>
                                 <td>{{item.formula}}</td>
                                 <td>{{item.price}}</td>
-                                <td>{{item.conrequire}}</td>
                               </tr>
                             </tbody>
                           </table>
-                          <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
-                          <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>台</strong>
+                          <strong>订单总额为:</strong><strong style='color:green'>{{item.price}}万元</strong><br>
                         </div>
 
                         <div class="modal-footer">
@@ -132,9 +131,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPrice()"
-                            v-if="number!='' && number>0"
-                          >提交订单</button>
+                            @click="sendPrice(index)">提交订单</button>
                         </div>
                     </div> 
                   </div> 
@@ -155,12 +152,14 @@ import app from "../../App.vue";
 var App = app;
 
 export default {
-  name: "commer",
+  name: "mine",
   data() {
     return {
-      showCompeteCommer:'',
+      showCompeteCommerland:'',
       showResearchItems:'',
-      number: "",
+      //购买研究所
+      temp:'',
+      judgeShowResearch:[]
     };
   },
   beforeMount() {
@@ -168,7 +167,7 @@ export default {
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
   },
   mounted() {
-    this.showMyCommer();
+    this.showMyCommerland();
     this.showResearch()
   },
   filters: {
@@ -179,6 +178,11 @@ export default {
     sumPrice(x, y) {
       return x * y;
       console.log(x, y);
+    },
+    formatDiggerNumber(x){
+      // console.log(x)
+      if(x==null) return '暂未配置挖掘机';
+      else return x;
     }
   },
   //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
@@ -191,38 +195,82 @@ export default {
         },
         {
           // settings
-          type: "danger"
+          type: "success"
         }
       );
     },
     openSetting(index) {
-      this.number=''
+      this.judgeShowResearch=[]
+      this.temp=this.showCompeteCommerland[index]
+      let level=this.showCompeteCommerland[index].level
+      
+      if(level==4){
+        this.judgeShowResearch=this.showResearchItems
+      }else if(level==3){
+        this.showResearchItems.forEach(e => {
+          if(e.conrequire<=level){
+            this.judgeShowResearch.push(e)
+          }
+        });
+      }else if(level==2 || level==1){
+        this.showResearchItems.forEach(e => {
+          if(e.conrequire<=2){
+            this.judgeShowResearch.push(e)
+          }
+        });
+      }
+      console.log(this.temp)
+      this.showResearch()
     },
-    sendPrice() {
-      s_alert.Success("下单成功", "正在加载……", "success");
+    sendPrice(index) {
+      //购买研究所 绑定 到 商业用地
+      let that=this
+      let s=`${app.data().globleUrl}/ass/commerland_research?judge=6&commerland_id=${this.temp.id}&research_id=${this.showResearchItems[index].id}`
+        console.log(s)
+        that.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {          
+          s_alert.Success("下单成功", "正在加载……", "success");
+          that.showMyCommerland();
+        })
+        .catch(err => {
+          s_alert.Success("下单失败", "正在加载……", "success");
+        });
+
     },
-    showMyCommer() {
-      //显示已购 矿区
-      this.axios
-        .post("/compete/api")
+    checkMaxNumber(){
+      console.log(Number(this.number)+Number(this.haveNumber))
+      if(Number(this.number)+Number(this.haveNumber)>4){
+          s_alert.Success("矿区挖掘机数量不超过4个", "正在加载……", "warning");
+      }
+    },
+    showMyCommerland() {
+      //显示已购 商业用地
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/ass/commerland_research?judge=4&company_id=${userinfo[0].company_id}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
-          let arr=[]
-          res.data.forEach(element => {
-              if(element.type==2){
-                  arr.push(element);
-              }
-          });
-          this.showCompeteCommer=arr;
-          console.log(this.showCompeteCommer)
+          this.showCompeteCommerland=res.data;
+          console.log(this.showCompeteCommerland)
         })
         .catch(err => {
           console.log(err);
         });
     },
     showResearch() {
-      //显示 挖掘机 信息
-      this.axios
-        .post("/commer/api")
+      //显示 研究所 信息
+      let s=`${app.data().globleUrl}/research?judge=0`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
         .then(res => {
           console.log(res.data);
           this.showResearchItems = res.data;

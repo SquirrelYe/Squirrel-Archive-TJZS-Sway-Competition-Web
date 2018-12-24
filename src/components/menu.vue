@@ -501,7 +501,7 @@
           </div>
           <div class="clearfix"></div>
           <!-- 计时器 -->
-          <h4 class="time">{{startTime}}</h4>
+          <!-- <h4 class="time">{{startTime}}</h4> -->
         </div>
       </div>
       <!-- Left Sidebar End -->
