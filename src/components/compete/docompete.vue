@@ -283,7 +283,7 @@
             </div>
             <!-- 内容 -->
             <div class="modal-body" align='center'>
-              <h4>矿区情况介绍</h4>  
+              <h4>商业用地情况介绍</h4>  
               <!-- <h5> {{model}}</h5> -->
               <address class="ng-scope">
                 <strong>商地等级:</strong>{{model.level}}<br>
@@ -331,7 +331,7 @@ export default {
       showMiningItems: "",
       showInduslandItems: "",
       showCommerlandItems: "",
-      showCompete: "",
+      
       model:"",
       price:'',
       givePrice:''
@@ -343,9 +343,6 @@ export default {
   },
   mounted() {
     this.showMining();
-    // setInterval(() => {
-      this.showMyCompete();
-    // }, 2000);
   },
   filters: {
     formatTime(val) {
@@ -412,18 +409,6 @@ export default {
         .then(res => {
           console.log(res.data);
           s_alert.Success(`你的此次出价为：${this.givePrice}`, "正在加载……", "success");
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    showMyCompete() {
-      //获取自己公司竞拍情况
-      this.axios
-        .post("/compete/api")
-        .then(res => {
-          console.log(res.data);
-          this.showCompete = res.data;
         })
         .catch(err => {
           console.log(err);

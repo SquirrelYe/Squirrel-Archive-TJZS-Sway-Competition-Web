@@ -168,8 +168,7 @@ export default {
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
   },
   mounted() {
-    this.showMyMining();
-    this.showDigger()
+    this.init()
   },
   filters: {
     formatTime(val) {
@@ -200,11 +199,15 @@ export default {
         }
       );
     },
+    init(){
+      this.showMyMining();
+      this.showDigger()
+    },
     openSetting(index) {
       this.number=0
       this.haveNumber=0
       this.temp=this.showCompeteMining[index]
-      console.log(this.temp)
+      console.log('--->当前配置清单',this.temp)
       this.showDigger()
       this.getHaveNumber(index)
     },
@@ -241,18 +244,16 @@ export default {
         })
         .then(res => {          
           // s_alert.Success("下单成功", "正在加载……", "success");
+          that.init()
           that.sendNumber(index)
         })
-        .catch(err => {
-          // s_alert.Success("下单失败", "正在加载……", "success");
-        });
-
     },
     sendNumber(index) {
       //更改 挖掘机 数量
-      let addNumber= Number(this.temp.diggers[index].mining_digger.number) + Number(this.number)
-      console.log(addNumber)
-      let s=`${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${this.temp.id}&digger_id=${this.showDiggerItems[index].id}&number=${addNumber}`
+      try {
+        let addNumber= Number(this.temp.diggers[index].mining_digger.number) + Number(this.number)
+        console.log('-->',addNumber)
+        let s=`${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${this.temp.id}&digger_id=${this.showDiggerItems[index].id}&number=${addNumber}`
         console.log(s)
         this.axios({
         method: "post",
@@ -260,16 +261,33 @@ export default {
         })
         .then(res => {       
           console.log(res.data)   
-          if(res.data.success){
+          if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
-            this.showMyMining()
+            this.init()
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
-        .catch(err => {
-          s_alert.Success("下单失败", "正在加载……", "success");
-        });
+      } 
+      catch (error) {
+        let addNumber= Number(this.number)
+        console.log(addNumber)
+        let s=`${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${this.temp.id}&digger_id=${this.showDiggerItems[index].id}&number=${addNumber}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {       
+          console.log(res.data)   
+          if(res){
+            s_alert.Success("下单成功", "正在加载……", "success");
+            this.init()
+          }else{
+            s_alert.Success("下单失败", "正在加载……", "success");
+          }
+        })
+      }
 
     },
     checkMaxNumber(){

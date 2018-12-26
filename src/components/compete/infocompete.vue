@@ -73,8 +73,11 @@ export default {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
     formatCondition(val){
-      if(val==0) return '竞拍失败'
-      if(val==1) return '竞拍成功'
+      if(val==-2) return '竞拍未开始'
+      if(val==-1) return '产品流拍'
+      if(val==0) return '竞拍中'
+      if(val==1) return '竞拍已结束'
+      if(val==2) return '定向公司发送'
     }
   },
   methods: {

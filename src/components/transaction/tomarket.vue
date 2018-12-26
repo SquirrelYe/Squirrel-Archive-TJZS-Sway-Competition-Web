@@ -72,7 +72,7 @@
                             <td>{{item.created_at}}</td>
                             <td>{{item.updated_at}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index)">
+                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,0)">
                                 <i class="fa  fa-tags"></i>
                               </a>
                             </td>
@@ -95,7 +95,6 @@
                             <th>产品id</th>
                             <th>工业用地id</th>
                             <th>公司id</th>
-                            <th>类型</th>
                             <th>总量</th>
                             <th>单价</th>
                             <th>生成时间</th>
@@ -109,13 +108,12 @@
                             <td>{{item.commerresearch_id}}</td>
                             <td>{{item.indusland_id}}</td>
                             <td>{{item.company_id}}</td>
-                            <td>{{item.kind}}</td>
                             <td>{{item.sum}}</td>
-                            <td>{{item.price}}</td>
-                            <td>{{item.created_at}}</td>
-                            <td>{{item.updated_at}}</td>
+                            <td>{{item.commerresearch.price}}</td>
+                            <td>{{item.created_at|formatTime}}</td>
+                            <td>{{item.updated_at|formatTime}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index)">
+                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,1)">
                                 <i class="fa  fa-tags"></i>
                               </a>
                             </td>
@@ -174,8 +172,7 @@
                     <strong>注意：</strong><br>
                     贷款额度为公司固定资产的80%，公司品牌价值超过100的部分对可贷上限有百分比提升。<br>
                     <strong>可贷额度</strong>=<strong>(固定资产 - 已贷资金)*0.8*（品牌价值）/100</strong><br>
-                    利率：一年8%、两年12%、三年16%，利息计算方法为单利计算<br>
-                  
+                    利率：一年8%、两年12%、三年16%，利息计算方法为单利计算<br>                  
                   </p>
                 </div>
               </div>
@@ -185,107 +182,69 @@
       </div>
     </div>
 
-    <!-- StandardModal -->
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" id="myModalLabel">交易清单</h4>
-            </div>
-            <!-- 内容 -->
-            <div class="modal-body" align='center'>
-              <h4>矿区情况介绍</h4>  
-              <!-- <h5> {{model}}</h5> -->
-              <address class="ng-scope">
-                <strong>矿区id:</strong>{{model.mining_id}}<br>
-                <strong>原料id:</strong>{{model.source_id}}<br> 
-                <strong>公司id:</strong>{{model.company_id}}<br> 
-                <strong>单价:</strong>{{model.price}}<br> 
-                <strong>数量:</strong>{{model.sum}}<br> 
-                <strong>分布时间:</strong>{{model.updated_at}}<br> <hr>
-                <strong>订单总额为:</strong><strong>{{number|sumPrice(model.price)}}万元</strong><br> 
-                <strong>请输入购买数量:</strong><input type="number" v-model="number"><strong>万件</strong>
-              </address>             
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="number!='' && number>0">提交订单</button>
-            </div>
-        </div>
-        </div>
-    </div>
-    <!-- <button class="btn btn-primary waves-effect waves-light" data-toggle="modal" data-target="#myModal">StandardModal</button> -->
-    <!-- Modal Content is Responsive -->
-    <div id="con-close-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
+    <!-- 原料Modal -->
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="judgeChoose==0">
       <div class="modal-dialog">
         <div class="modal-content">
+          <!-- 头部 -->
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title">Modal Content is Responsive</h4>
+            <h4 class="modal-title" id="myModalLabel">交易清单</h4>
           </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field-1" class="control-label">Name</label>
-                  <input type="text" class="form-control" id="field-1" placeholder="John">
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label for="field-2" class="control-label">Surname</label>
-                  <input type="text" class="form-control" id="field-2" placeholder="Doe">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="field-3" class="control-label">Address</label>
-                  <input type="text" class="form-control" id="field-3" placeholder="Address">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="field-4" class="control-label">City</label>
-                  <input type="text" class="form-control" id="field-4" placeholder="Boston">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="field-5" class="control-label">Country</label>
-                  <input type="text" class="form-control" id="field-5" placeholder="United States">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="field-6" class="control-label">Zip</label>
-                  <input type="text" class="form-control" id="field-6" placeholder="123456">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group no-margin">
-                  <label for="field-7" class="control-label">Personal Info</label>
-                  <textarea class="form-control autogrow" id="field-7" placeholder="Write something about yourself"
-                    style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px">                                                        </textarea>
-                </div>
-              </div>
-            </div>
+          <!-- 内容 -->
+          <div class="modal-body" align='center'>
+            <h4>原料情况介绍</h4>  
+            <!-- <h5> {{model}}</h5> -->
+            <address class="ng-scope">
+              <strong>矿区id:</strong>{{model.mining_id}}<br>
+              <strong>原料id:</strong>{{model.source_id}}<br> 
+              <strong>公司id:</strong>{{model.company_id}}<br> 
+              <strong>单价:</strong>{{model.price}}<br> 
+              <strong>数量:</strong>{{model.sum}}<br> 
+              <strong>分布时间:</strong>{{model.updated_at}}<br> <hr>
+              <strong>订单总额为:</strong><strong>{{number|sumPrice(model.price)}}万元</strong><br> 
+              <strong>请输入购买数量:</strong><input type="number" v-model="number"><strong>万件</strong>
+            </address>             
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-info waves-effect waves-light">Save changes</button>
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="number!='' && number>0">提交订单</button>
           </div>
         </div>
       </div>
     </div>
-    <!-- <button class="btn btn-primary waves-effect waves-light" data-toggle="modal" data-target="#con-close-modal">ResponsiveModal</button> -->
 
+    <!-- 产品Modal -->
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="judgeChoose==1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- 头部 -->
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">交易清单</h4>
+          </div>
+          <!-- 内容 -->
+          <div class="modal-body" align='center' v-if="model.commerresearch">
+            <h4>产品情况介绍</h4>  
+            <!-- <h5> {{model}}</h5> -->
+            <address class="ng-scope">
+              <strong>产品id:</strong>{{model.commerresearch.id}}<br>
+              <strong>产品名称:</strong>{{model.commerresearch.name}}<br> 
+              <strong>产品介绍:</strong>{{model.commerresearch.introduction}}<br> 
+              <strong>产品单价:</strong>{{model.commerresearch.price}}<br> 
+              <strong>产品数量:</strong>{{model.sum}}<br> 
+              <strong>发布时间:</strong>{{model.updated_at | formatTime}}<br> <hr>
+              <strong>订单总额为:</strong><strong style="color:green">{{model.sum|sumPrice(model.commerresearch.price)}}万元</strong><br> 
+              <textarea v-model="detail" placeholder="产品交易备注"></textarea><br>
+            </address>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(1,model)" >提交订单</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -312,6 +271,9 @@ export default {
       year:0,
       rate:0,
       other:'',
+      //选择
+      judgeChoose:0,
+      detail:''
     };
   },
   beforeMount() {
@@ -319,7 +281,7 @@ export default {
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
   },
   mounted() {
-    this.showSource();
+    this.init()
   },
   filters: {
     formatTime(val) {
@@ -352,11 +314,40 @@ export default {
         type: 'danger'
       });
     },
-    m(index){
-      this.model=this.showSourceItems[index]
+    init(){
+      this.showSource();
+      this.showGoods();
+      this.showLoan()
     },
-    sendPrice(){
-      s_alert.Success("下单成功", "正在加载……", "success");
+    openSetting(index,x){
+      if(x==0) this.model=this.showSourceItems[index];
+      if(x==1) this.model=this.showGoodsItems[index]
+      this.number=0      
+    },
+    sendPrice(index,model){
+      console.log(index,model)
+      if(index==1){
+          let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+          if(model.commerresearch.company_id!=userinfo[0].company_id){
+            let s=`${app.data().globleUrl}/transaction?judge=1&Yearid=${1}&inout=1&type=2&kind=2&price=${model.commerresearch.price}&number=${model.sum}&me=${model.commerresearch.company_id}&other=${userinfo[0].company_id}&commerresearch_id=${model.commerresearch_id}`
+            console.log(s)
+            this.axios({
+            method: "post",
+            url: s
+            })
+            .then(res => {
+              console.log(res.data);
+              s_alert.Success("下单成功", "正在加载……", "success");
+              this.init()
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          }else{
+            s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
+          }
+          
+        }
     },
     showMyCompete() {
       //获取自己公司贷款情况
@@ -377,6 +368,7 @@ export default {
         .then(res => {
           console.log(res.data);
           this.showSourceItems = res.data;
+          this.judgeChoose=0
         })
         .catch(err => {
           console.log(err);
@@ -384,15 +376,20 @@ export default {
     },
     showGoods() {
       //市场交易 - 产品
-      this.axios
-        .post("/trangoods/api")
-        .then(res => {
-          console.log(res.data);
-          this.showGoodsItems = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      let s=`${app.data().globleUrl}/industryyield?judge=5&ispublic=1`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data);
+        this.showGoodsItems = res.data;
+          this.judgeChoose=1
+      })
+      .catch(err => {
+        console.log(err);
+      });
     },
     showLoan() {
       //市场交易 - 贷款
@@ -401,6 +398,7 @@ export default {
         .then(res => {
           console.log(res.data);
           this.showCommerlandItems = res.data;
+          this.judgeChoose=2
         })
         .catch(err => {
           console.log(err);
@@ -422,12 +420,5 @@ export default {
 </script>
 
 <style>
-th {
-  text-align: center; /** 设置水平方向居中 */
-  vertical-align: middle; /** 设置垂直方向居中 */
-}
-td {
-  text-align: center; /** 设置水平方向居中 */
-  vertical-align: middle; /** 设置垂直方向居中 */
-}
+
 </style>

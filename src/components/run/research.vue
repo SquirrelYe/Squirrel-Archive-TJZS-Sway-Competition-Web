@@ -16,7 +16,7 @@
             <div class="tabs-vertical-env"> 
                 <ul class="nav tabs-vertical"> 
                     <li class="" v-for="(item,index) in showCompeteCommer" :key="index" :class="{'active' : index==1}">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseCommerIndex(index)">商业用地ID{{item.id}}</a>
+                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false">商业用地ID{{item.id}}</a>
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
@@ -49,7 +49,7 @@
                       </div>
                       <div class='tab-pane'>    
                         <h3 class="panel-title">研究所信息</h3>                        
-                        <div class="tab-content" v-for="(item,index) in showResearchItems" :key="index">
+                        <div class="tab-content">
                           <div class="panel panel-default">
                             <div class="panel-heading"> 
                                 <!-- {{item}}   -->
@@ -66,13 +66,13 @@
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td>{{item.id}}</td>
-                                    <td>{{item.model}}</td>
-                                    <td>{{item.brand}}</td>
-                                    <td>{{item.formula}}</td>
-                                    <td>{{item.conrequire}}</td>
+                                    <td>{{item.research.id}}</td>
+                                    <td>{{item.research.model}}</td>
+                                    <td>{{item.research.brand}}</td>
+                                    <td>{{item.research.formula}}</td>
+                                    <td>{{item.research.conrequire}}</td>
                                     <td>
-                                      <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="m(index)"></i>  
+                                      <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="openSetting(index)"></i>  
                                     </td>
                                   </tr>
                                 </tbody>
@@ -140,7 +140,9 @@
                                           </div>
                                       </div>         
                                   </form>
-                                  注意：价格单位 万元，不得超过最高单价，最高单价=配方元素量*根号（元素种类）*（1+品牌提升）*0.1
+                                  <div align='center'>
+                                    注意：价格单位 万元，不得超过最高单价<br>最高单价=配方元素量*根号（元素种类）*（1+品牌提升）*0.1
+                                  </div>
                               </div>
                           </div>
                           </div> 
@@ -191,7 +193,15 @@
                                       </div>
                                   </div>
                                 </form>
-                                  注意：元素单位 量，元素总量不得超过 研究所 规定的总量。
+                                <div align='center'>
+                                  注意：元素单位 量，元素总量不得超过 研究所 规定的总量。<br>
+                                  <strong style="color:green" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && canICreatGood">
+                                    该产品未被其他公司申请专利，可以研发
+                                  </strong>
+                                  <strong style="color:red" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && !canICreatGood">
+                                    该产品已被其他公司申请专利，不允许研发
+                                  </strong>
+                                </div>
                               </div>
                             </div>
                           </div> 
@@ -202,10 +212,19 @@
 
           </div>
           
-          注意：申请产品研发需支付60万元，申请专利保护需支付100万元。
           <div align='center'>
-            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource">
-              当前最高单价为：{{max}}万元
+            注意：申请产品研发需支付60万元，申请专利保护需支付100万元。<br>
+            当前研究所支持的配方数：{{sumSource}}
+          </div>
+          <div align='center'>
+            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && canICreatGood">
+              当前最高单价为：{{max}}万元<br>
+              <div v-if="price<max">
+                你的出价为：{{price}}
+              </div>
+              <div v-else style="color:red">
+                你的定价大于最高单价
+              </div>
               <div class="checkbox checkbox-success checkbox-circle">
                   <input id="checkbox-10" type="checkbox" v-model="law">
                   <label for="checkbox-10">
@@ -214,7 +233,7 @@
               </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" >提交申请</button>
+              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="price<max">提交申请</button>
             </div>
             </div>
             <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)>sumSource" style="color:red">
@@ -249,15 +268,13 @@ export default {
   data() {
     return {
       showCompeteCommer:'',
-      showResearchItems:'',
-      number:0,
-      tMining:'',
-      tDigger:'',
       // 研发产品信息
       name:'',
       func:'',
       intro:'',
       price:'',
+      // 当前的商业用地信息
+      currentCommerlandInfo:'',
       // 原料信息
       s1:0,
       s2:0,
@@ -265,10 +282,13 @@ export default {
       s4:0,
       s5:0,
       // 最高单价
-      sumSource:3, // 元素量
+      sumSource:0, // 允许配方元素量
       brand:0.5,  //品牌价值提升
       max:'',   //最高单价
-      law:false
+      law:false,
+      //判断是否存在当前研发产品
+      judgeGoodHave:'',
+      canICreatGood:false
     };
   },
   beforeMount() {
@@ -293,41 +313,63 @@ export default {
     init(){      
       let that=this
       that.showMyCommer();
-      that.showResearch();
+      // that.showResearch();
     },
-    m(index){
-      this.tDigger=this.showResearchItems[index]
+    initFormulaNumber(){
+      this.s1=0
+      this.s2=0
+      this.s3=0
+      this.s4=0
+      this.s5=0
+    },
+    openSetting(index){
+      this.initFormulaNumber()
+      this.sumSource=this.showCompeteCommer[index].research.formula
+      this.currentCommerlandInfo=this.showCompeteCommer[index]
+      console.log(this.showCompeteCommer[index])
     },
     sendPrice(){
-      s_alert.Success("产品研发申请发送成功", "请到 公司—>公司产品 中查看", "success");
+      if(this.name==''||this.func==''||this.intro==''||this.price==''){
+        s_alert.Success("下单失败", "产品研发信息不能为空", "warning");
+      }else{
+        //执行 发送产品研发信息清单
+        console.log(this.name,this.func,this.intro,this.price,this.law)
+        let tempLaw=0;
+          if(this.law) tempLaw=1;
+          else tempLaw=0;
+        let s=`${app.data().globleUrl}/commerresearch?judge=1&commerland_id=${this.currentCommerlandInfo.id}&name=${this.name}&function=${this.func}&introduction=${this.intro}&price=${this.price}&condition=0&maxprice=${this.max}&law=${tempLaw}&s1=${this.s1}&s2=${this.s2}&s3=${this.s3}&s4=${this.s4}&s5=${this.s5}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {
+          s_alert.Success("产品研发申请发送成功", "请到 公司—>公司产品 中查看", "success");
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
     },
     showMyCommer() {
-      this.axios
-        .post("/ccompete/api")
-        .then(res => {
-          this.showCompeteCommer=res.data;
-          this.chooseCommerIndex(1)
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    // 测试 显示研究所信息  
-    showResearch() {
-      this.axios
-        .post("/commer/api")
-        .then(res => {
-          console.log(res.data);
-          this.showResearchItems = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    chooseCommerIndex(index){
-      this.tMining= this.showCompeteCommer[index]      
+        //显示已购 商业用地
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/ass/commerland_research?judge=4&company_id=${userinfo[0].company_id}`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        this.showCompeteCommer=res.data;
+        console.log(this.showCompeteCommer)
+      })
+      .catch(err => {
+        console.log(err);
+      });
     },
     getMax(){
+      //获取价格变化
       console.log(this.s1,this.s2,this.s3,this.s4,this.s5)
       let sum=0;
       if(this.s1!=0) sum++;
@@ -335,8 +377,34 @@ export default {
       if(this.s3!=0) sum++;
       if(this.s4!=0) sum++;
       if(this.s5!=0) sum++;
-      console.log(sum)
       this.max=this.sumSource*Math.sqrt(sum)*(1+this.brand)*0.1
+      //获取此产品是否存在
+      let s=`${app.data().globleUrl}/commerresearch?judge=4&s1=${this.s1}&s2=${this.s2}&s3=${this.s3}&s4=${this.s4}&s5=${this.s5}`
+      console.log('获取此产品是否存在',s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data)
+        this.judgeGoodHave=res.data
+        if(res.data.rows.length!=0){
+          this.canICreatGood=false
+          for (let i = 0; i < res.data.rows.length; i++) {
+            if(Number(res.data.rows[i].law)==1) {
+              this.canICreatGood=false
+              break;
+            }
+            else this.canICreatGood=true          
+          }
+        }else{
+          this.canICreatGood=true
+        }
+        
+      })
+      .catch(err => {
+        console.log(err);
+      });
     }
   }
 };

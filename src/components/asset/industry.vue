@@ -41,6 +41,7 @@
                                                 <div v-for="(item2,index2) in showInduslandFactoryLineItem" :key="index2">
                                                   <div v-if="item2.indusland_id==item.id && item2.factory_id==item1.id">
                                                     <!-- 根据 生产线与工业用地&工厂对应关系的indusland_id和factory_id 来匹配 显示 -->
+                                                      已有当前工厂数量{{item2.number}}
                                                     <div v-if="item2.lines!=''">生产线信息如下：<br>  </div>
                                                     <div v-if="item2.lines==''">暂未配置生产线信息：<br>  </div>
                                                     <div class="btn-group"  v-for="(item3,index3) in item2.lines" :key="index3">
@@ -146,7 +147,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPriceToFactory(index)"
+                            @click="sendPriceToFactory(index,item)"
                             v-if="number!='' && number>0 && number*item.measure+currentIndustryHaveUsedTotalMeasure<=temp.measure"
                           >提交订单</button>
                         </div>
@@ -156,7 +157,7 @@
 
                 <!-- 配置生产线 -->
                 <div v-if="Number(chooseFunction)==1">
-                  <div class="panel panel-default" v-for="(item,index) in showLineItem" :key="index"> 
+                  <div class="panel panel-default" v-for="(item,index) in showLineItem" :key="index" v-if="chooseLineByFactoryIdNumber>=item.conrequire"> 
                     <div class="panel-heading"> 
                         <h4 class="panel-title"> 
                             <a data-toggle="collapse" data-parent="#accordion-test1" :href="'#'+index" class="collapsed">
@@ -190,11 +191,13 @@
                           </table>
                           <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
                           <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>条</strong><br>
+                          <strong style='color:green'>当前工厂允许容纳的最大生产线数量:{{currentChoosedFactoryItem.includeline}}</strong><br>
+                          <strong style='color:red'>当前工厂已配置生产线数量:{{currentChoosedFactoryHaveLineTotal}}</strong><br>
+                          
                           <!-- <div v-for="(item,index) in currentIndustryHaveFactory.rows" :key="index">                            
                             <strong>当前矿区已有工厂编号：{{item.factory_id}}</strong>                        
                             <strong>、工厂数量：{{item.number}}</strong><br> -->
                           </div>
-                          <!-- <strong>当前工业用地面积已使用:{{currentIndustryHaveUsedTotalMeasure}}</strong><br> -->
                         </div>
 
                         <div class="modal-footer">
@@ -203,8 +206,8 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPriceToLine(index)"
-                            v-if="number!='' && number>0"
+                            @click="sendPriceToLine(item,index)"
+                            v-if="number!='' && number>0 && Number(currentChoosedFactoryHaveLineTotal)+Number(number)<=Number(currentChoosedFactoryItem.includeline)"
                           >提交订单</button>
                         </div>
                     </div> 
@@ -236,6 +239,9 @@ export default {
       showInduslandFactoryLineItem:'',
       //处理选择 配置工厂 or 生产线
       chooseFunction:'',
+      chooseLineByFactoryIdNumber:'',
+      currentChoosedFactoryItem:'',
+      currentChoosedFactoryHaveLineTotal:0,
       //暂存 工业用地-工厂 中间表 id
       tempInduslandFactoryId:'',
       // 购买清单
@@ -248,6 +254,9 @@ export default {
   beforeMount() {
     var ses = window.sessionStorage;
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
+  },
+  beforeMount(){
+
   },
   mounted() {
     this.init()
@@ -265,6 +274,7 @@ export default {
     init(){
       this.showMyIndusland();
       this.showInduslandFactoryLine();
+      this.showAllFactory()  //获取工厂列表
     },
     //配置工厂 & 生产线
     openSetting(index,index1,choose) {
@@ -276,18 +286,28 @@ export default {
         this.haveNumber=0
         this.temp=this.showCompeteIndusland[index1]
         console.log(this.temp)
-        this.showAllFactory()  //获取工厂列表
         this.getCurrentIndustryHaveFactory(index1)
-      }else if(Number(choose)==1){
-        console.log('定位工业用地&工厂-->',this.showCompeteIndusland[index].id,this.showCompeteIndusland[index].factories[index1].id)
+      }
+      
+      else if(Number(choose)==1){
+        console.log('定位工业用地&工厂-->',index,index1,this.showCompeteIndusland[index].id,this.showCompeteIndusland[index].factories[index1].id)
+        //获取工厂ID进行选择 生产线 页面渲染
+        this.chooseLineByFactoryIdNumber=this.showCompeteIndusland[index].factories[index1].id
+        this.showFactoryItem.forEach(e => {  //查找容纳生产线数量
+          if(Number(this.showCompeteIndusland[index].factories[index1].id)==Number(e.id)){
+            this.currentChoosedFactoryItem=e
+          }
+        });
+        console.log('当前选择的工厂信息来配置生产线',this.currentChoosedFactoryItem)
         //处理选择 配置工厂 or 配置生产线
         this.chooseFunction=1
 
         this.number=0
         this.haveNumber=0
         this.temp=this.showInduslandFactoryLineItem[index]
-        console.log(this.showInduslandFactoryLineItem)
-        console.log(this.temp)
+        console.log('中间表与line关联数据',this.showInduslandFactoryLineItem)
+        console.log('----->',this.temp)
+        
         this.showAllLine();   //获取生产线列表
         this.getInduslandFactoryId(this.showCompeteIndusland[index].id,this.showCompeteIndusland[index].factories[index1].id) //获取工业用地-工厂 中间表id，来配置新生产线
       }
@@ -319,7 +339,7 @@ export default {
 
       });
     },
-    sendPriceToFactory(index) {
+    sendPriceToFactory(index,item) {
       //购买工厂 绑定 到工业用地
       let that=this
       let s=`${app.data().globleUrl}/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${this.showFactoryItem[index].id}`
@@ -330,21 +350,21 @@ export default {
         })
         .then(res => {
           if(res){
-            that.init()
-            that.sendNumber(index)
+            that.sendNumber(index,item)
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
 
     },
-    sendNumber(index) {
+    sendNumber(index,item) {
       //更改 工厂 数量
       let that=this
+      console.log(that.temp,item,index)
       try {
         let addNumber= Number(that.temp.factories[index].indusland_factory.number) + Number(that.number)
         console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=1&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}`
+        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}`
         console.log(s)
         that.axios({
         method: "post",
@@ -354,6 +374,7 @@ export default {
           console.log(res.data)   
           if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
+            that.init()
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
@@ -371,6 +392,7 @@ export default {
           console.log(res.data)   
           if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
+            that.init()
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
@@ -388,14 +410,28 @@ export default {
         })
         .then(res => {
           if(res){
-            //console.log(res.data)
+            console.log(res.data)
             this.tempInduslandFactoryId=res.data.id
+            this.getTotalFactoryHaveLine();
           }else{
             s_alert.Success("获取工业用地-工厂 中间表id失败", "正在加载……", "warning");
           }
         })
     },
-    sendPriceToLine(index) {
+    getTotalFactoryHaveLine(){
+        //获取当前工厂已有生产线总数
+        let total=0;
+        this.showInduslandFactoryLineItem.forEach(el => {
+          if(Number(el.id)==Number(this.tempInduslandFactoryId)){
+            el.lines.forEach(element => {
+              total+=element.indusland_factory_line.number
+            });
+          }
+        });
+        console.log('total-->',total)        
+        this.currentChoosedFactoryHaveLineTotal=total;
+    },
+    sendPriceToLine(item,index) {
       //购买生产线 绑定 到工厂
       let that=this
       let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}`
@@ -407,18 +443,15 @@ export default {
         .then(res => {
           if(res){
             that.init()
-            that.sendLineNumber(index)
+            that.sendLineNumber(item,index)
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
     },
-    sendLineNumber(index) {
-      //更改 工厂 数量
-      let that=this      
-      // this.showInduslandFactoryLineItem.forEach(e => {
-      //   if(e.id==this.tempInduslandFactoryId) 
-      // });
+    sendLineNumber(item,index) {
+      //更改 生产线 数量
+      let that=this  
       let tid=null;
       for (let i = 0; i < this.showInduslandFactoryLineItem.length; i++) {
         const e = this.showInduslandFactoryLineItem[i];
@@ -426,9 +459,18 @@ export default {
           tid=i; 
         }    
       }
-      console.log('tid',tid)
+      let tid1=null;
+      for (let j = 0; j < this.showInduslandFactoryLineItem[tid].lines.length; j++) {
+        const e = this.showInduslandFactoryLineItem[tid].lines[j];
+        if(e.id==item.id) {
+          tid1=j; 
+        }    
+      }
+      //  console.log(this.temp)
+      // console.log('tid',tid,this.showInduslandFactoryLineItem[tid],'tid1',tid1,item)
+      // console.log(that.showInduslandFactoryLineItem[tid])
       try {
-        let addNumber= Number(that.temp.lines[tid].indusland_factory_line.number) + Number(that.number)
+        let addNumber= Number(that.temp.lines[tid1].indusland_factory_line.number) + Number(that.number)
         console.log(addNumber)
         let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}`
         console.log(s)

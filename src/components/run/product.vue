@@ -15,19 +15,19 @@
           <div class="panel panel-body"> 
             <div class="tabs-vertical-env"> 
                 <ul class="nav tabs-vertical"> 
-                    <li class="" v-for="(item,index) in showCompeteMining" :key="index" :class="{'active' : index==1}">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseMiningIndex(index)">工业用地ID{{item.id}}</a>
+                    <li class="" v-for="(item,index) in showCompeteIndusland" :key="index">
+                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseInduslandIndex(index)">工业用地ID{{item.id}}</a>
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
-                    <div class="tabs-vertical-env"> 
+                <div class="tabs-vertical-env"> 
                 <ul class="nav tabs-vertical"> 
-                    <li class="" v-for="(item,index) in showCompeteMining" :key="index" :class="{'active' : index==1}">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseMiningIndex(index)">工厂ID{{item.id}}</a>
+                    <li class="" v-for="(item,index) in tFactory" :key="index">
+                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseFactoryIndex(index)">工厂ID{{item.id}}</a>
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
-                    <div class="tab-pane" :id="index" v-for="(item,index) in showCompeteMining" :key="index" :class="{'active' : index==1}"> 
+                    <div class="tab-pane" :id="index" v-for="(item,index) in showCompeteIndusland" :key="index"> 
                       <h3 class="panel-title">工业用地 & 工厂信息</h3>  
                       <div class="tab-content">
                         <div class="panel panel-default">
@@ -36,20 +36,22 @@
                               <table class="table table-striped" style id="datatable-editable">
                                 <thead>
                                   <tr>
-                                    <th>矿区星级</th>
-                                    <th>原料类型</th>
-                                    <th>元素储量</th>
+                                    <th>型号</th>
+                                    <th>面积</th>
+                                    <th>生产效率提升</th>
                                     <th>折旧减免</th>
-                                    <th>回购价值</th>
+                                    <th>改良花费</th>
+                                    <th>是否改良</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td>{{item.star}}</td>
-                                    <td>{{item.source_id}}</td>
-                                    <td>{{item.reserve}}</td>
-                                    <td>{{item.deprelief}}</td>
+                                    <td>{{item.model}}</td>
+                                    <td>{{item.measure}}</td>
+                                    <td>{{item.efficient}}</td>
                                     <td>{{item.repurchase}}</td>
+                                    <td>{{item.improve}}</td>
+                                    <td>{{item.isimprove}}</td>
                                   </tr>
                                 </tbody>
                             </table>
@@ -57,27 +59,25 @@
                         </div>
                       </div>
 
-                      <div class="tab-content">
-                        <div class="panel panel-default">
+                      <div class="tab-content" v-if="currentFactoryItem!=''">
+                        <div class="panel panel-default" >
                           <div class="panel-heading"> 
                                 <!-- {{item}} -->
                               <table class="table table-striped" style id="datatable-editable">
                                 <thead>
                                   <tr>
-                                    <th>矿区星级</th>
-                                    <th>原料类型</th>
-                                    <th>元素储量</th>
-                                    <th>折旧减免</th>
-                                    <th>回购价值</th>
+                                    <th>型号</th>
+                                    <th>占用面积</th>
+                                    <th>容纳生产线数量</th>
+                                    <th>建设成本</th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td>{{item.star}}</td>
-                                    <td>{{item.source_id}}</td>
-                                    <td>{{item.reserve}}</td>
-                                    <td>{{item.deprelief}}</td>
-                                    <td>{{item.repurchase}}</td>
+                                    <td>{{currentFactoryItem.model}}</td>
+                                    <td>{{currentFactoryItem.measure}}</td>
+                                    <td>{{currentFactoryItem.includeline}}</td>
+                                    <td>{{currentFactoryItem.price}}</td>
                                   </tr>
                                 </tbody>
                             </table>
@@ -86,19 +86,22 @@
                       </div>
                       <div class='tab-pane'>    
                         <h3 class="panel-title">生产线信息</h3>                        
-                        <div class="tab-content" v-for="(item,index) in showDiggerItems" :key="index">
+                        <div class="tab-content" v-for="(item,index) in currentLineItem.lines" :key="index">
                           <div class="panel panel-default">
                             <div class="panel-heading"> 
                                 <!-- {{item}}   -->
                                 <br>
-                                <strong>挖掘机编号:</strong>{{item.id}}<br>
-                                <strong>挖掘机型号:</strong>{{item.model}}<br>
-                                <strong>挖掘效率:</strong>{{item.efficient}}<br> 
-                                <strong>价值折旧:</strong>{{item.deprelief}}<br>                                 
+                                <strong>型号:</strong>{{item.model}}<br>
+                                <strong>产能:</strong>{{item.capacity}}<br>
+                                <strong>价值折旧率:</strong>{{item.relief}}<br> 
+                                <strong>良品率:</strong>{{item.yield}}<br>    
+                                <strong>价值:</strong>{{item.price}}<br>     
+                                <strong>建设要求:</strong>{{item.conrequire}}<br>   
+                                <strong>已有数量:</strong>{{item.indusland_factory_line.number}}<br>                            
                                 <hr>
-                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="go(index)" v-if="item.condition==1"> <i class="fa fa-spin fa-circle-o-notch"></i> </button> 
-                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="go(index)" v-if="item.condition==0"> <i class="fa fa-wrench"></i> </button> 
-                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="go(index)" v-if="item.condition==2"> <i class="fa fa-check"></i> </button> 
+                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(index)" v-if="item.indusland_factory_line.condition==1"> <i class="fa fa-spin fa-circle-o-notch"></i> </button> 
+                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(index)" v-if="item.indusland_factory_line.condition==0"> <i class="fa fa-wrench"></i> </button> 
+                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(index)" v-if="item.indusland_factory_line.condition==2"> <i class="fa fa-check"></i> </button> 
                             </div>
                           </div>
                         </div>
@@ -135,17 +138,17 @@
                                         <span class="divider"></span>                                
                                         <a data-toggle="collapse" data-parent="#accordion1" href="#bg-inverse"><i class="ion-minus-round"></i></a>
                                         <span class="divider"></span>
-                                        <a href="#" ><i class="ion-close-round"></i></a>
+                                        <a><i class="ion-close-round"></i></a>
                                         <!-- data-toggle="remove" -->
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div id="bg-inverse" class="panel-collapse collapse in">
                                     <div class="portlet-body">
-                                      <strong>工地ID:</strong>{{tMining.id}}<br> 
-                                      <strong>工地面积:</strong>{{tMining.star}}<br>
-                                      <strong>效率提升:</strong>{{tMining.source_id}}<br> 
-                                      <strong>折旧降低:</strong>{{tMining.reserve}}<br> 
+                                      <strong>工地ID:</strong>{{tIndusland.id}}<br> 
+                                      <strong>工地面积:</strong>{{tIndusland.measure}}<br>
+                                      <strong>效率提升:</strong>{{tIndusland.efficient}}<br> 
+                                      <strong>折旧降低:</strong>{{tIndusland.repurchase}}<br> 
                                       <hr>
                                     </div>
                                 </div>
@@ -162,16 +165,16 @@
                                       <span class="divider"></span>
                                       <a data-toggle="collapse" data-parent="#accordion1" href="#bg-success"><i class="ion-minus-round"></i></a>
                                       <span class="divider"></span>
-                                      <a href="#" data-toggle="remove"><i class="ion-close-round"></i></a>
+                                      <a ><i class="ion-close-round"></i></a>
                                   </div>
                                   <div class="clearfix"></div>
                               </div>
                               <div id="bg-primary" class="panel-collapse collapse in">
                                     <div class="portlet-body">
-                                      <strong>工厂ID:</strong>{{tDigger.id}}<br>
-                                      <strong>工地型号:</strong>{{tDigger.model}}<br> 
-                                      <strong>占用面积:</strong>{{tDigger.model}}<br> 
-                                      <strong>可容纳生产线:</strong>{{tDigger.efficient}}<br> 
+                                      <strong>工厂ID:</strong>{{currentFactoryItem.id}}<br>
+                                      <strong>工地型号:</strong>{{currentFactoryItem.model}}<br> 
+                                      <strong>占用面积:</strong>{{currentFactoryItem.measure}}<br> 
+                                      <strong>可容纳生产线:</strong>{{currentFactoryItem.includeline}}<br> 
                                       <hr>
                                     </div>
                                 </div>
@@ -188,24 +191,27 @@
                                         <span class="divider"></span>
                                         <a data-toggle="collapse" data-parent="#accordion1" href="#bg-primary"><i class="ion-minus-round"></i></a>
                                         <span class="divider"></span>
-                                        <a href="#" ><i class="ion-close-round"></i></a>
+                                        <a ><i class="ion-close-round"></i></a>
                                         <!-- data-toggle="remove" -->
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
                                 <div id="bg-primary" class="panel-collapse collapse in">
                                     <div class="portlet-body">
-                                      <strong>生产线ID:</strong>{{tDigger.id}}<br>
-                                      <strong>生产产能:</strong>{{tDigger.model}}<br> 
-                                      <strong>产线价值折旧:</strong>{{tDigger.efficient}}<br> 
-                                      <strong>良品率:</strong>{{tDigger.deprelief}}<br> 
+                                      <strong>生产线ID:</strong>{{tLine.id}}<br>
+                                      <strong>生产产能:</strong>{{tLine.capacity}}<br> 
+                                      <strong>产线价值折旧:</strong>{{tLine.relief}}<br> 
+                                      <strong>良品率:</strong>{{tLine.yield}}<br> 
+                                      <div v-if="currentLineNumber">
+                                        <strong>生产线数量：{{currentLineNumber}}</strong>
+                                      </div>
                                       <hr>
                                     </div>
                                 </div>
                             </div>
                         </div>         
-                        <div class="col-lg-12" v-if="tDigger.condition==0">
-                                <div class="portlet">
+                        <div class="col-lg-12" v-if="tLine.indusland_factory_line">
+                                <div class="portlet" v-if="tLine.indusland_factory_line.condition==0">
                                     <div class="portlet-heading portlet-default">
                                         <h3 class="portlet-title text-dark">
                                             选择要生产的产品
@@ -215,7 +221,7 @@
                                             <span class="divider"></span>
                                             <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i class="ion-minus-round"></i></a>
                                             <span class="divider"></span>
-                                            <a href="#" data-toggle="remove"><i class="ion-close-round"></i></a>
+                                            <a ><i class="ion-close-round"></i></a>
                                         </div>
                                         <div class="clearfix"></div>
                                     </div>
@@ -236,12 +242,12 @@
                                               </tr>
                                             </thead>
                                             <tbody>
-                                              <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}">
+                                              <tr v-for="(item,index) in showGoodItems.rows" :key="index" :class="{'active' : index==1}">
                                                 <td>
                                                   <div class="radio radio-success radio-single">
-                                                      <input type="radio" @input="getResearch(index)" v-model="research" :value="index" name="radioSingle1" aria-label="Single radio One">
+                                                      <input type="radio" @input="getResearch(index)" name="sigle" aria-label="Single radio One">
                                                       <label></label>
-                                                  </div>                                                
+                                                  </div>
                                                 </td>
                                                 <td>{{item.id}}</td>
                                                 <td>{{item.name}}</td>
@@ -260,11 +266,12 @@
                         
                     </div>
 
-                      <hr>
-                      <div v-if="tDigger.condition==0">
+                    <hr>
+                    <div v-if="tLine.indusland_factory_line">
+                      <div v-if="tLine.indusland_factory_line.condition==0">
                         <strong>产品名称:</strong><strong>{{chooseResearch.name}}</strong><br>
-                        <strong>预计产量（单位/量）:</strong><strong>{{number|sumCreat(0.88)}}</strong><br>
-                        <strong>预计结束时间:</strong><strong>{{number|predict(100)}}</strong><br>
+                        <strong>预计产量（单位/量）:</strong><strong>{{number|sumCreat(tLine.yield)}}</strong><br>
+                        <strong>预计结束时间:</strong><strong>{{number|predict(tLine.capacity)}}</strong><br>
                         <div v-if="chooseResearch!=''">
                           <strong>需要耗费元素:
                             金：{{chooseResearch.s1|sumSource(this.number)}}
@@ -273,32 +280,44 @@
                             火：{{chooseResearch.s4|sumSource(this.number)}}
                             土：{{chooseResearch.s5|sumSource(this.number)}}
                           </strong>
+                          <div v-if="judge && chooseResearch" style="color:green">
+                            原料足够可以生产
+                          </div>
+                          <div v-if="!judge && chooseResearch" style="color:red">
+                            原料不够，不可以生产
+                          </div>
                         </div>
+                        <strong style="color:green">当前库存元素储量为：金_{{showHaveTotalSource[0]}}、木_{{showHaveTotalSource[1]}}、水_{{showHaveTotalSource[2]}}、火_{{showHaveTotalSource[3]}}、土_{{showHaveTotalSource[4]}}、</strong>
                         <br>
-                        <strong>请输入需要生产的产品数量:</strong><input type="number" v-model="number"><strong>（单位/件）</strong><br>
+                        <strong>请输入需要生产的产品数量:</strong><input type="number" v-model="number" @input="judgeTotalSurce()"><strong>（单位/件）</strong><br>
                       </div>
-                      <div v-if="tDigger.condition==1">
-                        <strong>产品名称:</strong><strong>{{chooseResearch.name}}</strong><br>
+                      <!-- 生产中 -->
+                      <div v-if="tLine.indusland_factory_line.condition==1">
+                        <!-- <strong>产品名称:</strong><strong>{{chooseResearch.name}}</strong><br> -->
                         <h4 style="color:#00b300">生产中</h4><br>
-                        <strong>预计结束时间:</strong><strong>{{number|predict(100)}}</strong><br>
+                        <strong>预计结束时间:</strong><strong>{{tLine.indusland_factory_line.start|predictEnd(tLine.indusland_factory_line.stay)}}</strong><br>
                       </div>
-                      <div v-if="tDigger.condition==2">
-                        <strong>产品名称:</strong><strong>{{chooseResearch.name}}</strong><br>
+                      <!-- 生产完成 -->
+                      <div v-if="tLine.indusland_factory_line.condition==2">
+                        <strong>产品名称:</strong><strong>{{FinishedResearchItem.name}}</strong><br>
                         <h4 style="color:#00b300">生产完成</h4>
-                        <strong>产量（单位/量）:</strong><strong>{{number|sumCreat(0.88)}}</strong><br>
+                        <strong>产量（单位/量）:</strong><strong>{{tLine.indusland_factory_line.stay|iScreated(tLine.capacity,tLine.indusland_factory_line.number)}}</strong><br>
                           <strong>耗费元素:
-                            金：{{chooseResearch.s1|sumSource(this.number)}}
-                            木：{{chooseResearch.s2|sumSource(this.number)}}
-                            水：{{chooseResearch.s3|sumSource(this.number)}}
-                            火：{{chooseResearch.s4|sumSource(this.number)}}
-                            土：{{chooseResearch.s5|sumSource(this.number)}}
+                            金：{{FinishedResearchItem.s1|iScreatedSource(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)}}
+                            木：{{FinishedResearchItem.s2|iScreatedSource(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)}}
+                            水：{{FinishedResearchItem.s3|iScreatedSource(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)}}
+                            火：{{FinishedResearchItem.s4|iScreatedSource(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)}}
+                            土：{{FinishedResearchItem.s5|iScreatedSource(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)}}
                           </strong>
-                      </div>     
+                      </div>    
+                    </div> 
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="tDigger.condition==0">开始生产</button>
-                    <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="tDigger.condition==2">重新配置</button>
+                    <div v-if="tLine.indusland_factory_line">
+                      <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge">开始生产</button>
+                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="reBuild(FinishedResearchItem)" v-if="tLine.indusland_factory_line.condition==2">存入库存</button>
+                    </div>
                   </div>
             </div>
             </div>
@@ -319,14 +338,25 @@ export default {
   name: "exploit",
   data() {
     return {
-      showCompeteMining:'',
+      showCompeteIndusland:'',
       showDiggerItems:'',
-      showGoodItems:'',
+      showGoodItems:'',  //显示所有 已通过的 公司产品
+      showHaveTotalSource:[],
       chooseResearch:'',  //显示选择的产品信息
       research:'',  //保存选择的 产品
+      currentLineNumber:0,
+      //judge元素是否够
+      judge:false,
       number:0,
-      tMining:'',
-      tDigger:'',
+      tIndusland:'',
+      tLine:'',
+      tFactory:'',
+      //index
+      induslandIndex:0,
+      factoryIndex:0,
+      currentFactoryItem:'',
+      currentLineItem:'',
+      FinishedResearchItem:''
     };
   },
   beforeMount() {
@@ -343,71 +373,282 @@ export default {
     sumCreat(x, y) {
       return Number(x) * Number(y);
     },
+    iScreated(x,y,z){
+      return x*y*z
+    },
     sumSource(x,y) {
       return x * y
     },
-    predict(x,y){      
-      return moment().locale('zh-cn').add(x/y, 'minutes').utc().utcOffset(-8).format('YYYY-MM-DD HH:mm:ss');
+    predict(x,y){
+      return moment().locale('zh-cn').add(x/y, 'minutes').utc().zone(-8).format('YYYY-MM-DD HH:mm:ss'); 
+    },
+    predictEnd(x,y){
+      return moment(x).add(y, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+    },
+    iScreatedSource(x,y,z,a){
+      return x*y*z*a
     }
   },
   methods: {
     init(){      
-      let that=this
-      that.showMyMining();
-      that.showDigger();
-      that.showGood()
+      this.showMyIndusland();
     },
-    go(index){
-      this.tDigger=this.showDiggerItems[index]
+    openSetting(index){
+      this.tLine=this.currentLineItem.lines[index]
+      console.log('....',this.tLine)
       this.chooseResearch=''
+      this.currentLineNumber=this.currentLineItem.lines[index].indusland_factory_line.number
+      this.number=0
       this.research=''
+      this.judge=true
+      this.getShowGoodItems()
+      this.getTotalSource()
+      //如果 生产状态 condition=2 （已完成），获取已生产产品信息
+      if(this.tLine.indusland_factory_line.condition==2){
+        this.showFinishedResearchItem(this.tLine.indusland_factory_line.commerresearch_id)
+      }
     },
-    sendPrice(){
+    showFinishedResearchItem(commerresearch_id){
+      //获取已完成生产 产品信息
+      let that=this
+      let s=`${app.data().globleUrl}/commerresearch?judge=7&id=${commerresearch_id}`
+      console.log(s)
+      that.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        that.FinishedResearchItem=res.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+    getShowGoodItems(){
+      //获取公司 通过的 所有商品
+      let that=this
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/commerresearch?judge=6&company_id=${userinfo[0].company_id}`
+      console.log(s)
+      that.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        that.showGoodItems=res.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+    getTotalSource(){
+      //显示开采的原料  用于生产产品
+      let that=this
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/miniyield?judge=4&company_id=${userinfo[0].company_id}`
+      console.log(s)
+      that.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data)
+        let s1=0,s2=0,s3=0,s4=0,s5=0;
+        res.data.forEach(e => {
+          if(e.source_id==1) s1+=e.sum;
+          if(e.source_id==2) s2+=e.sum;
+          if(e.source_id==3) s3+=e.sum;
+          if(e.source_id==4) s4+=e.sum;
+          if(e.source_id==5) s5+=e.sum;
+        });
+        this.showHaveTotalSource=[s1,s2,s3,s4,s5]
+        console.log('仓库库存的储量为',this.showHaveTotalSource)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+    //判断 需要原料数 与 库存原料数 差值
+    judgeTotalSurce(){
+      let judge=false
+      if(this.chooseResearch.s1*this.number<=this.showHaveTotalSource[0]&&this.chooseResearch.s2*this.number<=this.showHaveTotalSource[1]&&this.chooseResearch.s3*this.number<=this.showHaveTotalSource[2]&&this.chooseResearch.s4*this.number<=this.showHaveTotalSource[3]&&this.chooseResearch.s5*this.number<=this.showHaveTotalSource[4]){
+        this.judge=true
+      }else{
+        this.judge=false
+      }
+    },
+    sendPrice1(){
       s_alert.Success("矿区-挖掘机配置成功，挖掘机开始开采ing", "正在加载……", "success");
       console.log(Date.now())
     },
-    showMyMining() {
-      this.axios
-        .post("/mcompete/api")
-        .then(res => {
-          this.showCompeteMining=res.data;
-          this.chooseMiningIndex(1)
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    sendPrice(){
+      //配置生产线 开始工作
+      let time=this.number/this.tLine.capacity
+      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=2&stay=${time}&start=${moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")}&indusland_factory_line_id=${this.tLine.indusland_factory_line.id}&condition=1&commerresearch_id=${this.chooseResearch.id}` //chooseResearch
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {        
+        s_alert.Success("工业用地-工厂-生产线配置成功，开始生产", "正在加载……", "success");
+        this.init()
+        this.chooseFactoryIndex(this.factoryIndex)
+      })
+      .catch(err => {
+        console.log(err);
+      });      
     },
-    // 测试 显示挖掘机信息  
-    showDigger() {
-      this.axios
-        .post("/digger/api")
-        .then(res => {
-          console.log(res.data);
-          this.showDiggerItems = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    showMyIndusland() {
+      //显示已购 工业用地
+      let that=this
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let s=`${app.data().globleUrl}/ass/indusland_factory?judge=4&company_id=${userinfo[0].company_id}`
+      console.log(s)
+      that.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        that.showCompeteIndusland=res.data;
+        console.log(res.data)
+      })
+      .catch(err => {
+        console.log(err);
+      });
     },
-    // 测试 显示公司产品信息  
-    showGood() {
-      this.axios
-        .post("/good/api")
-        .then(res => {
-          console.log(res.data);
-          this.showGoodItems = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+
+    chooseInduslandIndex(index){
+      console.log(index)
+      this.induslandIndex=index
+      this.tIndusland= this.showCompeteIndusland[index]
+      this.tFactory=this.showCompeteIndusland[index].factories  //获取对应工业用地 下的 工厂
+      this.currentFactoryItem=''
+      this.currentLineItem=''
     },
-    chooseMiningIndex(index){
-      this.tMining= this.showCompeteMining[index]      
+    chooseFactoryIndex(index){
+      console.log(index)
+      this.factoryIndex=index
+      // 显示 选择 工业用地->工厂 后对应的 工厂信息
+      this.currentFactoryItem= this.showCompeteIndusland[this.induslandIndex].factories[this.factoryIndex]
+      this.getInduslandFactoryHaveLineItem()
     },
-    getResearch(index){
-      this.chooseResearch=this.showGoodItems[index];
-      console.log(this.showGoodItems[index].id,this.chooseResearch,this.research)
+    //获取工业用地->工厂 一一对应后的 生产线信息
+    getInduslandFactoryHaveLineItem(){
+      //工业用地->工厂 一一对应后的 生产线信息
+      let that=this
+      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=8&indusland_factory_id=${this.showCompeteIndusland[this.induslandIndex].factories[this.factoryIndex].indusland_factory.id}`
+      console.log(s)
+      that.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        this.currentLineItem=res.data[0]
+        console.log('工业用地->工厂 一一对应后的 生产线信息',res.data)
+        this.forToChangeCondition(res.data[0].lines)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+
+    getResearch(index){ //获得选择的 生产线
+      console.log(index)
+      this.research=this.showGoodItems.rows[index]
+      this.chooseResearch=this.showGoodItems.rows[index];
+    },
+    forToChangeCondition(data){
+      let that =this
+      console.log('forToChangeCondition',data)
+          for (let s = 0; s < data.length; s++) {
+            console.log(data[s].indusland_factory_line)
+            if(Number(data[s].indusland_factory_line.condition)==1){
+                let now=moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
+                let endTime=moment(data[s].indusland_factory_line.start).add(data[s].indusland_factory_line.stay, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+                console.log(now,endTime)
+                if(now > endTime){
+                  that.updateConditionToFinished(data[s].indusland_factory_line.id)
+                }
+            }else{
+              continue
+            }            
+          }     
+      },
+    updateConditionToFinished(indusland_factory_line_id){
+      //配置挖掘机 开始工作
+      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=2&indusland_factory_line_id=${indusland_factory_line_id}&condition=2`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {        
+        this.init()
+        this.chooseFactoryIndex(this.factoryIndex) //更新页面
+      })
+      .catch(err => {
+        console.log(err);
+      });      
+    },
+    reBuild(FinishedResearchItem){
+      //加入到 库存
+      console.log(FinishedResearchItem,this.tLine.indusland_factory_line.commerresearch_id)
+      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      let sum=this.tLine.indusland_factory_line.stay*this.tLine.capacity*this.tLine.indusland_factory_line.number
+      let s=`${app.data().globleUrl}/industryyield?judge=1&commerresearch_id=${this.tLine.indusland_factory_line.commerresearch_id}&company_id=${userinfo[0].company_id}&kind=1&sum=${sum}`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {        
+        console.log(res.data)
+        if(res.data[1]){
+          this.changeConditionToZero()
+        }else{
+          let total=res.data[0].sum+sum
+          let id=res.data[0].id
+          this.updateTotal(total,id)
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      }); 
+    },
+    updateTotal(total,id){
+      let s=`${app.data().globleUrl}/industryyield?judge=2&sum=${total}&id=${id}`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {     
+        this.changeConditionToZero()
+      })
+      .catch(err => {
+        console.log(err);
+      }); 
+    },
+    changeConditionToZero(){
+      let indusland_factory_line_id=this.tLine.indusland_factory_line.id
+      //更新状态
+      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=2&indusland_factory_line_id=${indusland_factory_line_id}&condition=0`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {        
+        this.init()
+        this.chooseFactoryIndex(this.factoryIndex) //更新页面
+        s_alert.Success("库存更新成功", "正在加载……", "success");
+      })
+      .catch(err => {
+        console.log(err);
+      }); 
     }
+      
   }
 };
 </script>
