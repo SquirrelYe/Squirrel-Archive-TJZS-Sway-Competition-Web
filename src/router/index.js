@@ -41,6 +41,7 @@ import toCompany from '@/components/transaction/tocompany'
 import toMarket from '@/components/transaction/tomarket'
 import loan from '@/components/transaction/loan'
 import showtransaction from '@/components/transaction/showtransaction'
+import trade from '@/components/transaction/trade'
 // ---------------------------------管理员端-----------------------------------
 // users
 import sway from '@/adminComponents/users/sway'
@@ -205,6 +206,11 @@ export default new Router({
           path:'showtransaction',    //订单详情
           name:'showtransaction',
           component:showtransaction
+        },
+        {
+          path:'trade',    //订单详情
+          name:'trade',
+          component:trade
         },
         // -----------------------------------管理员端---------------------------------
         {

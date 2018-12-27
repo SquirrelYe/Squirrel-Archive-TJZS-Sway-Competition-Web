@@ -28,7 +28,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showMiniYield" :key="item.name">
+                  <tr class="gradeX" v-for="(item,index) in showMiniYield" :key="item.name" v-if="item.sum!=0">
                     <td>{{index}}</td>
                     <td>{{item.mining_id}}</td>
                     <td>{{item.source_id}}</td>

@@ -364,7 +364,7 @@ export default {
       try {
         let addNumber= Number(that.temp.factories[index].indusland_factory.number) + Number(that.number)
         console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}`
+        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}&condition=0`
         console.log(s)
         that.axios({
         method: "post",
@@ -382,7 +382,7 @@ export default {
       } catch (error) {
         let addNumber= Number(that.number)
         console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}`
+        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}&condition=0`
         console.log(s)
         that.axios({
         method: "post",
@@ -472,7 +472,7 @@ export default {
       try {
         let addNumber= Number(that.temp.lines[tid1].indusland_factory_line.number) + Number(that.number)
         console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}`
+        let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}&condition=0`
         console.log(s)
         that.axios({
         method: "post",
@@ -490,7 +490,7 @@ export default {
       } catch (error) {
         let addNumber= Number(that.number)
         console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}`
+        let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}&condition=0`
         console.log(s)
         that.axios({
         method: "post",

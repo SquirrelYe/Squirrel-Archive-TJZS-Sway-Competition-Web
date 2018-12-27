@@ -33,7 +33,15 @@
                     <span class="hidden-xs">产品交易</span>
                   </a>
                 </li>
-                <li class @click="showLoan()">
+                <li class @click="showloan()">
+                  <a href="#loan" data-toggle="tab" aria-expanded="false">
+                    <span class="visible-xs">
+                      <i class="fa fa-user"></i>
+                    </span>
+                    <span class="hidden-xs">贷款列表</span>
+                  </a>
+                </li>
+                <li class @click="doLoan()">
                   <a href="#messages" data-toggle="tab" aria-expanded="false">
                     <span class="visible-xs">
                       <i class="fa fa-envelope-o"></i>
@@ -51,8 +59,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>矿区id</th>
-                            <th>原料id</th>
+                            <th>原料名称</th>
                             <th>公司id</th>
                             <th>单价</th>
                             <th>数量</th>
@@ -64,13 +71,12 @@
                         <tbody>
                           <tr v-for="(item,index) in showSourceItems" :key="index">
                             <td>{{index}}</td>
-                            <td>{{item.mining_id}}</td>
-                            <td>{{item.source_id}}</td>
-                            <td>{{item.company_id}}</td>
+                            <td>{{item.source.name}}</td>
+                            <td>{{item.company.name}}</td>
                             <td>{{item.price}}</td>
-                            <td>{{item.sum}}</td>
-                            <td>{{item.created_at}}</td>
-                            <td>{{item.updated_at}}</td>
+                            <td>{{item.number}}</td>
+                            <td>{{item.created_at|formatTime}}</td>
+                            <td>{{item.updated_at|formatTime}}</td>
                             <td class="actions" align="center">
                               <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,0)">
                                 <i class="fa  fa-tags"></i>
@@ -92,8 +98,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>产品id</th>
-                            <th>工业用地id</th>
+                            <th>产品名称</th>
                             <th>公司id</th>
                             <th>总量</th>
                             <th>单价</th>
@@ -105,10 +110,9 @@
                         <tbody>
                           <tr v-for="(item,index) in showGoodsItems" :key="index">
                             <td>{{index}}</td>
-                            <td>{{item.commerresearch_id}}</td>
-                            <td>{{item.indusland_id}}</td>
-                            <td>{{item.company_id}}</td>
-                            <td>{{item.sum}}</td>
+                            <td>{{item.commerresearch.name}}</td>
+                            <td>{{item.company.name}}</td>
+                            <td>{{item.number}}</td>
                             <td>{{item.commerresearch.price}}</td>
                             <td>{{item.created_at|formatTime}}</td>
                             <td>{{item.updated_at|formatTime}}</td>
@@ -125,26 +129,69 @@
                   <hr>
                   <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
                 </div>
+                <!-- 已有贷款信息展示 -->
+                <div class="tab-pane" id="loan">
+                  <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                      <table class="table table-striped" style id="datatable-editable">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>贷款金额</th>
+                            <th>开始财年</th>
+                            <th>应还财年</th>
+                            <th>贷款利率</th>
+                            <th>应还金额</th>
+                            <th>贷款状态</th>
+                            <th>创建时间</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(item,index) in showLoanItem" :key="index">
+                            <td>{{index}}</td>
+                            <td>{{item.money}}</td>
+                            <td>{{item.from}}</td>
+                            <td>{{item.end}}</td>
+                            <td>{{item.rate}}</td>
+                            <td>{{item.send}}</td>
+                            <td>{{item.condition}}</td>
+                            <td>{{item.created_at|formatTime}}</td>
+                            <td>{{item.detail}}</td>
+                            <td class="actions" align="center">
+                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,2)">
+                                <i class="fa  fa-tags"></i>
+                              </a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <hr>
+                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                </div>
                 <!-- 政府贷款展示处 -->
                 <div class="tab-pane" id="messages">
                   <div class="panel-body">
                     <form class="form-horizontal" role="form">
-                        <div class="form-group">
+                        <div class="form-group" v-if="currentCompanyName">
                             <label class="col-md-2 control-label">公司名称</label>
                             <div class="col-md-10">
-                                <input type="text" class="form-control" placeholder="xxx" v-model="name">
+                                <input type="text" disabled class="form-control" :placeholder="this.currentCompanyName">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="example-email" >贷款金额</label>
+                            <label class="col-md-2 control-label" for="example-email">贷款金额</label>
                             <div class="col-md-10">
                                 <input class="form-control" placeholder="xxx" v-model="money">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-md-2 control-label" for="example-email">贷款年限</label>
+                            <label class="col-md-2 control-label" for="example-email">贷款周期</label>
                             <div class="col-md-10">
-                                <input type="number" class="form-control" placeholder="0" v-model="year" @input="getRate()">
+                                <input type="number" class="form-control" placeholder="0" v-model="stay" @input="getRate()">
                             </div>
                         </div>
                         <div class="form-group">
@@ -196,19 +243,18 @@
             <h4>原料情况介绍</h4>  
             <!-- <h5> {{model}}</h5> -->
             <address class="ng-scope">
-              <strong>矿区id:</strong>{{model.mining_id}}<br>
               <strong>原料id:</strong>{{model.source_id}}<br> 
-              <strong>公司id:</strong>{{model.company_id}}<br> 
+              <strong>公司id:</strong>{{model.me}}<br> 
               <strong>单价:</strong>{{model.price}}<br> 
-              <strong>数量:</strong>{{model.sum}}<br> 
-              <strong>分布时间:</strong>{{model.updated_at}}<br> <hr>
-              <strong>订单总额为:</strong><strong>{{number|sumPrice(model.price)}}万元</strong><br> 
-              <strong>请输入购买数量:</strong><input type="number" v-model="number"><strong>万件</strong>
+              <strong>数量:</strong>{{model.number}}<br> 
+              <strong>分布时间:</strong>{{model.updated_at|formatTime}}<br> <hr>
+              <strong>订单总额为:</strong><strong style="color:green">{{model.number|sumPrice(model.price)}}万元</strong><br> 
+              <textarea v-model="detail" placeholder="产品交易备注"></textarea><br>
             </address>             
           </div>
           <div class="modal-footer">
           <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="number!='' && number>0">提交订单</button>
+          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(0,model)">提交订单</button>
           </div>
         </div>
       </div>
@@ -232,15 +278,46 @@
               <strong>产品名称:</strong>{{model.commerresearch.name}}<br> 
               <strong>产品介绍:</strong>{{model.commerresearch.introduction}}<br> 
               <strong>产品单价:</strong>{{model.commerresearch.price}}<br> 
-              <strong>产品数量:</strong>{{model.sum}}<br> 
+              <strong>产品数量:</strong>{{model.number}}<br> 
               <strong>发布时间:</strong>{{model.updated_at | formatTime}}<br> <hr>
-              <strong>订单总额为:</strong><strong style="color:green">{{model.sum|sumPrice(model.commerresearch.price)}}万元</strong><br> 
+              <strong>订单总额为:</strong><strong style="color:green">{{model.number|sumPrice(model.commerresearch.price)}}万元</strong><br> 
               <textarea v-model="detail" placeholder="产品交易备注"></textarea><br>
             </address>
           </div>
           <div class="modal-footer">
           <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
           <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(1,model)" >提交订单</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 贷款信息model -->
+    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="judgeChoose==2">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- 头部 -->
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">贷款清单</h4>
+          </div>
+          <!-- 内容 -->
+          <div class="modal-body" align='center'>
+            <h4>贷款情况介绍</h4>  
+            <!-- <h5> {{model}}</h5> -->
+            <address class="ng-scope">
+              <strong>贷款金额:</strong>{{model.money}}<br>
+              <strong>开始财年:</strong>{{model.from}}<br> 
+              <strong>应还财年:</strong>{{model.end}}<br> 
+              <strong>贷款利率:</strong>{{model.rate}}<br> 
+              <strong>应还金额:</strong>{{model.send}}<br> 
+              <strong>贷款状态:</strong>{{model.condition | formatLoanCondition}}<br> <hr> 
+              <strong>贷款备注:</strong>{{model.detail}}<br> 
+            </address>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(2,model)" v-if="model.condition==0">还清贷款</button>
           </div>
         </div>
       </div>
@@ -259,18 +336,26 @@ export default {
   name: "docompete",
   data() {
     return {
+      //公司信息
+      company_id:'',
+      companyAllInfo:'',
+      //界面信息
       showSourceItems: "",
       showGoodsItems: "",
       showCommerlandItems: "",
+      showLoanItem:'',
       showCompete: "",
       model:"",
       number:'',
       //贷款信息
-      name:'xx公司',
-      money:0,
-      year:0,
+      currentCompanyName:'xx',
+      from:0,
+      stay:0,
+      end:0,
       rate:0,
-      other:'',
+      other:'',//备注
+      money:0,
+      send:0,
       //选择
       judgeChoose:0,
       detail:''
@@ -279,104 +364,250 @@ export default {
   beforeMount() {
     var ses = window.sessionStorage;
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    this.company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
   },
   mounted() {
     this.init()
   },
   filters: {
     formatTime(val) {
-      //console.log(val)
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
     sumPrice(x,y){
         return x*y
         console.log(x,y)
+    },
+    formatLoanCondition(x){
+      if(x==0) return '未还款'
+      if(x==1) return '已还款'
     }
   },
-  //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
   methods: {
-    submitForm(){
-      $.notify({
-        // options
-        message: '提交贷款信息成功！' 
-      },{
-        // settings
-        type: 'success'
-      });
-    },
-    info(){
-      // $.Notification.notify('info', 'top right', '简单', '加入成功，请去公司信息查看，正在加载……')
-      $.notify({
-        // options
-        message: 'Hello World' 
-      },{
-        // settings
-        type: 'danger'
-      });
-    },
     init(){
       this.showSource();
-      this.showGoods();
-      this.showLoan()
+      this.showAllCompanyToFormat() 
+      // this.showGoods();
+      // this.doLoan()
     },
     openSetting(index,x){
-      if(x==0) this.model=this.showSourceItems[index];
-      if(x==1) this.model=this.showGoodsItems[index]
+      if(x==0) {this.model=this.showSourceItems[index];console.log(this.model)}
+      if(x==1) {this.model=this.showGoodsItems[index];console.log(this.model)}
+      if(x==2) this.model=this.showLoanItem[index]
       this.number=0      
     },
     sendPrice(index,model){
       console.log(index,model)
+
+       if(index==0){ //购买 原料
+        let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+        if(model.me==userinfo[0].company_id){
+          let s=`${app.data().globleUrl}/transaction?judge=2&detail=${this.detail}&other=${userinfo[0].company_id}&id=${model.id}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+            console.log(res.data);
+            s_alert.Success("下单成功", "正在加载……", "success");
+            //追加到 库存
+            this.appendToStock(index,model);
+            //刷新 页面
+            this.showSource()
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }else{
+          s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
+        }        
+      }
+
+      if(index==1){ //购买 产品
+        let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+        if(model.me==userinfo[0].company_id){
+          let s=`${app.data().globleUrl}/transaction?judge=2&detail=${this.detail}&other=${userinfo[0].company_id}&id=${model.id}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+            console.log(res.data);
+            // s_alert.Success("下单成功", "正在加载……", "success");
+            //追加到 库存
+            this.appendToStock(index,model);
+            //刷新 页面
+            this.showGoods()
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }else{
+          s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
+        }        
+      }
+
+        if(index==2){ //还清 贷款
+          let s=`${app.data().globleUrl}/loan?judge=2&id=${model.id}&condition=1`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+            console.log(res.data);
+            s_alert.Success("还清贷款成功", "正在加载……", "success");
+            this.showloan()
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }      
+      },
+    appendToStock(index,model){
+      //追加 原料订单
+      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+      if(index==0){
+        let s=`${app.data().globleUrl}/miniyield?judge=1&source_id=${model.source_id}&company_id=${company_id}&sum=${model.number}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+            console.log(res.data);
+            if(!res.data[1]){
+              this.sendNumber(0,model,res.data[0])
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+      //追加 产品订单
       if(index==1){
-          let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-          if(model.commerresearch.company_id!=userinfo[0].company_id){
-            let s=`${app.data().globleUrl}/transaction?judge=1&Yearid=${1}&inout=1&type=2&kind=2&price=${model.commerresearch.price}&number=${model.sum}&me=${model.commerresearch.company_id}&other=${userinfo[0].company_id}&commerresearch_id=${model.commerresearch_id}`
-            console.log(s)
-            this.axios({
-            method: "post",
-            url: s
-            })
-            .then(res => {
-              console.log(res.data);
+        let s=`${app.data().globleUrl}/industryyield?judge=1&commerresearch_id=${model.commerresearch_id}&company_id=${company_id}&sum=${model.number}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+            console.log(res.data);
+            if(!res.data[1]){
+              this.sendNumber(1,model,res.data[0])
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    },
+    sendNumber(index,model,data) {
+      if(index==0){
+        //更改 库存 原料储量
+        try {
+          let addNumber= Number(data.sum) + Number(model.number)
+          console.log('-->',addNumber)
+          let s=`${app.data().globleUrl}/miniyield?judge=2&id=${data.id}&sum=${addNumber}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {       
+            console.log(res.data)   
+            if(res){
               s_alert.Success("下单成功", "正在加载……", "success");
               this.init()
-            })
-            .catch(err => {
-              console.log(err);
-            });
-          }else{
-            s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
-          }
-          
+            }else{
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          })
+        } 
+        catch (error) {
+          let addNumber= Number(model.number)
+          console.log(addNumber)
+          let s=`${app.data().globleUrl}/miniyield?judge=2&id=${data.id}&sum=${model.number}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {       
+            console.log(res.data)   
+            if(res){
+              s_alert.Success("下单成功", "正在加载……", "success");
+              this.init()
+            }else{
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          })
         }
-    },
-    showMyCompete() {
-      //获取自己公司贷款情况
-      this.axios
-        .post("/compete/api")
-        .then(res => {
-          console.log(res.data);
-          this.showCompete = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      }
+      if(index==1){
+        //更改 库存 产品储量
+        try {
+          let addNumber= Number(data.sum) + Number(model.number)
+          console.log('-->',addNumber)
+          let s=`${app.data().globleUrl}/industryyield?judge=2&id=${data.id}&sum=${addNumber}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {       
+            console.log(res.data)   
+            if(res){
+              s_alert.Success("下单成功", "正在加载……", "success");
+              this.init()
+            }else{
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          })
+        } 
+        catch (error) {
+          let addNumber= Number(model.number)
+          console.log(addNumber)
+          let s=`${app.data().globleUrl}/industryyield?judge=2&id=${data.id}&sum=${addNumber}`
+          console.log(s)
+          this.axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {       
+            console.log(res.data)   
+            if(res){
+              s_alert.Success("下单成功", "正在加载……", "success");
+              this.init()
+            }else{
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          })
+        }
+      }      
     },
     showSource() {
       //市场交易 - 原料
-      this.axios
-        .post("/transoource/api")
-        .then(res => {
-          console.log(res.data);
-          this.showSourceItems = res.data;
-          this.judgeChoose=0
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      let s=`${app.data().globleUrl}/transaction?judge=7`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data);
+        this.showSourceItems = res.data;
+        this.judgeChoose=0
+      })
+      .catch(err => {
+        console.log(err);
+      });
     },
     showGoods() {
       //市场交易 - 产品
-      let s=`${app.data().globleUrl}/industryyield?judge=5&ispublic=1`
+      let s=`${app.data().globleUrl}/transaction?judge=6`
       console.log(s)
       this.axios({
       method: "post",
@@ -391,32 +622,93 @@ export default {
         console.log(err);
       });
     },
-    showLoan() {
+    showAllCompanyToFormat() {
+      //获取所有公司信息
+      let s=`${app.data().globleUrl}/company?judge=0`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data);
+        this.companyAllInfo = res.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+    doLoan() {
+      this.currentCompanyName=JSON.parse(window.sessionStorage.getItem('companyinfo')).name
+
       //市场交易 - 贷款
-      this.axios
-        .post("/ccompete/api")
-        .then(res => {
-          console.log(res.data);
-          this.showCommerlandItems = res.data;
-          this.judgeChoose=2
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      
+    },
+    showloan(){
+      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+
+      let s=`${app.data().globleUrl}/loan?judge=4&company_id=${company_id}`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data);
+        this.showLoanItem = res.data;
+        this.judgeChoose=2
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+    submitForm(){
+      //市场交易 - 提交贷款
+      //贷款信息
+      let send=this.money*(1+(this.rate*this.stay));//应还总额
+      let from=Number(window.sessionStorage.getItem('yearid')) //当前财年
+      let end=Number(window.sessionStorage.getItem('yearid'))+this.stay;//应还财年
+      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+
+      let s=`${app.data().globleUrl}/loan?judge=1&from=${from}&stay=${this.stay}&end=${end}&rate=${this.rate}&detail=${this.other}&money=${this.money}&send=${send}&condition=0&company_id=${company_id}`
+      console.log(s)
+
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log(res.data)
+        if(res.data[1]){
+          s_alert.Success("贷款信息提交成功", "正在加载……", "success");
+        }else{
+          s_alert.Warning('贷款信息提交失败','请改正后重试……')
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+      $.notify({
+        // options
+        message: '提交贷款信息成功！' 
+      },{
+        // settings
+        type: 'success'
+      });
     },
     getRate(){
-      if(this.year==0) this.rate=0;
-      if(this.year==1) this.rate=0.08;
-      if(this.year==2) this.rate=0.12;
-      if(this.year==3) this.rate=0.16;
-      if(this.year>3||this.year<0) {
+      if(this.stay==0) this.rate=0;
+      if(this.stay==1) this.rate=0.08;
+      if(this.stay==2) this.rate=0.12;
+      if(this.stay==3) this.rate=0.16;
+      if(this.stay>3||this.stay<0) {
         s_alert.Warning('贷款年限输入有误','贷款年限不能小于0或者大于3，请改正后重试……')
-        this.year=0;
+        this.stay=0;
         this.rate=0;
       }
     }
   }
-};
+}
 </script>
 
 <style>

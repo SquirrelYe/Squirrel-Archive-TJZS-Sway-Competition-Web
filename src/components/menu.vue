@@ -493,6 +493,9 @@
                   <li class="has_sub">
                     <a href="javascript:void(0)" @click="showTransaction()">订单列表</a>
                   </li>
+                  <li class="has_sub">
+                    <a href="javascript:void(0)" @click="trade()">交易明细</a>
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -645,9 +648,10 @@ export default {
       // clearInterval(i)
     }, 10000);
 
-    // setInterval(() => { //实时更新个人信息
-    //   this.refreshUserinfo()
-    // }, 5000);
+    setInterval(() => { //实时更新个人信息
+      this.refreshUserinfo()
+      this.refreshCompanyInfo()
+    }, 5000);
   },
   methods: {
     refreshUserinfo(){
@@ -657,7 +661,7 @@ export default {
 
       }else{
         let s=`${app.data().globleUrl}/sway?judge=3&name=${ses.getItem('name')}&pass=${ses.getItem('pass')}`
-        console.log(s)
+        //console.log(s)
         this.axios({
         method: "post",
         url: s
@@ -667,6 +671,35 @@ export default {
           ses.setItem("userinfo", d);
           // console.log(d)
         })
+        .catch(err => {
+          console.log(err);
+          s_alert.Success("更新个人信息失败", "请联系管理员……", "warning");
+        });
+      }      
+    },
+    refreshCompanyInfo(){
+      //获取所有公司信息
+      var ses = window.sessionStorage;
+      if(ses.getItem('userinfo')==null){
+
+      }else{
+        let s=`${app.data().globleUrl}/company?judge=0`
+        //console.log(s)
+        this.axios({
+        method: "post",
+        url: s
+        })
+        .then(res => {
+          //console.log(res.data);
+          let me=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+          res.data.forEach(e => {
+            if(e.id==me) window.sessionStorage.setItem('companyinfo',JSON.stringify(e))
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          s_alert.Success("更新个人公司信息失败", "请联系管理员……", "warning");
+        });
       }
       
     },
@@ -691,7 +724,7 @@ export default {
     goods(){ this.$router.push({ name:'goods'})}, //库存
     resource(){ this.$router.push({ name:'resource'})},
     stock(){ this.$router.push({ name:'stock'})},
-    tocompany(){ this.$router.push({ name:'tocompany'})},   //交易
+    trade(){ this.$router.push({ name:'trade'})},   //交易
     tomarket(){ this.$router.push({ name:'tomarket'})},
     loan(){ this.$router.push({ name:'loan'})},
     showTransaction(){ this.$router.push({ name:'showtransaction'}) },

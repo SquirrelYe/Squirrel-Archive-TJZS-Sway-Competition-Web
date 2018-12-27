@@ -7,13 +7,13 @@
                 <div class="col-sm-12">
                     <div class="btn-group pull-right">
                         <button type="button" class="btn btn-primary dropdown-toggle waves-effect waves-light" data-toggle="dropdown" aria-expanded="false"> 设置 <span class="m-l-5"><i class="fa fa-cog"></i></span></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Action</a></li>
-                            <li><a href="#">Another action</a></li>
-                            <li><a href="#">Something else here</a></li>
+                        <!-- <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">测试</a></li>
+                            <li><a href="#">测试</a></li>
+                            <li><a href="#">测试</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
-                        </ul>
+                            <li><a href="#">测试</a></li>
+                        </ul> -->
                     </div>
                     <h4 class="page-title">欢迎 !</h4>
                 </div>
@@ -135,7 +135,7 @@
                     <div class="portlet"><!-- /portlet heading -->
                         <div class="portlet-heading">
                             <h3 class="portlet-title text-dark text-uppercase">
-                                参赛者分布示意图
+                                公司运营情况示意图
                             </h3>
                             <div class="portlet-widgets">
                                 <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
@@ -152,10 +152,40 @@
                                     <div class="col-md-12">
                                         <div id="pie-chart">
                                             <div id="pie-chart-container" class="flot-chart" style="height: 320px">
-                                                <!-- 地图 -->
-                                                <div  id="app">       
-                                                <div id="allmap" ref="allmap1"></div>
-                                                <router-view></router-view>
+                                                <div class="table-responsive" v-if="showStasticsItem">
+                                                    <table class="table table-borderless">
+                                                        <tbody>
+                                                        <tr>
+                                                            <th>财年</th>
+                                                            <td>{{showStasticsItem.Yearid}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>公司名称</th>
+                                                            <td>{{showStasticsItem.company.name}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>流动资金</th>
+                                                            <td>{{showStasticsItem.float}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>固定资金</th>
+                                                            <td>{{showStasticsItem.fixed}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>总资产</th>
+                                                            <td>{{showStasticsItem.total}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>品牌价值</th>
+                                                            <td>{{showStasticsItem.brand}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>状态</th>
+                                                            <td>{{showStasticsItem.condition|formatCondition}}</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                             </div>
                                         </div>
@@ -174,26 +204,41 @@
                                 </div>
                             </div>
                         </div>
-                    </div> <!-- /Portlet -->
-                </div> <!-- end col -->
-            </div> <!-- End row -->
+                    </div> 
+                </div> 
+            </div>
 
         </div>
-      </div>   
 </template>
 
 <script>
+const s_alert = require("../../utils/alert");
+const moment = require("moment");
+const notify= require('bootstrap-notify');
+import app from "../../App.vue";
+var App = app;
+
 export default {
   name: "index",
   data() {
     return {
-        
+        showStasticsItem:''
     };
   },
+  filters:{
+    formatCondition(x){
+        if(x==0) return '存续';
+        if(x==-1) return '公司破产'
+    }
+  },
   mounted() {
-      this.map();
+      this.init()
   },
   methods: {
+    init(){
+      this.map();
+      this.showStastics();
+    },
     map() {
       let map = new BMap.Map(this.$refs.allmap); // 创建Map实例
       map.centerAndZoom(new BMap.Point(116.404, 39.915), 11); // 初始化地图,设置中心点坐标和地图级别
@@ -205,20 +250,24 @@ export default {
       );
       map.setCurrentCity("天津"); // 设置地图显示的城市 此项是必须设置的
       map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
-      
-      //主界面右侧小地图   
-      let map1 = new BMap.Map(this.$refs.allmap1); // 创建Map实例
-      map1.centerAndZoom(new BMap.Point(117.086, 39.093), 11); // 初始化地图,设置中心点坐标和地图级别
-      map1.addControl(
-        new BMap.MapTypeControl({
-          //添加地图类型控件
-          mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
+    },
+    showStastics(){
+        let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+        let s=`${app.data().globleUrl}/ass/company_statistic?judge=5&company_id=${company_id}`
+        console.log(s)
+        this.axios({
+        method: "post",
+        url: s
         })
-      );
-      map1.setCurrentCity("天津"); // 设置地图显示的城市 此项是必须设置的
-      map1.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+        .then(res => {   
+          console.log(res.data)
+          this.showStasticsItem=res.data[0] 
+        })
+        .catch(err => {
+          console.log(err)
+        });
     }
-  }
+}
 };
 </script>
 
