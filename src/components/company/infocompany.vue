@@ -53,6 +53,46 @@
           </div>
         </div>
       </div>
+
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sway商战大赛-公司信息</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped" style id="datatable-editable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>公司ID</th>
+                        <th>公司名称</th>
+                        <th>公司法人</th>
+                        <th>统一社会信用代码</th>
+                        <th>经营范围</th>
+                        <th>创建时间</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="gradeX">
+                        <td>1</td>
+                        <td>{{meinfo.id}}</td>
+                        <td>{{meinfo.name}}</td>
+                        <td>{{meinfo.legal}}</td>
+                        <td>{{meinfo.code}}</td>
+                        <td>{{meinfo.area}}</td>
+                        <td>{{meinfo.created_at|formatTime}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- StandardModal -->
@@ -102,13 +142,21 @@ export default {
       showItems: "",
       select: [],
       isSelectedAll: false,
+      //meinfo
+      meinfo:'',
       //显示在修改栏
       model:'',
       office:''
     };
   },
+  filters:{
+    formatTime(x) {
+      return moment(x).format("YYYY-MM-DD HH:mm:ss");
+    },
+  },
   mounted() {
     this.mocks();
+    this.showMe()
   },
   methods: {
     mocks() {
@@ -158,18 +206,6 @@ export default {
       }else{
 
       }
-      // swal({
-      //       title: '确定删除吗',
-      //       text: '删除之后可以重新加入公司',
-      //       type: "warning",
-      //       showCancelButton: true,
-      //       cancelButtonText:'取消',
-      //       confirmButtonColor: "#DD6B55",
-      //       confirmButtonText: "我知道了",
-      //       closeOnConfirm: false
-      //   }, function () {          
-      //     swal("删除成功!", "你开除了一名成员", "success");
-      // });
     },
     
     dele(del){
@@ -184,6 +220,23 @@ export default {
         console.log(res.data);
         that.mocks()
         swal("删除成功!", "你开除了一名成员", "success");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+
+    showMe(){
+      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+      let s=`${app.data().globleUrl}/company?judge=4&id=${company_id}`
+      console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        this.meinfo=res.data
+        console.log(res.data)
       })
       .catch(err => {
         console.log(err);

@@ -185,7 +185,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="example-email">贷款金额</label>
                             <div class="col-md-10">
-                                <input class="form-control" placeholder="xxx" v-model="money">
+                                <input class="form-control" placeholder="xxx万元" v-model="money">
                             </div>
                         </div>
                         <div class="form-group">
@@ -273,7 +273,7 @@
           <div class="modal-body" align='center' v-if="model.commerresearch">
             <h4>产品情况介绍</h4>  
             <!-- <h5> {{model}}</h5> -->
-            <address class="ng-scope">
+            <address class="ng-scope" v-if="model.commerresearch">
               <strong>产品id:</strong>{{model.commerresearch.id}}<br>
               <strong>产品名称:</strong>{{model.commerresearch.name}}<br> 
               <strong>产品介绍:</strong>{{model.commerresearch.introduction}}<br> 
@@ -459,6 +459,7 @@ export default {
             console.log(res.data);
             s_alert.Success("还清贷款成功", "正在加载……", "success");
             this.showloan()
+            this.tempPriceEndLoan(model)
           })
           .catch(err => {
             console.log(err);
@@ -479,6 +480,8 @@ export default {
             console.log(res.data);
             if(!res.data[1]){
               this.sendNumber(0,model,res.data[0])
+              //－钱
+              this.tempPriceFixed(company_id,model)
             }
           })
           .catch(err => {
@@ -497,12 +500,44 @@ export default {
             console.log(res.data);
             if(!res.data[1]){
               this.sendNumber(1,model,res.data[0])
+              //钱
+              this.tempPriceFixed(company_id,model)
             }
           })
           .catch(err => {
             console.log(err);
           });
       }
+    },
+          
+    tempPriceFixed(company_id,model){           //钱模板   *********************
+        let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+        this.axios({
+        method: "post",
+        url: m
+        })
+        .then(res => {
+            let float=res.data[0].float-model.price*model.number;
+            let total=res.data[0].total-model.price*model.number;
+
+            let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
+            console.log(s);
+            this
+            .axios({
+            method: "post",
+            url: s
+            })
+            .then(res => {
+                console.log(res.data);
+                this.init()
+            })
+            .catch(err => {
+            console.log(err);
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
     },
     sendNumber(index,model,data) {
       if(index==0){
@@ -640,9 +675,7 @@ export default {
     },
     doLoan() {
       this.currentCompanyName=JSON.parse(window.sessionStorage.getItem('companyinfo')).name
-
-      //市场交易 - 贷款
-      
+      //市场交易 - 贷款      
     },
     showloan(){
       let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
@@ -681,6 +714,7 @@ export default {
         console.log(res.data)
         if(res.data[1]){
           s_alert.Success("贷款信息提交成功", "正在加载……", "success");
+          this.tempPriceLoan(company_id,this.money)
         }else{
           s_alert.Warning('贷款信息提交失败','请改正后重试……')
         }
@@ -688,12 +722,64 @@ export default {
       .catch(err => {
         console.log(err);
       });
-      $.notify({
-        // options
-        message: '提交贷款信息成功！' 
-      },{
-        // settings
-        type: 'success'
+    },
+    tempPriceLoan(company_id,money){           //钱模板   *********************
+      let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+      this.axios({
+      method: "post",
+      url: m
+      })
+      .then(res => {
+          let float=Number(res.data[0].float)+Number(money);
+          let total=Number(res.data[0].total)+Number(money);
+
+          let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
+          console.log(s);
+          this
+          .axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+              console.log(res.data);
+              this.init()
+          })
+          .catch(err => {
+          console.log(err);
+          });
+      })
+      .catch(err => {
+          console.log(err);
+      });
+    },
+    tempPriceEndLoan(model){           //钱模板   *********************
+      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+      let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+      this.axios({
+      method: "post",
+      url: m
+      })
+      .then(res => {
+          let float=res.data[0].float-Number(model.send);
+          let total=res.data[0].float-Number(model.send);
+
+          let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
+          console.log(s);
+          this
+          .axios({
+          method: "post",
+          url: s
+          })
+          .then(res => {
+              console.log(res.data);
+              this.init()
+          })
+          .catch(err => {
+          console.log(err);
+          });
+      })
+      .catch(err => {
+          console.log(err);
       });
     },
     getRate(){

@@ -8,7 +8,7 @@
 
     <div class="row">
       <div class="col-sm-12">
-        <div class="panel panel-default">
+        <div class="panel panel-default" v-if="showCompeteCommer">
           <div class="panel-heading">
             <h3 class="panel-title">Sway商战大赛-研究所研发管理</h3>            
           </div>
@@ -64,7 +64,7 @@
                                     <th>操作:</th>
                                   </tr>
                                 </thead>
-                                <tbody>
+                                <tbody v-if="item.research">
                                   <tr>
                                     <td>{{item.research.id}}</td>
                                     <td>{{item.research.model}}</td>
@@ -337,7 +337,7 @@ export default {
         let tempLaw=0;
           if(this.law) tempLaw=1;
           else tempLaw=0;
-        let s=`${app.data().globleUrl}/commerresearch?judge=1&commerland_id=${this.currentCommerlandInfo.id}&name=${this.name}&function=${this.func}&introduction=${this.intro}&price=${this.price}&condition=0&maxprice=${this.max}&law=${tempLaw}&s1=${this.s1}&s2=${this.s2}&s3=${this.s3}&s4=${this.s4}&s5=${this.s5}`
+        let s=`${app.data().globleUrl}/commerresearch?judge=1&commerland_id=${this.currentCommerlandInfo.id}&name=${this.name}&function=${this.func}&introduction=${this.intro}&price=${this.price}&condition=0&maxprice=${this.max}&law=${tempLaw}&s1=${this.s1}&s2=${this.s2}&s3=${this.s3}&s4=${this.s4}&s5=${this.s5}&company_id=${JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id}`
         console.log(s)
         this.axios({
         method: "post",
@@ -345,6 +345,50 @@ export default {
         })
         .then(res => {
           s_alert.Success("产品研发申请发送成功", "请到 公司—>公司产品 中查看", "success");
+
+            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id   //***钱***/
+            this.axios({
+            method: "post",
+            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+            })
+            .then(res => {
+              if(this.law){
+                let float=res.data[0].float-160;
+                let total=res.data[0].total-160;
+                let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&total=${total}&company_id=${company_id}`;  
+                this.axios({
+                method: "post",
+                url: s
+                })
+
+             let year=window.sessionStorage.getItem('year')
+              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=160&number=1&me=${company_id}&commerresearch_id=0`;   
+              console.log(e)
+              this.axios({
+                method: "post",
+                url: e
+                })
+
+              }else{
+                let float=res.data[0].float-60;
+                let total=res.data[0].total-60;
+                let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&total=${total}&company_id=${company_id}`;  
+                this.axios({
+                method: "post",
+                url: s
+                })
+
+             let year=window.sessionStorage.getItem('year')
+              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=60&number=1&me=${company_id}&commerresearch_id=0`;   
+              console.log(e)
+              this.axios({
+                method: "post",
+                url: e
+                })
+              }              
+            })
+
+            
         })
         .catch(err => {
           console.log(err);

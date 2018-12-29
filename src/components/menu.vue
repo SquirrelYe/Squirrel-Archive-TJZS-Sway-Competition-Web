@@ -215,7 +215,7 @@
                     <a href="javascript:void(0)" @click="admin()">管理员管理</a>
                   </li>
                   <li>
-                    <a href="javascript:void(0)" @click="company()">公司审核</a>
+                    <a href="javascript:void(0)" @click="company()">公司管理</a>
                   </li>
                 </ul>
               </li>
@@ -247,6 +247,9 @@
                   </span>
                 </a>
                 <ul class="list-unstyled">
+                  <li>
+                    <a href="javascript:void(0)" @click="syear()">财年管理</a>
+                  </li>
                   <li>
                     <a href="javascript:void(0)" @click="scompete()">竞拍管理</a>
                   </li>
@@ -305,7 +308,7 @@
           </div>
           <div class="clearfix"></div>
           <!-- 计时器 -->
-          <h4 class="time">{{startTime}}</h4>
+          <!-- <h4 class="time">{{startTime}}</h4> -->
         </div>
       </div>
 
@@ -473,29 +476,12 @@
                   <li class="has_sub">
                     <a href="javascript:void(0)" @click="tomarket()">交易市场</a>
                   </li>
-                  <!-- <li class="has_sub">
-                    <a href="javascript:void(0)" @click="tocompany()">公司代工</a>
-                  </li>
-                  <li class="has_sub">
-                    <a href="javascript:void(0)" @click="loan()">政府贷款</a> -->
-                    <!-- <ul class="list-unstyled">
-                      <li>
-                        <a href="javascript:void(0)">授信额度</a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">贷款期限</a>
-                      </li>
-                      <li>
-                        <a href="javascript:void(0)">未还贷款</a>
-                      </li>
-                    </ul> -->
-                  <!-- </li> -->
                   <li class="has_sub">
                     <a href="javascript:void(0)" @click="showTransaction()">订单列表</a>
                   </li>
-                  <li class="has_sub">
+                  <!-- <li class="has_sub">
                     <a href="javascript:void(0)" @click="trade()">交易明细</a>
-                  </li>
+                  </li> -->
                 </ul>
               </li>
             </ul>
@@ -507,6 +493,7 @@
           <!-- <h4 class="time">{{startTime}}</h4> -->
         </div>
       </div>
+      
       <!-- Left Sidebar End -->
       <div class="content-page">
         <!-- Start content -->
@@ -538,14 +525,13 @@
             </div>
           </div>
         </footer>
-        <!-- End Footer -->
       </div>
-      <!-- Right Sidebar -->
+      
       <div class="side-bar right-bar nicescroll">
         <h4 class="text-center">联系</h4>
         <div class="contact-list nicescroll">
           <ul class="list-group contacts-list">
-            <li class="list-group-item">
+            <!-- <li class="list-group-item">
               <a href="#">
                 <div class="avatar">
                   <img src="assets/images/users/avatar-1.jpg" alt>
@@ -554,37 +540,7 @@
                 <i class="fa fa-circle online"></i>
               </a>
               <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-2.jpg" alt>
-                </div>
-                <span class="name">Tomaslau</span>
-                <i class="fa fa-circle online"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-3.jpg" alt>
-                </div>
-                <span class="name">Stillnotdavid</span>
-                <i class="fa fa-circle online"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>
-            <li class="list-group-item">
-              <a href="#">
-                <div class="avatar">
-                  <img src="assets/images/users/avatar-4.jpg" alt>
-                </div>
-                <span class="name">Kurafire</span>
-                <i class="fa fa-circle online"></i>
-              </a>
-              <span class="clearfix"></span>
-            </li>            
+            </li>                        -->
           </ul>
         </div>
       </div>
@@ -649,8 +605,9 @@ export default {
     }, 10000);
 
     setInterval(() => { //实时更新个人信息
-      this.refreshUserinfo()
-      this.refreshCompanyInfo()
+      // this.refreshUserinfo()
+      // this.refreshCompanyInfo()
+        //  this.refreshYearid()
     }, 5000);
   },
   methods: {
@@ -671,10 +628,10 @@ export default {
           ses.setItem("userinfo", d);
           // console.log(d)
         })
-        .catch(err => {
-          console.log(err);
-          s_alert.Success("更新个人信息失败", "请联系管理员……", "warning");
-        });
+        // .catch(err => {
+        //   console.log(err);
+        //   s_alert.Success("更新个人信息失败", "请联系管理员……", "warning");
+        // });
       }      
     },
     refreshCompanyInfo(){
@@ -696,12 +653,27 @@ export default {
             if(e.id==me) window.sessionStorage.setItem('companyinfo',JSON.stringify(e))
           });
         })
-        .catch(err => {
-          console.log(err);
-          s_alert.Success("更新个人公司信息失败", "请联系管理员……", "warning");
-        });
+        // .catch(err => {
+        //   console.log(err);
+        //   s_alert.Success("更新个人公司信息失败", "请联系管理员……", "warning");
+        // });
       }
       
+    },
+    refreshYearid(){
+      //获取所有公司信息
+      var ses = window.sessionStorage;
+      let s=`${app.data().globleUrl}/game?judge=0`
+      //console.log(s)
+      this.axios({
+      method: "post",
+      url: s
+      })
+      .then(res => {
+        console.log('year',res.data[0].Yearid);
+        let year=res.data[0].Yearid
+        ses.setItem('year',year)
+      })    
     },
     
     test() {
@@ -737,6 +709,7 @@ export default {
     scompete(){this.$router.push({name:'scompete'})},//赛事运营
     stransation(){this.$router.push({name:'stransation'})},
     sstastics(){this.$router.push({name:'sstastics'})},
+    syear(){this.$router.push({name:'syear'})}
   },
   components: {
     remote: {

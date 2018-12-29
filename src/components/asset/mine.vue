@@ -20,17 +20,17 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                       
                       <div class="row">
-                            <div class="col-lg-4" v-for="(item,index) in showCompeteMining" :key="index">
+                            <div class="col-lg-4" v-for="(item1,index) in showCompeteMining" :key="index">
                                 <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-purple' : index%3==1,'panel-success' : index%3==2}">
                                     <div class="panel-heading" style="height:40px"> 
-                                        <h3 class="panel-title" style="float:left">矿区编号  {{item.id}}</h3> 
+                                        <h3 class="panel-title" style="float:left">矿区编号  {{item1.id}}</h3> 
                                         <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(index)">配置</i>
                                     </div> 
                                     <div class="panel-body"> 
                                       <div class="row">           
                                         <div class="col-lg-12">
-                                          <div v-if="item.diggers!=''">已配置挖掘机信息如下：<br>  </div>
-                                          <div v-if="item.diggers==''">暂未配置挖掘机<br>  </div>
+                                          <div v-if="item1.diggers!=''">已配置挖掘机信息如下：<br>  </div>
+                                          <div v-if="item1.diggers==''">暂未配置挖掘机<br>  </div>
                                           <div class="btn-group" v-for="(item,index) in showCompeteMining[index].diggers" :key="index">
                                               <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
                                                 {{item.id}} 
@@ -46,6 +46,7 @@
                                                           <strong>挖掘效率：</strong>{{item.efficient}}<br>
                                                           <strong>价值折旧：</strong>{{item.deprelief}}<br>
                                                           <strong>挖机数量：</strong>{{item.mining_digger.number}}<br>
+                                                          <strong style="color:red" data-toggle="modal" data-target="#company" @click="move(item1,item,item.mining_digger.number)">移动挖掘机至其他矿区</strong>
                                                         </p>  
                                                       </div>
                                                     </a>
@@ -60,12 +61,6 @@
                         </div>                 
 
                       <div class="panel-body">
-                        <a
-                          class="btn btn-success waves-effect waves-light"
-                          href="javascript:;"
-                          @click="info"
-                        >Info</a>
-
                       </div>
                     </div>
                   </div>
@@ -129,7 +124,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPrice(index)"
+                            @click="sendPrice(index,number*item.price,number,item.id)"
                             v-if="number!='' && number>0 && Number(number)+Number(haveNumber)<=4"
                           >提交订单</button>
                         </div>
@@ -138,6 +133,46 @@
 
               </div>
           </div>
+      </div>
+    </div>
+    <!-- company -->
+    <div id="company" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">转移挖掘机</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>转移挖掘机到其他矿区</h4></div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">                             
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" >目的矿区编号</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" v-model="kqbh">
+                                    </div>
+                                    <label class="col-md-3 control-label">目的挖机数量</label>
+                                    <div class="col-md-9">
+                                        <input type="number" class="form-control" v-model="wjjsl">
+                                    </div>
+                                </div>          
+                                <div style="color:red">注意：每个矿区只能容纳四台挖掘机，转移前请检查矿区挖掘机数量。</div>              
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>         
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="moveDigger()">转移到矿区</button>
+            </div>
+        </div>
       </div>
     </div>
   
@@ -160,7 +195,14 @@ export default {
       //购买挖掘机
       haveNumber:0,
       number: "",
-      temp:''
+      temp:'',
+
+      //
+      kqbh:'',
+      wjjsl:'',
+      m1:'',
+      m2:'',
+      m3:0,
     };
   },
   beforeMount() {
@@ -187,18 +229,6 @@ export default {
   },
   //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
   methods: {
-    info() {
-      $.notify(
-        {
-          // options
-          message: "Hello World"
-        },
-        {
-          // settings
-          type: "success"
-        }
-      );
-    },
     init(){
       this.showMyMining();
       this.showDigger()
@@ -233,7 +263,35 @@ export default {
           console.log(err)
         });
     },
-    sendPrice(index) {
+    move(item1,item,number){
+      console.log(item1,item)
+      this.m1=item1;
+      this.m2=item;
+      this.m3=number;
+    },
+    moveDigger(){
+        this.axios({
+        method: 'post',
+        url: `${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${this.m1.id}&digger_id=${this.m2.id}&number=${this.wjjsl-this.m3}`,
+        })
+
+        this.axios({
+        method: 'post',
+        url: `${app.data().globleUrl}/ass/mining_digger?judge=10&mining_id=${this.kqbh}&digger_id=${this.m2.id}&id=1&number=${this.wjjsl}`,
+        }).then(res=>{
+          console.log('lala',res.data)
+
+            let number=Number(res.data[0].number)+Number(this.wjjsl)
+            console.log(`${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${res.data[0].mining_id}&digger_id=${res.data[0].digger_id}&number=${number}`)
+            if(!res.data[1]){
+              this.axios({
+              method: 'post',
+              url: `${app.data().globleUrl}/ass/mining_digger?judge=6&mining_id=${res.data[0].mining_id}&digger_id=${res.data[0].digger_id}&number=${number}`
+              })
+            }
+        })        
+    },
+    sendPrice(index,money,number,digger_id) {
       //购买挖掘机 绑定 到矿区
       let that=this
       let s=`${app.data().globleUrl}/ass/mining_digger?judge=1&mining_id=${this.temp.id}&digger_id=${this.showDiggerItems[index].id}`
@@ -246,6 +304,34 @@ export default {
           // s_alert.Success("下单成功", "正在加载……", "success");
           that.init()
           that.sendNumber(index)
+
+            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+            this.axios({
+            method: "post",
+            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+            })
+            .then(res => {
+              let float=res.data[0].float-money;
+              let fixed=res.data[0].fixed+money;
+
+              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
+              console.log(s);
+              this.axios({
+                method: "post",
+                url: s
+                })
+
+              let year=window.sessionStorage.getItem('year')
+              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${company_id}&digger_id=${digger_id}`;   
+              console.log(e)
+              this.axios({
+                method: "post",
+                url: e
+                })
+            })
+          .catch(err => {
+              console.log(err);
+          });
         })
     },
     sendNumber(index) {
@@ -296,6 +382,7 @@ export default {
           s_alert.Success("矿区挖掘机数量不超过4个", "正在加载……", "warning");
       }
     },
+
     showMyMining() {
       //显示已购 矿区
       let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))

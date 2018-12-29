@@ -64,12 +64,6 @@
                         </div>                 
 
                       <div class="panel-body">
-                        <a
-                          class="btn btn-success waves-effect waves-light"
-                          href="javascript:;"
-                          @click="info"
-                        >Info</a>
-
                       </div>
                     </div>
                   </div>
@@ -131,7 +125,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPrice(index)">提交订单</button>
+                            @click="sendPrice(index,item.price,item.id)">提交订单</button>
                         </div>
                     </div> 
                   </div> 
@@ -222,7 +216,7 @@ export default {
       console.log(this.temp)
       this.showResearch()
     },
-    sendPrice(index) {
+    sendPrice(index,money,research_id) {
       //购买研究所 绑定 到 商业用地
       let that=this
       let s=`${app.data().globleUrl}/ass/commerland_research?judge=6&commerland_id=${this.temp.id}&research_id=${this.showResearchItems[index].id}`
@@ -234,6 +228,30 @@ export default {
         .then(res => {          
           s_alert.Success("下单成功", "正在加载……", "success");
           that.showMyCommerland();
+
+            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+            this.axios({
+            method: "post",
+            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+            })
+            .then(res => {
+              let float=res.data[0].float-money;
+              let fixed=res.data[0].fixed+money;
+              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
+              this.axios({
+                method: "post",
+                url: s
+                })
+            })
+
+            let year=window.sessionStorage.getItem('year')
+              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=1&me=${company_id}&research_id=${research_id}`;   
+              console.log(e)
+              this.axios({
+                method: "post",
+                url: e
+                })
+
         })
         .catch(err => {
           s_alert.Success("下单失败", "正在加载……", "success");

@@ -55,6 +55,7 @@
                 </tbody>
               </table>
             </div>
+            <p><strong>注意:上图所示己方与对方均为对方公司ID，详细公司信息请前往 公司-> 公司信息中查看。</strong></p>
           </div>
         </div>
       </div>

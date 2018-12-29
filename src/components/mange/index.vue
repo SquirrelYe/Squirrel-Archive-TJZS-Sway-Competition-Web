@@ -2,7 +2,6 @@
     <div class="wrapper">
         <div class="container">
 
-            <!-- Page-Title -->
             <div class="row">
                 <div class="col-sm-12">
                     <div class="btn-group pull-right">
@@ -15,11 +14,11 @@
                             <li><a href="#">测试</a></li>
                         </ul> -->
                     </div>
-                    <h4 class="page-title">欢迎 !</h4>
+                    <h4 class="page-title" style="color:red" v-if="showStasticsItem">欢迎 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{showStasticsItem.Yearid}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="info">欢迎 {{info[0].name}}</h4>
                 </div>
             </div>
 
-            <!-- Start Widget -->
             <div class="row">
                 <div class="col-md-6 col-sm-6 col-lg-3">
                     <div class="mini-stat clearfix bx-shadow bg-info">
@@ -79,137 +78,65 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-            <!-- End row-->
+            
+            <div class="row text-center" v-if="showStasticsItem">
+                <div class="col-md-6 col-sm-6 col-lg-3">
+                    <div class="panel panel-border panel-purple widget-s-1">
+                        <div class="panel-heading"> </div>
+                        <div class="panel-body">
+                        <div class="h2 text-purple">{{showStasticsItem.float}}</div>
+                        <span class="text-muted">流动资金</span>
+                        <div class="text-right">
+                            <i class="ion-social-usd fa-2x text-purple"></i>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                        
+                <div class="col-md-6 col-sm-6 col-lg-3">
+                    <div class="panel panel-border panel-pink widget-s-1">
+                        <div class="panel-heading"> </div>
+                        <div class="panel-body">
+                        <div class="h2 text-pink">{{showStasticsItem.fixed}}</div>
+                        <span class="text-muted">固定资金</span>
+                        <div class="text-right">
+                            <i class="ion-ios7-cart fa-2x text-pink"></i>
+                        </div>
+                    </div>
+                    </div>
+                </div>
 
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="portlet"><!-- /portlet heading -->
-                        <div class="portlet-heading">
-                            <h3 class="portlet-title text-dark text-uppercase">
-                                赛事分布位置图
-                            </h3>
-                            <div class="portlet-widgets">
-                                <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
-                                <span class="divider"></span>
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#portlet1"><i class="ion-minus-round"></i></a>
-                                <span class="divider"></span>
-                                <a href="#" data-toggle="remove"><i class="ion-close-round"></i></a>
-                            </div>
-                            <div class="clearfix"></div>
+                <div class="col-md-6 col-sm-6 col-lg-3">
+                    <div class="panel panel-border panel-primary widget-s-1">
+                        <div class="panel-heading"> </div>
+                        <div class="panel-body">
+                        <div class="h2 text-primary">{{showStasticsItem.total}}</div>
+                        <span class="text-muted">总资产</span>
+                        <div class="text-right">
+                            <i class="ion-android-contacts fa-2x text-primary"></i>
                         </div>
-                        <div id="portlet1" class="panel-collapse collapse in">
-                            <div class="portlet-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div id="website-stats" style="position: relative;height: 320px">
-                                            <!-- 地图 -->
-                                            <div id="app">       
-                                                <div id="allmap" ref="allmap"></div>
-                                                <router-view></router-view>
-                                            </div>
-                                        </div>
-                                        <div class="row text-center m-t-30">
-                                            <div class="col-sm-4">
-                                                <h4 class="counter">86,956</h4>
-                                                <small class="text-muted"> Weekly Report</small>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <h4 class="counter">86,69</h4>
-                                                <small class="text-muted">Monthly Report</small>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <h4 class="counter">948,16</h4>
-                                                <small class="text-muted">Yearly Report</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                    </div>
+                </div>
+                        
+                <div class="col-md-6 col-sm-6 col-lg-3">
+                    <div class="panel panel-border panel-success widget-s-1">
+                        <div class="panel-heading"> </div>
+                        <div class="panel-body">
+                        <div class="h2 text-success">{{showStasticsItem.brand}}</div>
+                        <span class="text-muted">品牌价值</span>
+                        <div class="text-right">
+                            <i class="ion-eye fa-2x text-success"></i>
                         </div>
-                    </div> <!-- /Portlet -->
-                </div> <!-- end col -->
-
-                <div class="col-lg-4">
-                    <div class="portlet"><!-- /portlet heading -->
-                        <div class="portlet-heading">
-                            <h3 class="portlet-title text-dark text-uppercase">
-                                公司运营情况示意图
-                            </h3>
-                            <div class="portlet-widgets">
-                                <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
-                                <span class="divider"></span>
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#portlet2"><i class="ion-minus-round"></i></a>
-                                <span class="divider"></span>
-                                <a href="#" data-toggle="remove"><i class="ion-close-round"></i></a>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div id="portlet2" class="panel-collapse collapse in">
-                            <div class="portlet-body">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div id="pie-chart">
-                                            <div id="pie-chart-container" class="flot-chart" style="height: 320px">
-                                                <div class="table-responsive" v-if="showStasticsItem">
-                                                    <table class="table table-borderless">
-                                                        <tbody>
-                                                        <tr>
-                                                            <th>财年</th>
-                                                            <td>{{showStasticsItem.Yearid}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>公司名称</th>
-                                                            <td>{{showStasticsItem.company.name}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>流动资金</th>
-                                                            <td>{{showStasticsItem.float}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>固定资金</th>
-                                                            <td>{{showStasticsItem.fixed}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>总资产</th>
-                                                            <td>{{showStasticsItem.total}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>品牌价值</th>
-                                                            <td>{{showStasticsItem.brand}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>状态</th>
-                                                            <td>{{showStasticsItem.condition|formatCondition}}</td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row text-center m-t-30">
-                                            <div class="col-sm-6">
-                                                <h4 class="counter">86,956</h4>
-                                                <small class="text-muted"> Weekly Report</small>
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <h4 class="counter">86,69</h4>
-                                                <small class="text-muted">Monthly Report</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
-                </div> 
+                    </div>
+                    </div>
+                </div>
             </div>
-
         </div>
+    </div>
 </template>
+
 
 <script>
 const s_alert = require("../../utils/alert");
@@ -222,13 +149,17 @@ export default {
   name: "index",
   data() {
     return {
-        showStasticsItem:''
+        showStasticsItem:'',
+        info:''
     };
   },
   filters:{
     formatCondition(x){
         if(x==0) return '存续';
         if(x==-1) return '公司破产'
+    },
+    formatTime(val){
+      return moment(val).format('YYYY-MM-DD HH:mm:ss')
     }
   },
   mounted() {
@@ -236,20 +167,8 @@ export default {
   },
   methods: {
     init(){
-      this.map();
       this.showStastics();
-    },
-    map() {
-      let map = new BMap.Map(this.$refs.allmap); // 创建Map实例
-      map.centerAndZoom(new BMap.Point(116.404, 39.915), 11); // 初始化地图,设置中心点坐标和地图级别
-      map.addControl(
-        new BMap.MapTypeControl({
-          //添加地图类型控件
-          mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP]
-        })
-      );
-      map.setCurrentCity("天津"); // 设置地图显示的城市 此项是必须设置的
-      map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+      this.getinfo()
     },
     showStastics(){
         let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
@@ -266,6 +185,10 @@ export default {
         .catch(err => {
           console.log(err)
         });
+    },
+    getinfo(){
+        let info=JSON.parse(window.sessionStorage.getItem('userinfo'))
+        this.info=info
     }
 }
 };

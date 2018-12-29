@@ -108,7 +108,6 @@ export default {
   },
   filters:{
     formatTime(val){
-      //console.log(val)
       return moment(val).format('YYYY-MM-DD HH:mm:ss')
     },
     formatCondition(val){

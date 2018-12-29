@@ -147,7 +147,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPriceToFactory(index,item)"
+                            @click="sendPriceToFactory(index,item,number*item.price,number,item.id)"
                             v-if="number!='' && number>0 && number*item.measure+currentIndustryHaveUsedTotalMeasure<=temp.measure"
                           >提交订单</button>
                         </div>
@@ -206,7 +206,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPriceToLine(item,index)"
+                            @click="sendPriceToLine(item,index,number*item.price,number,item.id)"
                             v-if="number!='' && number>0 && Number(currentChoosedFactoryHaveLineTotal)+Number(number)<=Number(currentChoosedFactoryItem.includeline)"
                           >提交订单</button>
                         </div>
@@ -339,7 +339,7 @@ export default {
 
       });
     },
-    sendPriceToFactory(index,item) {
+    sendPriceToFactory(index,item,money,number,factory_id) {
       //购买工厂 绑定 到工业用地
       let that=this
       let s=`${app.data().globleUrl}/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${this.showFactoryItem[index].id}`
@@ -351,6 +351,30 @@ export default {
         .then(res => {
           if(res){
             that.sendNumber(index,item)
+
+            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id   //***** 减钱 *****/
+            this.axios({
+            method: "post",
+            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+            })
+            .then(res => {
+              let float=res.data[0].float-money;
+              let fixed=res.data[0].fixed+money;
+              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
+              this.axios({
+                method: "post",
+                url: s
+                })
+            })
+
+            let year=window.sessionStorage.getItem('year')
+              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${company_id}&factory_id=${factory_id}`;   
+              console.log(e)
+              this.axios({
+                method: "post",
+                url: e
+                })
+
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
@@ -361,6 +385,14 @@ export default {
       //更改 工厂 数量
       let that=this
       console.log(that.temp,item,index)
+      console.log('lala0',this.currentIndustryHaveFactory)
+      // for (let i = 0; i < this.currentIndustryHaveFactory.length; i++) {
+      //   const e = this.currentIndustryHaveFactory;
+      //   console.log('---->',e)
+      //   // if(e.id==this.showFactoryItem) {
+      //   //   tid=i; 
+      //   // }    
+      // }
       try {
         let addNumber= Number(that.temp.factories[index].indusland_factory.number) + Number(that.number)
         console.log(addNumber)
@@ -379,7 +411,8 @@ export default {
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
-      } catch (error) {
+      } 
+      catch (error) {
         let addNumber= Number(that.number)
         console.log(addNumber)
         let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}&condition=0`
@@ -431,7 +464,7 @@ export default {
         console.log('total-->',total)        
         this.currentChoosedFactoryHaveLineTotal=total;
     },
-    sendPriceToLine(item,index) {
+    sendPriceToLine(item,index,money,number,line_id) {
       //购买生产线 绑定 到工厂
       let that=this
       let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}`
@@ -444,6 +477,30 @@ export default {
           if(res){
             that.init()
             that.sendLineNumber(item,index)
+
+            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id   //***** 减钱 *****/
+            this.axios({
+            method: "post",
+            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
+            })
+            .then(res => {
+              let float=res.data[0].float-money;
+              let fixed=res.data[0].fixed+money;
+              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
+              this.axios({
+                method: "post",
+                url: s
+                })
+            })
+
+            let year=window.sessionStorage.getItem('year')
+              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${company_id}&line_id=${line_id}`;   
+              console.log(e)
+              this.axios({
+                method: "post",
+                url: e
+                })
+
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
@@ -466,9 +523,6 @@ export default {
           tid1=j; 
         }    
       }
-      //  console.log(this.temp)
-      // console.log('tid',tid,this.showInduslandFactoryLineItem[tid],'tid1',tid1,item)
-      // console.log(that.showInduslandFactoryLineItem[tid])
       try {
         let addNumber= Number(that.temp.lines[tid1].indusland_factory_line.number) + Number(that.number)
         console.log(addNumber)
