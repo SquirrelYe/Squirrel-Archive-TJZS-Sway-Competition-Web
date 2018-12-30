@@ -540,7 +540,7 @@
                 <i class="fa fa-circle online"></i>
               </a>
               <span class="clearfix"></span>
-            </li>                        -->
+            </li> -->
           </ul>
         </div>
       </div>
@@ -605,9 +605,9 @@ export default {
     }, 10000);
 
     setInterval(() => { //实时更新个人信息
-      // this.refreshUserinfo()
-      // this.refreshCompanyInfo()
-        //  this.refreshYearid()
+        this.refreshUserinfo()
+        this.refreshCompanyInfo()
+         this.refreshYearid()
     }, 5000);
   },
   methods: {

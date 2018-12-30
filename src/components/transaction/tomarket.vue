@@ -400,7 +400,7 @@ export default {
 
        if(index==0){ //购买 原料
         let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-        if(model.me==userinfo[0].company_id){
+        if(model.me!=userinfo[0].company_id){
           let s=`${app.data().globleUrl}/transaction?judge=2&detail=${this.detail}&other=${userinfo[0].company_id}&id=${model.id}`
           console.log(s)
           this.axios({
@@ -425,7 +425,7 @@ export default {
 
       if(index==1){ //购买 产品
         let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-        if(model.me==userinfo[0].company_id){
+        if(model.me!=userinfo[0].company_id){
           let s=`${app.data().globleUrl}/transaction?judge=2&detail=${this.detail}&other=${userinfo[0].company_id}&id=${model.id}`
           console.log(s)
           this.axios({
@@ -521,23 +521,31 @@ export default {
             let total=res.data[0].total-model.price*model.number;
 
             let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
-            console.log(s);
+            console.log('jian',s);
             this
             .axios({
             method: "post",
             url: s
             })
-            .then(res => {
-                console.log(res.data);
-                this.init()
-            })
-            .catch(err => {
-            console.log(err);
-            });
         })
-        .catch(err => {
-            console.log(err);
-        });
+
+        let m1=`${app.data().globleUrl}/statistic?judge=5&company_id=${model.me}`
+        this.axios({
+        method: "post",
+        url: m1
+        })
+        .then(res => {
+            let float=res.data[0].float+model.price*model.number;
+            let total=res.data[0].total+model.price*model.number;
+
+            let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${model.me}`;   
+            console.log('jia',s);
+            this
+            .axios({
+            method: "post",
+            url: s
+            })
+        })
     },
     sendNumber(index,model,data) {
       if(index==0){
