@@ -60,7 +60,7 @@
                           <tr>
                             <th>#</th>
                             <th>原料名称</th>
-                            <th>公司id</th>
+                            <th>公司名称</th>
                             <th>单价</th>
                             <th>数量</th>
                             <th>生成时间</th>
@@ -69,7 +69,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showSourceItems" :key="index">
+                          <tr v-for="(item,index) in showSourceItems" :key="index" v-if="item.source">
                             <td>{{index}}</td>
                             <td>{{item.source.name}}</td>
                             <td>{{item.company.name}}</td>
@@ -99,7 +99,7 @@
                           <tr>
                             <th>#</th>
                             <th>产品名称</th>
-                            <th>公司id</th>
+                            <th>公司名称</th>
                             <th>总量</th>
                             <th>单价</th>
                             <th>生成时间</th>

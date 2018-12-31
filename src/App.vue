@@ -12,7 +12,7 @@ export default {
       globleUrl1: "http://localhost:11111",
       globleUrl1: "http://10.5.66.248:11111",
       globleUrl1: "http://192.168.43.131:11111",
-      globleUrl1: "http://192.168.43.131:11111",
+      globleUrl1: "https://www.yexuan.site",
       globleUrl: "http://10.0.53.241:11111",
       name: "yexuan"
     };

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h4 class="pull-left page-title">公司管理</h4>
+        <h4 class="pull-left page-title">竞拍管理</h4>
       </div>
     </div>
 
