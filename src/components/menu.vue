@@ -159,7 +159,7 @@
             <div class="user-info">
               <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  {{userinfo[0].cname}}
+                  {{userinfo.cname}}
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
@@ -322,7 +322,7 @@
             <div class="user-info">
               <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  {{userinfo[0].cname}}
+                  {{userinfo.cname}}
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
@@ -512,13 +512,13 @@
               <div class="col-xs-6">
                 <ul class="pull-right list-inline m-b-0">
                   <li>
-                    <a href="#">关于</a>
+                    <a href="javascript:void(0)">关于</a>
                   </li>
                   <li>
-                    <a href="#">帮助</a>
+                    <a href="javascript:void(0)">帮助</a>
                   </li>
                   <li>
-                    <a href="#">联系</a>
+                    <a href="javascript:void(0)">联系</a>
                   </li>
                 </ul>
               </div>
@@ -551,8 +551,12 @@
 </template>
 
 <script>
-const cookie = require("../utils/cookie");
 const s_alert = require("../utils/alert");
+const ses = require("../utils/ses");
+const req = require("../utils/axios");
+const print = require("../utils/print");
+const apis = require("../utils/api/apis");
+
 import app from "../App.vue";
 var App = app;
 
@@ -579,108 +583,42 @@ export default {
       //默认加载 index
       this.$router.push("/menu/index");
       if (ses.getItem("type") && this.userinfo!='') {
-        console.log("用户类别：-->", ses.getItem("type"));
+        print.log("用户类别：-->", ses.getItem("type"));
         this.judgeUserType = ses.getItem("type");
       }
     }
-    //定义计时器
-    let i=setInterval(() => {
-      const formatNumber = n => {
-        n = n.toString()
-        return n[1] ? n : '0' + n
-      }
-      let date=new Date()
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1
-      const day = date.getDate()
-      const hour = date.getHours()
-      const minute = date.getMinutes()
-      const second = date.getSeconds()
-      //console.log('计时器开始',[year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':'))
-      this.startTime=[year, month, day].map(formatNumber).join('-') + ' ' + [hour, minute, second].map(formatNumber).join(':')
-    }, 1000);
-    //清除计时器
-    setTimeout(() => {
-      // clearInterval(i)
-    }, 10000);
-
+    
     setInterval(() => { //实时更新个人信息
-        this.refreshUserinfo()
-        this.refreshCompanyInfo()
-         this.refreshYearid()
+        // this.refreshUserinfo()
+        // this.refreshYearid()
     }, 5000);
+    this.refreshUserinfo()
+    this.refreshYearid()
   },
   methods: {
+
+    // 更新个人信息
     refreshUserinfo(){
-      //重新获取个人信息
-      var ses = window.sessionStorage;
-      if(ses.getItem('name')==null||ses.getItem('pass')==null){
-
-      }else{
-        let s=`${app.data().globleUrl}/sway?judge=3&name=${ses.getItem('name')}&pass=${ses.getItem('pass')}`
-        //console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      if(ses.getSes('name')!=null||ses.getSes('pass')!=null){
+        apis.getOneSwayById(JSON.parse(ses.getSes('userinfo')).id)
         .then(res => {
-          var d = JSON.stringify(res.data);
-          ses.setItem("userinfo", d);
-          // console.log(d)
+          let uinfo = JSON.stringify(res.data);
+          ses.setSes('userinfo',uinfo);
+          // print.log('个人信息',res.data)
         })
-        // .catch(err => {
-        //   console.log(err);
-        //   s_alert.Success("更新个人信息失败", "请联系管理员……", "warning");
-        // });
-      }      
-    },
-    refreshCompanyInfo(){
-      //获取所有公司信息
-      var ses = window.sessionStorage;
-      if(ses.getItem('userinfo')==null){
-
-      }else{
-        let s=`${app.data().globleUrl}/company?judge=0`
-        //console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
-        .then(res => {
-          //console.log(res.data);
-          let me=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-          res.data.forEach(e => {
-            if(e.id==me) window.sessionStorage.setItem('companyinfo',JSON.stringify(e))
-          });
-        })
-        // .catch(err => {
-        //   console.log(err);
-        //   s_alert.Success("更新个人公司信息失败", "请联系管理员……", "warning");
-        // });
-      }
-      
-    },
-    refreshYearid(){
-      //获取所有公司信息
-      var ses = window.sessionStorage;
-      let s=`${app.data().globleUrl}/game?judge=0`
-      //console.log(s)
-      this.axios({
-      method: "post",
-      url: s
-      })
-      .then(res => {
-        console.log('year',res.data[0].Yearid);
-        let year=res.data[0].Yearid
-        ses.setItem('year',year)
-      })    
+      }    
     },
     
-    test() {
-      var ses = window.sessionStorage;
-      console.log(ses.getItem("type"));
-      console.log(this.userinfo)
+    // 获取赛事财年信息
+    refreshYearid(){
+      apis.getGameYear(1)
+      .then(res => {
+        let ginfo=JSON.stringify(res.data)
+        ses.setSes('gameinfo',ginfo)
+        // print.log('财年信息',res.data)
+      })    
     },
+
     // 页面跳转 用户端
     creatCompany(){this.$router.push({name:'creatcompany'})},//公司
     joinCompany(){this.$router.push({name:'joincompany'})},
@@ -711,7 +649,8 @@ export default {
     sstastics(){this.$router.push({name:'sstastics'})},
     syear(){this.$router.push({name:'syear'})}
   },
-  components: {
+
+  components: {   //注入外部 js文件
     remote: {
       render: function(createElement) {
         var self = this;

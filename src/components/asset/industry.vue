@@ -23,17 +23,17 @@
                               <div class="panel panel-fill panel-inverse">
                                   <div class="panel-heading" style="height:40px"> 
                                       <h3 class="panel-title" style="float:left">工业用地编号  {{item.id}}、面积{{item.measure}}</h3> 
-                                      <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(null,index,0)">配置</i>
+                                      <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(null,item,0)">配置工厂</i>
                                   </div> 
                                   <div class="panel-body"> 
                                     <!-- <p>
                                       暂未配置工厂
                                     </p> -->
-                                    <div class="col-lg-4" v-for="(item1,index1) in showCompeteIndusland[index].factories" :key="index1">
+                                    <div class="col-lg-6" v-for="(item1,index1) in showCompeteIndusland[index].factories" :key="index1">
                                       <div class="panel panel-fill panel-default">
                                           <div class="panel-heading" style="height:40px"> 
                                               <h3 class="panel-title" style="float:left">工厂编号  {{item1.id}}</h3> 
-                                              <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(index,index1,1)">配置</i>
+                                              <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(item,item1,1)">配置生产线</i>
                                           </div> 
                                           <div class="panel-body"> 
                                             <div class="row">           
@@ -41,12 +41,12 @@
                                                 <div v-for="(item2,index2) in showInduslandFactoryLineItem" :key="index2">
                                                   <div v-if="item2.indusland_id==item.id && item2.factory_id==item1.id">
                                                     <!-- 根据 生产线与工业用地&工厂对应关系的indusland_id和factory_id 来匹配 显示 -->
-                                                      已有当前工厂数量{{item2.number}}
+                                                    <div style="color:green">已有当前工厂数量{{item2.number}}</div>
                                                     <div v-if="item2.lines!=''">生产线信息如下：<br>  </div>
                                                     <div v-if="item2.lines==''">暂未配置生产线信息：<br>  </div>
                                                     <div class="btn-group"  v-for="(item3,index3) in item2.lines" :key="index3">
                                                       <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index3%4==0,'btn-success' : index3%4==1,'btn-warning' : index3%4==2,'btn-primary' : index3%4==3}">
-                                                      {{item3.id}} 
+                                                      {{item3.model}} 
                                                       <span class="caret"></span>
                                                       </button>
                                                       <ul class="dropdown-menu" role="menu">
@@ -54,12 +54,12 @@
                                                           <a>
                                                             <div align='center'>
                                                               <p>
-                                                                <strong>生产线型号：</strong>{{item3.id}}<br>
-                                                                <strong>产能：</strong>{{item3.id}}<br>
-                                                                <strong>产线价值折旧：</strong>{{item3.id}}<br>
-                                                                <strong>良品率：</strong>{{item3.id}}<br>
-                                                                <strong>购置价格：</strong>{{item3.id}}<br>
-                                                                <strong>建设要求：</strong>{{item3.id}}<br>
+                                                                <strong>生产线型号：</strong>{{item3.model}}<br>
+                                                                <strong>产能：</strong>{{item3.capacity}}<br>
+                                                                <strong>产线价值折旧：</strong>{{item3.relief}}<br>
+                                                                <strong>良品率：</strong>{{item3.yield}}<br>
+                                                                <strong>购置价格：</strong>{{item3.price}}w<br>
+                                                                <strong>建设要求：</strong>{{item3.conrequire|formatConrequire}}<br>
                                                                 <strong>数量：</strong>{{item3.indusland_factory_line.number}}<br>
                                                               </p>  
                                                             </div>
@@ -67,7 +67,6 @@
                                                         </li>
                                                       </ul>
                                                     </div>
-
                                                   </div>
                                                 </div>
                                               </div>
@@ -85,10 +84,7 @@
                   </div>
                   <hr>
                   <p>
-                    <strong>注意</strong>：拍卖过程分为
-                    <strong>明拍</strong>与
-                    <strong>暗拍</strong>两种，以上单位均为
-                    <strong>万元</strong>。
+                    <strong>注意：工业用地->工厂，工厂->生产线有相应限制，请根据赛制规定操作。</strong>
                   </p>
                 </div>
           </div>
@@ -147,7 +143,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPriceToFactory(index,item,number*item.price,number,item.id)"
+                            @click="sendPriceToFactory(item,number*item.price,number,item.id)"
                             v-if="number!='' && number>0 && number*item.measure+currentIndustryHaveUsedTotalMeasure<=temp.measure"
                           >提交订单</button>
                         </div>
@@ -166,40 +162,34 @@
                         </h4> 
                     </div> 
                     <div :id="index" class="panel-collapse collapse" :class="{'in' : index==1}"> 
-                        <div class="modal-body" align="center">
-                          <table class="table table-bordered table-striped" style id="datatable-editable">
-                            <thead>
-                              <tr>
-                                <th>型号</th>
-                                <th>产能</th>
-                                <th>产线价值折旧折旧</th>
-                                <th>良品率</th>
-                                <th>价值</th>
-                                <th>建设要求</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr class="gradeX" >
-                                <td>{{item.model}}</td>
-                                <td>{{item.capacity}}</td>
-                                <td>{{item.relief}}</td>
-                                <td>{{item.yield}}</td>
-                                <td>{{item.price}}</td>
-                                <td>{{item.conrequire}}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
-                          <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>条</strong><br>
-                          <strong style='color:green'>当前工厂允许容纳的最大生产线数量:{{currentChoosedFactoryItem.includeline}}</strong><br>
-                          <strong style='color:red'>当前工厂已配置生产线数量:{{currentChoosedFactoryHaveLineTotal}}</strong><br>
-                          
-                          <!-- <div v-for="(item,index) in currentIndustryHaveFactory.rows" :key="index">                            
-                            <strong>当前矿区已有工厂编号：{{item.factory_id}}</strong>                        
-                            <strong>、工厂数量：{{item.number}}</strong><br> -->
-                          </div>
+                      <div class="modal-body" align="center">
+                        <table class="table table-bordered table-striped" style id="datatable-editable">
+                          <thead>
+                            <tr>
+                              <th>型号</th>
+                              <th>产能</th>
+                              <th>产线价值折旧折旧</th>
+                              <th>良品率</th>
+                              <th>价值</th>
+                              <th>建设要求</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr class="gradeX" >
+                              <td>{{item.model}}</td>
+                              <td>{{item.capacity}}</td>
+                              <td>{{item.relief}}</td>
+                              <td>{{item.yield}}</td>
+                              <td>{{item.price}}</td>
+                              <td>{{item.conrequire}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
+                        <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>条</strong><br>
+                        <strong style='color:green'>当前工厂允许容纳的最大生产线数量:{{currentChoosedFactoryItem.includeline}}</strong><br>
+                        <strong style='color:red'>当前工厂已配置生产线数量:{{currentChoosedFactoryHaveLineTotal}}</strong><br>                        
                         </div>
-
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
                           <button
@@ -210,11 +200,10 @@
                             v-if="number!='' && number>0 && Number(currentChoosedFactoryHaveLineTotal)+Number(number)<=Number(currentChoosedFactoryItem.includeline)"
                           >提交订单</button>
                         </div>
+                      </div>
                     </div> 
                   </div> 
-
                 </div>
-
               </div>
           </div>
       </div>
@@ -224,6 +213,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 const moment = require("moment");
 const notify = require("bootstrap-notify");
 import app from "../../App.vue";
@@ -233,6 +227,9 @@ export default {
   name: "industry",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showCompeteIndusland:'',
       showLineItem:'',
       showFactoryItem:'',
@@ -251,15 +248,16 @@ export default {
       currentIndustryHaveUsedTotalMeasure:''
     };
   },
-  beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
-  },
   beforeMount(){
-
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
     this.init()
+    // 实时获取info
+    setTimeout(() => {
+      this.getInfo();
+    }, 10000);
   },
   filters: {
     formatTime(val) {
@@ -267,61 +265,69 @@ export default {
     },
     sumPrice(x, y) {
       return x * y;
-      console.log(x, y);
+      print.log(x, y);
+    },
+    formatConrequire(x){
+      if(x==1) return '无要求';
+      if(x==2) return '大型工厂';
+      if(x==3) return '巨无霸工厂';
+      if(x==4) return '富士康工厂';
     }
   },
   methods: {
+    getInfo(){
+      this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    },
     init(){
       this.showMyIndusland();
       this.showInduslandFactoryLine();
       this.showAllFactory()  //获取工厂列表
     },
     //配置工厂 & 生产线
-    openSetting(index,index1,choose) {
+    openSetting(item,item1,choose) {
+
       if(Number(choose)==0){
         //处理选择 配置工厂 or 配置生产线
         this.chooseFunction=0
 
         this.number=0
         this.haveNumber=0
-        this.temp=this.showCompeteIndusland[index1]
-        console.log(this.temp)
-        this.getCurrentIndustryHaveFactory(index1)
+        this.temp=item1
+        print.log('当前选中的工业用地->',this.temp)
+        this.getCurrentIndustryHaveFactory(item1)
       }
       
       else if(Number(choose)==1){
-        console.log('定位工业用地&工厂-->',index,index1,this.showCompeteIndusland[index].id,this.showCompeteIndusland[index].factories[index1].id)
         //获取工厂ID进行选择 生产线 页面渲染
-        this.chooseLineByFactoryIdNumber=this.showCompeteIndusland[index].factories[index1].id
+        this.chooseLineByFactoryIdNumber=item1.id
         this.showFactoryItem.forEach(e => {  //查找容纳生产线数量
-          if(Number(this.showCompeteIndusland[index].factories[index1].id)==Number(e.id)){
+          if(Number(item1.id)==Number(e.id)){
             this.currentChoosedFactoryItem=e
           }
         });
-        console.log('当前选择的工厂信息来配置生产线',this.currentChoosedFactoryItem)
+        print.log('当前选择的工厂信息来配置生产线',this.currentChoosedFactoryItem)
         //处理选择 配置工厂 or 配置生产线
         this.chooseFunction=1
 
         this.number=0
         this.haveNumber=0
-        this.temp=this.showInduslandFactoryLineItem[index]
-        console.log('中间表与line关联数据',this.showInduslandFactoryLineItem)
-        console.log('----->',this.temp)
+        this.temp=item1
+        print.log('中间表与line关联数据',this.showInduslandFactoryLineItem)
+        print.log('当前选中的工厂->',this.temp)
         
         this.showAllLine();   //获取生产线列表
-        this.getInduslandFactoryId(this.showCompeteIndusland[index].id,this.showCompeteIndusland[index].factories[index1].id) //获取工业用地-工厂 中间表id，来配置新生产线
+        this.getInduslandFactoryId(item.id,item1.id) //获取工业用地-工厂 中间表id，来配置新生产线
       }
     },
-    getCurrentIndustryHaveFactory(index) {
-      //查询 当前 工业用不同工厂数量
-      let s=`${app.data().globleUrl}/ass/indusland_factory?judge=6&indusland_id=${this.showCompeteIndusland[index].id}`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+    //查询 当前 工业用不同工厂数量
+    getCurrentIndustryHaveFactory(item1) {      
+      req.post_Param('api/ass/indusland_factory',{
+        'judge':6,
+        'indusland_id':item1.id
       })
       .then(res => {       
-        console.log(res.data)  
+        print.log(res.data)  
         this.currentIndustryHaveFactory=res.data
         //获取面积使用情况
         let tempMeasure=0;
@@ -332,78 +338,53 @@ export default {
             }
           });
         });
-        console.log('------------------->',tempMeasure)
+        print.log('面积使用情况->',tempMeasure)
         this.currentIndustryHaveUsedTotalMeasure=tempMeasure
       })
-      .catch(err => {
-
-      });
     },
-    sendPriceToFactory(index,item,money,number,factory_id) {
+    sendPriceToFactory(item,money,number,factory_id) {
       //购买工厂 绑定 到工业用地
-      let that=this
-      let s=`${app.data().globleUrl}/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${this.showFactoryItem[index].id}`
-        console.log(s)
-        that.axios({
-        method: "post", 
-        url: s
-        })
+      let that=this;
+      req.post(`api/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${factory_id}`)  // this.temp选择的工业用地
         .then(res => {
           if(res){
-            that.sendNumber(index,item)
-
-            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id   //***** 减钱 *****/
-            this.axios({
-            method: "post",
-            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-            })
+            // 更新数量
+            that.sendNumber(item)
+            // 查询资产信息
+            apis.getOneStatisticByCompanyId(that.company_id)
             .then(res => {
-              let float=res.data[0].float-money;
-              let fixed=res.data[0].fixed+money;
-              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
-              this.axios({
-                method: "post",
-                url: s
-                })
+              let float=res.data.float-money;
+              let fixed=res.data.fixed+money;
+              // 更新资产信息
+              req.post(`${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
             })
-
-            let year=window.sessionStorage.getItem('year')
-              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${company_id}&factory_id=${factory_id}`;   
-              console.log(e)
-              this.axios({
-                method: "post",
-                url: e
-                })
-
+            // 写入交易
+            req.post(`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${that.company_id}&factory_id=${factory_id}`)
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
 
     },
-    sendNumber(index,item) {
+    sendNumber(item) {
       //更改 工厂 数量
       let that=this
-      console.log(that.temp,item,index)
-      console.log('lala0',this.currentIndustryHaveFactory)
-      // for (let i = 0; i < this.currentIndustryHaveFactory.length; i++) {
-      //   const e = this.currentIndustryHaveFactory;
-      //   console.log('---->',e)
-      //   // if(e.id==this.showFactoryItem) {
-      //   //   tid=i; 
-      //   // }    
-      // }
+      print.log(that.temp,item)      
       try {
-        let addNumber= Number(that.temp.factories[index].indusland_factory.number) + Number(that.number)
-        console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}&condition=0`
-        console.log(s)
-        that.axios({
-        method: "post",
-        url: s
+        let n1=0;
+        for (let i = 0; i < this.temp.factories.length; i++) {
+          const e = this.temp.factories[i];
+          if(e.id==item.id) n1+=e.indusland_factory.number;
+        }
+        let addNumber= Number(n1) + Number(that.number)
+        req.post_Param('api/ass/indusland_factory',{
+          judge:5,
+          indusland_id:that.temp.id,
+          factory_id:item.id,
+          number:addNumber
         })
         .then(res => {       
-          console.log(res.data)   
+          print.log(res.data)   
           if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
             that.init()
@@ -414,15 +395,15 @@ export default {
       } 
       catch (error) {
         let addNumber= Number(that.number)
-        console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory?judge=5&indusland_id=${that.temp.id}&factory_id=${that.showFactoryItem[index].id}&number=${addNumber}&condition=0`
-        console.log(s)
-        that.axios({
-        method: "post",
-        url: s
+        print.log(addNumber)
+        req.post_Param('api/ass/indusland_factory',{
+          'judge':5,
+          'indusland_id':that.temp.id,
+          'factory_id':item.id,
+          'number':addNumber
         })
         .then(res => {       
-          console.log(res.data)   
+          print.log(res.data)   
           if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
             that.init()
@@ -432,18 +413,16 @@ export default {
         })
       }     
     },
+    //获取工业用地-工厂 中间表id，来配置新生产线
     getInduslandFactoryId(indusland_id,factory_id) {
-      ////获取工业用地-工厂 中间表id，来配置新生产线
-      let that=this
-      let s=`${app.data().globleUrl}/ass/indusland_factory?judge=7&indusland_id=${indusland_id}&factory_id=${factory_id}`
-        console.log(s)
-        that.axios({
-        method: "post", 
-        url: s
-        })
+      req.post_Param('api/ass/indusland_factory',{
+        'judge':7,
+        'indusland_id':indusland_id,
+        'factory_id':factory_id
+      })
         .then(res => {
           if(res){
-            console.log(res.data)
+            print.log(res.data)
             this.tempInduslandFactoryId=res.data.id
             this.getTotalFactoryHaveLine();
           }else{
@@ -451,8 +430,8 @@ export default {
           }
         })
     },
-    getTotalFactoryHaveLine(){
-        //获取当前工厂已有生产线总数
+    //获取当前工厂已有生产线总数
+    getTotalFactoryHaveLine(){       
         let total=0;
         this.showInduslandFactoryLineItem.forEach(el => {
           if(Number(el.id)==Number(this.tempInduslandFactoryId)){
@@ -460,81 +439,80 @@ export default {
               total+=element.indusland_factory_line.number
             });
           }
-        });
-        console.log('total-->',total)        
+        });    
         this.currentChoosedFactoryHaveLineTotal=total;
     },
+    //购买生产线 绑定 到工厂
     sendPriceToLine(item,index,money,number,line_id) {
-      //购买生产线 绑定 到工厂
       let that=this
-      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}`
-        console.log(s)
-        that.axios({
-        method: "post", 
-        url: s
-        })
+      req.post(`api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`)
         .then(res => {
           if(res){
+            // 更新页面
             that.init()
-            that.sendLineNumber(item,index)
+            that.sendLineNumber(item)
 
-            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id   //***** 减钱 *****/
-            this.axios({
-            method: "post",
-            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-            })
+            // 获取资产信息
+            apis.getOneStatisticByCompanyId(that.company_id)
             .then(res => {
-              let float=res.data[0].float-money;
-              let fixed=res.data[0].fixed+money;
-              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
-              this.axios({
-                method: "post",
-                url: s
-                })
+              let float=res.data.float-money;
+              let fixed=res.data.fixed+money;
+              // 更新资产信息
+              req.post_Param('api/statistic',{
+                'judge':4,
+                'float':float,
+                'fixed':fixed,
+                'company_id':that.company_id
+              })
+              // 写入交易信息
+              req.post_Param('api/transaction',{
+                'judge':1,
+                'id':0,
+                'Yearid':that.Yearid,
+                'inout':1,
+                'type':4,
+                'kind':3,
+                'price':money,
+                'number':number,
+                'me':that.company_id,
+                'line_id':line_id
+              })
             })
-
-            let year=window.sessionStorage.getItem('year')
-              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${company_id}&line_id=${line_id}`;   
-              console.log(e)
-              this.axios({
-                method: "post",
-                url: e
-                })
-
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
     },
-    sendLineNumber(item,index) {
+    sendLineNumber(item) {
       //更改 生产线 数量
-      let that=this  
-      let tid=null;
-      for (let i = 0; i < this.showInduslandFactoryLineItem.length; i++) {
-        const e = this.showInduslandFactoryLineItem[i];
-        if(e.id==this.tempInduslandFactoryId) {
-          tid=i; 
-        }    
-      }
-      let tid1=null;
-      for (let j = 0; j < this.showInduslandFactoryLineItem[tid].lines.length; j++) {
-        const e = this.showInduslandFactoryLineItem[tid].lines[j];
-        if(e.id==item.id) {
-          tid1=j; 
-        }    
-      }
+      let that=this        
       try {
-        let addNumber= Number(that.temp.lines[tid1].indusland_factory_line.number) + Number(that.number)
-        console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}&condition=0`
-        console.log(s)
-        that.axios({
-        method: "post",
-        url: s
+        let tid=null;
+        for (let i = 0; i < this.showInduslandFactoryLineItem.length; i++) {
+          const e = this.showInduslandFactoryLineItem[i];
+          if(e.id==this.tempInduslandFactoryId) {
+            tid=i; 
+          }
+        }
+        let tid1=null;
+        for (let j = 0; j < this.showInduslandFactoryLineItem[tid].lines.length; j++) {
+          const e = this.showInduslandFactoryLineItem[tid].lines[j];
+          if(e.id==item.id) {
+            tid1=j; 
+          }    
+        }
+        print.log('定位数量单元',tid1)
+        let addNumber= Number(this.showInduslandFactoryLineItem[tid].lines[tid1].indusland_factory_line.number) + Number(that.number)
+        print.log(addNumber)
+        req.post_Param('api/ass/indusland_factory_line',{
+          'judge':6,
+          'indusland_factory_id':this.tempInduslandFactoryId,
+          'line_id':item.id,
+          'number':addNumber
         })
         .then(res => {       
-            that.init()
-          console.log(res.data)   
+          that.init()
+          print.log(res.data)   
           if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
           }else{
@@ -543,93 +521,57 @@ export default {
         })
       } catch (error) {
         let addNumber= Number(that.number)
-        console.log(addNumber)
-        let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=6&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${this.showLineItem[index].id}&number=${addNumber}&condition=0`
-        console.log(s)
-        that.axios({
-        method: "post",
-        url: s
+        req.post_Param('api/ass/indusland_factory_line',{
+          'judge':6,
+          'indusland_factory_id':this.tempInduslandFactoryId,
+          'line_id':item.id,
+          'number':addNumber
         })
         .then(res => {          
-            that.init()
-          console.log(res.data)   
+          that.init()
+          print.log(res.data)   
           if(res){
             s_alert.Success("下单成功", "正在加载……", "success");
           }else{
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
-      }
-      
-
+      }    
     },
+    //显示已购 工业用地
     showMyIndusland() {
-      //显示已购 工业用地
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/indusland_factory?judge=4&company_id=${userinfo[0].company_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/ass/indusland_factory',{
+        'judge':4,
+        'company_id':this.company_id
+      })
         .then(res => {          
           this.showCompeteIndusland=res.data;
-          console.log('工业用地-工厂 对应关系',this.showCompeteIndusland)
+          print.log('工业用地-工厂 对应关系',this.showCompeteIndusland)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //显示 工厂
     showAllFactory() {
-      //显示 工厂
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/factory?judge=0`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/factory',{'judge':0})
         .then(res => {
-          console.log('不同种类的生产线',res.data);
+          print.log('不同种类的生产线',res.data);
           this.showFactoryItem = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
-    showAllLine() {
-      //显示 生产线 
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/line?judge=0`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+    //显示 生产线 
+    showAllLine() {      
+      req.post_Param('api/line',{'judge':0})
         .then(res => {
-          console.log('不同种类的生产线',res.data);
+          print.log('不同种类的生产线',res.data);
           this.showLineItem = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
-    showInduslandFactoryLine() {
-      //显示 生产线  (工业用地-工厂 对应的 生产线 汇总信息)
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=5`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+    //显示 生产线  (工业用地-工厂 对应的 生产线 汇总信息)
+    showInduslandFactoryLine() {    
+      req.post_Param('api/ass/indusland_factory_line',{'judge':5})
         .then(res => {
-          console.log('工业用地-工厂对应 生产线',res.data);
+          print.log('工业用地-工厂对应 生产线',res.data);
           this.showInduslandFactoryLineItem = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     }
   }
 };

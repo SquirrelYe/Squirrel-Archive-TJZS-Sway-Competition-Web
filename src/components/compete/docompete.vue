@@ -51,6 +51,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
+                            <th>id</th>
                             <th>矿区星级</th>
                             <th>属性</th>
                             <th>元素储量</th>
@@ -64,8 +65,9 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showMiningItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
+                            <td>{{item.id}}</td>
                             <td>{{item.star}}</td>
                             <td>{{item.source_id}}</td>
                             <td>{{item.reserve}}</td>
@@ -76,8 +78,8 @@
                             <td>{{item.price}}</td>
                             <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="m(index,1)">
-                                <i class="fa  fa-tags"></i>
+                              <a class="waves-effect waves-light" @click="openSetting(item,1)" data-toggle="tooltip" data-placement="top" title="竞拍出价">
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" ></i>
                               </a>
                             </td>
                           </tr>
@@ -85,8 +87,29 @@
                       </table>
                     </div>
                   </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                        <ul class="pagination" style="float:right">
+                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                          </li>
+                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                          </li>
+                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p>
                 </div>
                 <!-- 工业用地展示处 -->
                 <div class="tab-pane" id="profile">
@@ -96,6 +119,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
+                            <th>ID</th>
                             <th>型号</th>
                             <th>土地面积</th>
                             <th>生产效率提升</th>
@@ -109,8 +133,9 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showInduslandItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
+                            <td>{{item.id}}</td>
                             <td>{{item.model}}</td>
                             <td>{{item.measure}}</td>
                             <td>{{item.efficient}}</td>
@@ -121,8 +146,8 @@
                             <td>{{item.price}}</td>
                             <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal1" @click="m(index,2)">
-                                <i class="fa  fa-tags"></i>
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="竞拍出价">
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal1" @click="openSetting(item,2)" ></i>
                               </a>
                             </td>
                           </tr>
@@ -130,8 +155,29 @@
                       </table>
                     </div>
                   </div>
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                        <ul class="pagination" style="float:right">
+                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                          </li>
+                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                          </li>
+                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p>
                 </div>
                 <!-- 商业用地展示处 -->
                 <div class="tab-pane" id="messages">
@@ -141,6 +187,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
+                            <th>ID</th>
                             <th>等级</th>
                             <th>品牌提升</th>
                             <th>增值空间</th>
@@ -152,8 +199,9 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showCommerlandItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
+                            <td>{{item.id}}</td>
                             <td>{{item.level}}</td>
                             <td>{{item.brand}}</td>
                             <td>{{item.increment}}</td>
@@ -162,17 +210,38 @@
                             <td>{{item.price}}</td>
                             <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal2" @click="m(index,3)">
-                                <i class="fa  fa-tags"></i>
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="竞拍出价">
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal2" @click="openSetting(item,3)" ></i>
                               </a>
                             </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
-                  </div>
+                  </div>    
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                        <ul class="pagination" style="float:right">
+                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                          </li>
+                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                          </li>
+                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>              
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p>
                 </div>
               </div>
             </div>            
@@ -180,9 +249,6 @@
         </div>
       </div>
     </div>
-
-
-
     <!-- mining -->
     <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -320,6 +386,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -334,19 +405,26 @@ export default {
       
       model:"",
       price:'',
-      givePrice:''
+      givePrice:'',
+
+      items: [],
+      showItems: [],
+      PageShowSum: 10,
+      currentPage: "0",
+      sumPage: null,
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    
   },
   mounted() {
     this.showMining();
   },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+  },
   filters: {
     formatTime(val) {
-      //console.log(val)
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
     formatCondition(val){
@@ -357,111 +435,148 @@ export default {
       if(val==2) return '定向公司发送'
     }
   },
-  //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
   methods: {
-    m(index,judge){
+    openSetting(item,judge){
       this.givePrice=0
       //矿区
       if(judge==1){
-        this.model=this.showMiningItems[index]
-        console.log('model',this.model)
+        this.model=item
         this.getMaxPrice(this.model,judge)
       }
       //工业用地
       if(judge==2){
-        this.model=this.showInduslandItems[index]
-        console.log('model',this.model)
+        this.model=item
         this.getMaxPrice(this.model,judge)
       }
       //商业用地
       if(judge==3){
-        this.model=this.showCommerlandItems[index]
-        console.log('model',this.model)
+        this.model=item
         this.getMaxPrice(this.model,judge)
       }
     },
     getMaxPrice(m,type){
       //获取竞拍时某一商品已出价
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/compete?judge=5&type=${type}&thingid=${m.id}&company_id=${userinfo[0].company_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/compete',{
+        'judge':5,
+        'type':type,
+        'thingid':m.id,
+        'company_id':JSON.parse(ses.getSes('userinfo')).company_id
+      })
         .then(res => {
-          console.log(res.data);
+          print.log('前一次出价',res.data);
           this.price = res.data.auction;
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //出价
     sendPrice(type){
-      //出价
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/compete?judge=4&type=${type}&thingid=${this.model.id}&company_id=${userinfo[0].company_id}&auction=${this.givePrice}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/compete',{
+        'judge':1,
+        'type':type,
+        'thingid':this.model.id,
+        'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
+        'auction':this.givePrice
+      })
         .then(res => {
-          console.log(res.data);
-          s_alert.Success(`你的此次出价为：${this.givePrice}`, "正在加载……", "success");
+          print.log(res.data);
+          // 更新竞拍价
+          req.post_Param('api/compete',{
+            'judge':4,
+            'type':type,
+            'thingid':this.model.id,
+            'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
+            'auction':this.givePrice,
+            'condition':0,
+            'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid
+          })
+          .then(res=>{
+            print.log(res.data)
+            s_alert.Success(`你的此次出价为：${this.givePrice}`, "正在加载……", "success");
+          })
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //获取政府矿区竞拍汇总表
     showMining() {
-      //获取政府矿区竞拍汇总表
-      let s=`${app.data().globleUrl}/mining?judge=0`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/mining',{'judge':0})
         .then(res => {
-          console.log(res.data);
+          print.log(res.data);
           this.showMiningItems = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
-    showIndus() {
-      //获取政府工业用地竞拍汇总表
-      let s=`${app.data().globleUrl}/indusland?judge=0`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+    //获取政府工业用地竞拍汇总表  
+    showIndus() {    
+      req.post_Param('api/indusland',{'judge':0})
         .then(res => {
-          console.log(res.data);
+          print.log(res.data);
           this.showInduslandItems = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //获取政府商业用地竞拍汇总表
     showCommer() {
-      //获取政府商业用地竞拍汇总表
-      let s=`${app.data().globleUrl}/commerland?judge=0`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/commerland',{'judge':0})
         .then(res => {
-          console.log(res.data);
+          print.log(res.data);
           this.showCommerlandItems = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    },
+// -----------------------------------------------------------分页模板-------------------------------------------------------------
+    show(items) {
+      this.items=items;
+      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+      //页面加载完成，默认加载第一页
+      let page = Number(this.currentPage) + 1;
+      this.showEachPage(page);
+      print.log("当前数据总页为：--->", this.sumPage);
+    },
+    switchPage(page) {
+      let p = page - 1;
+      this.currentPage = `${p}`;
+      print.log("当前-->", page);
+      this.showEachPage(page);
+    },
+    showEachPage(page) {
+      let all = this.items;
+      this.showItems = [];
+      for (
+        let i = (page - 1) * this.PageShowSum;
+        i < page * this.PageShowSum;
+        i++
+      ) {
+        if (all[i] == null) {
+          break;
+        } else {
+          this.showItems.push(all[i]);
+        }
+      }
+    },
+    nextPage() {
+      if (this.currentPage == this.sumPage - 1) {
+        s_alert.basic("已经到达最后一页了……");
+      } else {
+        let p = Number(this.currentPage) + 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+    previousPage() {
+      if (this.currentPage == "0") {
+        s_alert.basic("已经到达最前面了……");
+      } else {
+        let p = Number(this.currentPage) - 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
   }
 };
 </script>

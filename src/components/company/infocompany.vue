@@ -37,11 +37,11 @@
                         <td>{{item.office}}</td>
                         <!-- <td>{{item.created_at}}</td> -->
                         <td class="actions" align='center'>
-                          <a class="on-default edit-row" data-toggle="modal" data-target="#myModal" @click="editItem(index)">
-                            <i class="fa fa-pencil"></i>
+                          <a class="on-default edit-row" data-toggle="modal" data-target="#myModal" @click="editItem(item)">
+                            <i class="fa fa-pencil"  data-toggle="tooltip" data-placement="top" title="编辑成员信息"></i>
                           </a>
-                          <a class="on-default remove-row" @click="deleteItem(index)">
-                            <i class="fa fa-trash-o"></i>
+                          <a class="on-default remove-row" @click="deleteItem(item)">
+                            <i class="fa fa-trash-o" data-toggle="tooltip" data-placement="top" title="开除此成员"></i>
                           </a>
                         </td>
                       </tr>
@@ -66,7 +66,6 @@
                   <table class="table table-bordered table-striped" style id="datatable-editable">
                     <thead>
                       <tr>
-                        <th>#</th>
                         <th>公司ID</th>
                         <th>公司名称</th>
                         <th>公司法人</th>
@@ -77,7 +76,6 @@
                     </thead>
                     <tbody>
                       <tr class="gradeX">
-                        <td>1</td>
                         <td>{{meinfo.id}}</td>
                         <td>{{meinfo.name}}</td>
                         <td>{{meinfo.legal}}</td>
@@ -120,7 +118,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="send()">确认修改</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="modified(model.id)">确认修改</button>
             </div>
         </div>
         </div>
@@ -131,6 +129,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require('moment');
 var App = app;
@@ -155,92 +158,67 @@ export default {
     },
   },
   mounted() {
-    this.mocks();
-    this.showMe()
+    this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   methods: {
-    mocks() {
-      var that = this;
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/sway?judge=10&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      that.axios({
-        method: "post",
-        url: s
-        })
-        .then(res => {
-          console.log(res.data);
-          that.showItems = res.data;
-        })
-        .catch(err => {
-          console.log(err);
-        });
+    init(){
+      this.getPartner();
+      this.showMe()
     },
-    send(){
-      var that = this;
-      let s=`${app.data().globleUrl}/sway?judge=11&sway_id=${that.model.id}&office=${that.office}`
-      console.log(s)
-      that.axios({
-        method: "post",
-        url: s
-        })
-        .then(res => {
-          console.log(res.data);
-          that.mocks()
-        })
-        .catch(err => {
-          console.log(err);
-        });
-
+    //获取公司 成员信息
+    getPartner() {
+      req.post_Param('/api/sway',{
+        'judge':10,
+        'company_id':JSON.parse(ses.getSes('userinfo')).company_id
+      })
+      .then(res => {
+        console.log(res.data);
+        this.showItems = res.data;
+      })
     },
-    editItem(index) {
-      this.model=this.showItems[index]
-      console.log(this.model);
+    //修改职位
+    modified(uid){
+      req.post_Param('api/sway',{
+        'judge':11,
+        'sway_id':uid,
+        'office':this.office
+      })
+      .then(res => {
+        console.log(res.data);
+        this.init()
+      })
     },
-    deleteItem(index) {
-      console.log(index);
-      let del=this.showItems[index]
+    //删除成员-提升框
+    deleteItem(item) {
       let that=this
       if(confirm('确定删除吗')){
-        that.dele(del)
+        that.dele(item)
       }else{
 
       }
     },
-    
-    dele(del){
-      let that=this
-      let s=`${app.data().globleUrl}/ass/company_sway?judge=1&sway_id=${del.id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+    //删除 数据库
+    dele(item){
+      req.post_Param('/api/ass/company_sway',{
+        'judge':1,
+        'sway_id':item.id
       })
       .then(res => {
         console.log(res.data);
-        that.mocks()
+        this.init()
         swal("删除成功!", "你开除了一名成员", "success");
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
-
+    //显示自己公司信息
     showMe(){
-      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-      let s=`${app.data().globleUrl}/company?judge=4&id=${company_id}`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
-      })
-      .then(res => {
-        this.meinfo=res.data
-        console.log(res.data)
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      this.meinfo=JSON.parse(ses.getSes('userinfo')).company
+      print.log(this.meinfo)
+    },
+    editItem(item){
+      this.model=item
     }
   }
 };

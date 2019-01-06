@@ -60,11 +60,18 @@
             </div> 
         </div> 
     </div> 
-    </div>
+    <button @click="test">测试</button>
+</div>
 </template>
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
+const async = require('async')
 import app from "../../App.vue";
 
 export default {
@@ -88,35 +95,120 @@ export default {
       if (this.name == "" || this.legal == ""|| this.code == ""|| this.area == ""|| this.others == "") {
         s_alert.basic("某一项输入为空！");
       } else {
-        // s_alert.Timer("ok", "ok");
         this.submitcom();        
       }
     },
     submitcom(){
-        let url=`${app.data().globleUrl}/company?judge=1&id=0&name=${this.name}&legal=${this.legal}&code=${this.code}&area=${this.area}&condition=0`
-        console.log(url)
-        this.axios({
-          method: "post",
-          url: url
-        })
-          .then(res => {
-            if (res.data.success) {
-                s_alert.Success("公司创建成功", "正在加载……", "success"); 
-                setTimeout(() => {
-                    this.$router.push({name:'infocompany'})
-                }, 2000);           
-            } else {
-              s_alert.Timer("公司创建失败", "。。。");
-            }
-          })
-          .catch(error => {
-            console.log(error);
+        let that=this
+        async.waterfall([
+        //串行，前一个任务的结果传递给后一个任务。
+        callback=> {              
+            that.creatCompany(callback);
+        },
+        (cid,callback)=> {
+            that.enterCompany(cid,callback);
+        },
+        (uid,callback)=> {
+            that.updateOffice(uid,callback);
+        },
+        (uid,callback)=> {
+            that.updateUserInfoSession(uid,callback);
+        }
+        ],
+        function(err, results) {
+            print.log(err,results)
             s_alert.Timer("公司创建失败", "请检查网络状况");
-          });
+        })
+    },
+    creatCompany(callback){
+        //创建公司
+        req.get_Param('api/company',{
+            'judge':1,
+            'name':this.name,
+            'legal':this.legal,
+            'code':this.code,
+            'area':this.area,
+            'condition':0
+        })
+        .then(res => {
+            s_alert.Success("公司创建成功", "正在自动进入公司……", "success");  
+            callback(null,res.data.id)
+        })
+    },
+    enterCompany(cid,callback){
+        //加入公司
+        let userinfo=ses.getSes('userinfo')[0]
+        req.get_Param('/api/ass/company_sway',{
+            'judge':0,
+            'sway_id':userinfo.id,
+            'company_id':cid
+        })
+        .then(res => {
+            if(res.data.success){
+                callback(null,userinfo.id)
+            }
+            else{
+                s_alert.Timer("加入失败，请检查……");
+            }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    updateOffice(uid,callback){
+        //更新职位
+        req.get_Param('/api/sway',{
+            'judge':11,
+            'sway_id':uid,
+            'office':'CEO'
+        })
+        .then(res => {
+            callback(null,uid)
+            s_alert.Success("职位更新成功", "请稍等……", "success");
+        })
+    },
+    updateUserInfoSession(uid,callback){
+        apis.getOneSwayById(uid)
+        .then(res=>{
+            ses.setSes("userinfo", JSON.stringify(res.data));
+            s_alert.Success("用户信息更新成功", "2秒后自动跳转到公司……", "success");
+            setTimeout(() => {                
+                this.$router.push({name:'infocompany'})
+            }, 2000);
+        })
+    },
+
+
+
+    test(){
+        // apis.getAllSway()
+        // apis.getOneSwayById(1)
+        // apis.getAllCompany()
+        // apis.getOneCompanyById(1)
+        // apis.getAllStatistic()
+        // apis.getOneStatisticByCompanyId(1)
+        // apis.getAllTransation()
+        // apis.getOneTransationByCompanyId(1)
+        apis.getGameYear(1)
+        // apis.getAllGoodsStock()
+        // apis.getOneGoodsStockByCompanyId(1)
+        // apis.getAllSourceStock()
+        // apis.getOneSourceStockByCompanyId(1)
+        // apis.getAllGoods()
+        // apis.getOneGoodByCompanyId(1)
+
+        .then(res => {
+            print.log(res.data)
+        })
+        .catch(err => {
+            console.warn(err);
+        });
     }
+
   }
 };
 </script>
 
 <style>
+
 </style>

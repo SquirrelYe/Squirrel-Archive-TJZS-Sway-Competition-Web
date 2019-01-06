@@ -77,9 +77,9 @@
                             <td>{{item.number}}</td>
                             <td>{{item.created_at|formatTime}}</td>
                             <td>{{item.updated_at|formatTime}}</td>
-                            <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,0)">
-                                <i class="fa  fa-tags"></i>
+                            <td class="actions">
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品">
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
                               </a>
                             </td>
                           </tr>
@@ -88,7 +88,7 @@
                     </div>
                   </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
                 </div>
                 <!-- 产品交易展示处 -->
                 <div class="tab-pane" id="profile">
@@ -113,12 +113,12 @@
                             <td>{{item.commerresearch.name}}</td>
                             <td>{{item.company.name}}</td>
                             <td>{{item.number}}</td>
-                            <td>{{item.commerresearch.price}}</td>
+                            <td>{{item.price}}</td>
                             <td>{{item.created_at|formatTime}}</td>
                             <td>{{item.updated_at|formatTime}}</td>
-                            <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,1)">
-                                <i class="fa  fa-tags"></i>
+                            <td class="actions">
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品">
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
                               </a>
                             </td>
                           </tr>
@@ -127,7 +127,7 @@
                     </div>
                   </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
                 </div>
                 <!-- 已有贷款信息展示 -->
                 <div class="tab-pane" id="loan">
@@ -156,12 +156,12 @@
                             <td>{{item.end}}</td>
                             <td>{{item.rate}}</td>
                             <td>{{item.send}}</td>
-                            <td>{{item.condition}}</td>
+                            <td>{{item.condition|formatLoanCondition}}</td>
                             <td>{{item.created_at|formatTime}}</td>
                             <td>{{item.detail}}</td>
-                            <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal" @click="openSetting(index,2)">
-                                <i class="fa  fa-tags"></i>
+                            <td class="actions">
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="还清贷款">
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
                               </a>
                             </td>
                           </tr>
@@ -170,7 +170,7 @@
                     </div>
                   </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
                 </div>
                 <!-- 政府贷款展示处 -->
                 <div class="tab-pane" id="messages">
@@ -327,6 +327,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 const moment = require("moment");
 const notify= require('bootstrap-notify');
 import app from "../../App.vue";
@@ -338,7 +343,6 @@ export default {
     return {
       //公司信息
       company_id:'',
-      companyAllInfo:'',
       //界面信息
       showSourceItems: "",
       showGoodsItems: "",
@@ -362,12 +366,13 @@ export default {
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
-    this.company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+    this.company_id=JSON.parse(ses.getSes('userinfo')).company_id
   },
   mounted() {
     this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters: {
     formatTime(val) {
@@ -375,7 +380,7 @@ export default {
     },
     sumPrice(x,y){
         return x*y
-        console.log(x,y)
+        print.log(x,y)
     },
     formatLoanCondition(x){
       if(x==0) return '未还款'
@@ -385,207 +390,181 @@ export default {
   methods: {
     init(){
       this.showSource();
-      this.showAllCompanyToFormat() 
-      // this.showGoods();
-      // this.doLoan()
     },
-    openSetting(index,x){
-      if(x==0) {this.model=this.showSourceItems[index];console.log(this.model)}
-      if(x==1) {this.model=this.showGoodsItems[index];console.log(this.model)}
-      if(x==2) this.model=this.showLoanItem[index]
-      this.number=0      
+    // 点击购买
+    openSetting(item){
+      this.model=item;
+      this.number=0;
+      print.log(this.model);
     },
+    // 购买
     sendPrice(index,model){
-      console.log(index,model)
+      print.log(index,model)
 
        if(index==0){ //购买 原料
-        let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-        if(model.me!=userinfo[0].company_id){
-          let s=`${app.data().globleUrl}/transaction?judge=2&detail=${this.detail}&other=${userinfo[0].company_id}&id=${model.id}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+        if(model.me!=this.company_id){
+          req.post_Param('api/transaction',{
+            'judge':2,
+            'detail':this.detail,
+            'other':this.company_id,
+            'id':model.id
           })
           .then(res => {
-            console.log(res.data);
+            print.log(res.data);
             s_alert.Success("下单成功", "正在加载……", "success");
             //追加到 库存
             this.appendToStock(index,model);
             //刷新 页面
             this.showSource()
           })
-          .catch(err => {
-            console.log(err);
-          });
         }else{
           s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
         }        
       }
 
       if(index==1){ //购买 产品
-        let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-        if(model.me!=userinfo[0].company_id){
-          let s=`${app.data().globleUrl}/transaction?judge=2&detail=${this.detail}&other=${userinfo[0].company_id}&id=${model.id}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+        if(model.me!=this.company_id){
+          req.post_Param('api/transaction',{
+            'judge':2,
+            'detail':this.detail,
+            'other':this.company_id,
+            'id':model.id
           })
           .then(res => {
-            console.log(res.data);
-            // s_alert.Success("下单成功", "正在加载……", "success");
+            print.log(res.data);
+            s_alert.Success("下单成功", "正在加载……", "success");
             //追加到 库存
             this.appendToStock(index,model);
             //刷新 页面
             this.showGoods()
           })
-          .catch(err => {
-            console.log(err);
-          });
         }else{
           s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
         }        
       }
 
         if(index==2){ //还清 贷款
-          let s=`${app.data().globleUrl}/loan?judge=2&id=${model.id}&condition=1`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+          req.post_Param('api/loan',{
+            'judge':2,
+            'id':model.id,
+            'condition':1
           })
           .then(res => {
-            console.log(res.data);
+            print.log(res.data);
             s_alert.Success("还清贷款成功", "正在加载……", "success");
+            // 刷新页面
             this.showloan()
+            // 还清贷款，更新资产信息
             this.tempPriceEndLoan(model)
           })
-          .catch(err => {
-            console.log(err);
-          });
         }      
-      },
+    },
+    // 追加订单
     appendToStock(index,model){
-      //追加 原料订单
-      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
+      //追加 原料到库存
       if(index==0){
-        let s=`${app.data().globleUrl}/miniyield?judge=1&source_id=${model.source_id}&company_id=${company_id}&sum=${model.number}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
-          })
+        req.post_Param('api/miniyield',{
+          'judge':1,
+          'source_id':model.source_id,
+          'company_id':this.company_id,
+          'sum':model.number
+        })
           .then(res => {
-            console.log(res.data);
-            if(!res.data[1]){
+            print.log(res.data);
+            if(!res.data[1]){    
+              //已有此原料 更新其库存数量
               this.sendNumber(0,model,res.data[0])
-              //－钱
-              this.tempPriceFixed(company_id,model)
+              // 更新资产
+              this.tempPriceFixed(model)
+            }else{
+              // 更新资产
+              this.tempPriceFixed(model)
             }
           })
-          .catch(err => {
-            console.log(err);
-          });
       }
-      //追加 产品订单
+      //追加 产品库存
       if(index==1){
-        let s=`${app.data().globleUrl}/industryyield?judge=1&commerresearch_id=${model.commerresearch_id}&company_id=${company_id}&sum=${model.number}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
-          })
-          .then(res => {
-            console.log(res.data);
-            if(!res.data[1]){
-              this.sendNumber(1,model,res.data[0])
-              //钱
-              this.tempPriceFixed(company_id,model)
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        req.post_Param('api/industryyield',{
+          'judge':1,
+          'commerresearch_id':model.commerresearch_id,
+          'company_id':this.company_id,
+          'sum':model.number
+        })
+        .then(res => {
+          print.log(res.data);
+          if(!res.data[1]){
+            //已有此产品 更新其库存数量
+            this.sendNumber(1,model,res.data[0])
+            // 更新资产
+            this.tempPriceFixed(model)
+          }else{
+            // 更新资产
+            this.tempPriceFixed(model)
+          }
+        })
       }
     },
-          
-    tempPriceFixed(company_id,model){           //钱模板   *********************
-        let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-        this.axios({
-        method: "post",
-        url: m
+    // 更新资产模板  
+    tempPriceFixed(model){
+        req.post_Param('api/statistic',{    //获取买方资产信息
+          'judge':5,
+          'company_id':this.company_id
         })
         .then(res => {
-            let float=res.data[0].float-model.price*model.number;
-            let total=res.data[0].total-model.price*model.number;
-
-            let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
-            console.log('jian',s);
-            this
-            .axios({
-            method: "post",
-            url: s
+            let float=res.data.float-model.price*model.number;
+            let total=res.data.total-model.price*model.number;
+            // 更新资产
+            req.post_Param('api/statistic',{
+              'judge':4,
+              'total':total,
+              'float':float,
+              'company_id':this.company_id
             })
         })
 
-        let m1=`${app.data().globleUrl}/statistic?judge=5&company_id=${model.me}`
-        this.axios({
-        method: "post",
-        url: m1
+        req.post_Param('api/statistic',{    //获取卖方资产信息
+          'judge':5,
+          'company_id':model.me
         })
         .then(res => {
-            let float=res.data[0].float+model.price*model.number;
-            let total=res.data[0].total+model.price*model.number;
-
-            let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${model.me}`;   
-            console.log('jia',s);
-            this
-            .axios({
-            method: "post",
-            url: s
+            let float=res.data.float+model.price*model.number;
+            let total=res.data.total+model.price*model.number;
+            // 更新资产
+            req.post_Param('api/statistic',{
+              'judge':4,
+              'total':total,
+              'float':float,
+              'company_id':model.me
             })
         })
     },
+    //  更新储量
     sendNumber(index,model,data) {
       if(index==0){
         //更改 库存 原料储量
         try {
           let addNumber= Number(data.sum) + Number(model.number)
-          console.log('-->',addNumber)
-          let s=`${app.data().globleUrl}/miniyield?judge=2&id=${data.id}&sum=${addNumber}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+          print.log('-->',addNumber)
+          req.post_Param('api/miniyield',{
+            'judge':2,
+            'id':data.id,
+            'sum':addNumber
           })
           .then(res => {       
-            console.log(res.data)   
-            if(res){
-              s_alert.Success("下单成功", "正在加载……", "success");
-              this.init()
-            }else{
-              s_alert.Success("下单失败", "正在加载……", "success");
-            }
+            s_alert.Success("下单成功", "正在加载……", "success");
           })
         } 
         catch (error) {
           let addNumber= Number(model.number)
-          console.log(addNumber)
-          let s=`${app.data().globleUrl}/miniyield?judge=2&id=${data.id}&sum=${model.number}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+          print.log(addNumber)
+          req.post_Param('api/miniyield',{
+            'judge':2,
+            'id':data.id,
+            'sum':addNumber
           })
           .then(res => {       
-            console.log(res.data)   
-            if(res){
-              s_alert.Success("下单成功", "正在加载……", "success");
-              this.init()
-            }else{
-              s_alert.Success("下单失败", "正在加载……", "success");
-            }
+            print.log(res.data)     
+            s_alert.Success("下单成功", "正在加载……", "success");
           })
         }
       }
@@ -593,203 +572,140 @@ export default {
         //更改 库存 产品储量
         try {
           let addNumber= Number(data.sum) + Number(model.number)
-          console.log('-->',addNumber)
-          let s=`${app.data().globleUrl}/industryyield?judge=2&id=${data.id}&sum=${addNumber}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+          print.log('-->',addNumber)
+          req.post_Param('api/industryyield',{
+            'judge':2,
+            'id':data.id,
+            'sum':addNumber
           })
           .then(res => {       
-            console.log(res.data)   
-            if(res){
-              s_alert.Success("下单成功", "正在加载……", "success");
-              this.init()
-            }else{
-              s_alert.Success("下单失败", "正在加载……", "success");
-            }
+            print.log(res.data)     
+            s_alert.Success("下单成功", "正在加载……", "success");
           })
         } 
         catch (error) {
           let addNumber= Number(model.number)
-          console.log(addNumber)
-          let s=`${app.data().globleUrl}/industryyield?judge=2&id=${data.id}&sum=${addNumber}`
-          console.log(s)
-          this.axios({
-          method: "post",
-          url: s
+          print.log(addNumber)
+          req.post_Param('api/industryyield',{
+            'judge':2,
+            'id':data.id,
+            'sum':addNumber
           })
           .then(res => {       
-            console.log(res.data)   
-            if(res){
-              s_alert.Success("下单成功", "正在加载……", "success");
-              this.init()
-            }else{
-              s_alert.Success("下单失败", "正在加载……", "success");
-            }
+            print.log(res.data)     
+            s_alert.Success("下单成功", "正在加载……", "success");
           })
         }
       }      
     },
+    //市场交易 - 原料
     showSource() {
-      //市场交易 - 原料
-      let s=`${app.data().globleUrl}/transaction?judge=7`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
-      })
+      req.post_Param('api/transaction',{'judge':7})
       .then(res => {
-        console.log(res.data);
+        print.log(res.data);
         this.showSourceItems = res.data;
         this.judgeChoose=0
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
+    //市场交易 - 产品
     showGoods() {
-      //市场交易 - 产品
-      let s=`${app.data().globleUrl}/transaction?judge=6`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
-      })
+      req.post_Param('api/transaction',{'judge':6})
       .then(res => {
-        console.log(res.data);
+        print.log(res.data);
         this.showGoodsItems = res.data;
           this.judgeChoose=1
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
-    showAllCompanyToFormat() {
-      //获取所有公司信息
-      let s=`${app.data().globleUrl}/company?judge=0`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
-      })
-      .then(res => {
-        console.log(res.data);
-        this.companyAllInfo = res.data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    },
+    //市场交易 - 贷款      
     doLoan() {
-      this.currentCompanyName=JSON.parse(window.sessionStorage.getItem('companyinfo')).name
-      //市场交易 - 贷款      
+      this.currentCompanyName=JSON.parse(ses.getSes('userinfo')).company.name
     },
+    // 显示贷款信息
     showloan(){
-      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-
-      let s=`${app.data().globleUrl}/loan?judge=4&company_id=${company_id}`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/loan',{
+        'judge':4,
+        'company_id':this.company_id
       })
       .then(res => {
-        console.log(res.data);
+        print.log(res.data);
         this.showLoanItem = res.data;
         this.judgeChoose=2
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
+    // 提交贷款
     submitForm(){
       //市场交易 - 提交贷款
       //贷款信息
       let send=this.money*(1+(this.rate*this.stay));//应还总额
-      let from=Number(window.sessionStorage.getItem('yearid')) //当前财年
-      let end=Number(window.sessionStorage.getItem('yearid'))+this.stay;//应还财年
-      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-
-      let s=`${app.data().globleUrl}/loan?judge=1&from=${from}&stay=${this.stay}&end=${end}&rate=${this.rate}&detail=${this.other}&money=${this.money}&send=${send}&condition=0&company_id=${company_id}`
-      console.log(s)
-
-      this.axios({
-      method: "post",
-      url: s
+      let from=Number(JSON.parse(ses.getSes('gameinfo')).Yearid) //当前财年
+      let end=Number(JSON.parse(ses.getSes('gameinfo')).Yearid)+Number(this.stay);//应还财年
+      // 提交贷款信息
+      req.post_Param('api/loan',{
+        'judge':1,
+        'from':from,
+        'stay':this.stay,
+        'end':end,
+        'rate':this.rate,
+        'detail':this.other,
+        'money':this.money,
+        'send':send,
+        'condition':0,
+        'company_id':this.company_id
       })
       .then(res => {
-        console.log(res.data)
+        print.log(res.data)
         if(res.data[1]){
           s_alert.Success("贷款信息提交成功", "正在加载……", "success");
-          this.tempPriceLoan(company_id,this.money)
+          this.tempPriceLoan(this.money)  //更新资产
         }else{
           s_alert.Warning('贷款信息提交失败','请改正后重试……')
         }
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
-    tempPriceLoan(company_id,money){           //钱模板   *********************
-      let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-      this.axios({
-      method: "post",
-      url: m
+    // 贷款成功，增加个人资产
+    tempPriceLoan(money){
+      // 查询个人资产
+      req.post_Param('api/statistic',{
+        'judge':5,
+        'company_id':this.company_id
       })
       .then(res => {
-          let float=Number(res.data[0].float)+Number(money);
-          let total=Number(res.data[0].total)+Number(money);
-
-          let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
-          console.log(s);
-          this
-          .axios({
-          method: "post",
-          url: s
+          let float=Number(res.data.float)+Number(money);
+          let total=Number(res.data.total)+Number(money);
+          // 更新个人资产
+          req.post_Param('api/statistic',{
+            'judge':4,
+            'total':total,
+            'float':float,
+            'company_id':this.company_id
           })
           .then(res => {
-              console.log(res.data);
-              this.init()
+            print.log(res.data);
+            this.init()
           })
-          .catch(err => {
-          console.log(err);
-          });
       })
-      .catch(err => {
-          console.log(err);
-      });
     },
-    tempPriceEndLoan(model){           //钱模板   *********************
-      let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-      let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-      this.axios({
-      method: "post",
-      url: m
+    // 还清贷款，减少个人资产
+    tempPriceEndLoan(model){
+      // 查询个人资产
+      req.post_Param('api/statistic',{
+        'judge':5,
+        'company_id':this.company_id
       })
       .then(res => {
-          let float=res.data[0].float-Number(model.send);
-          let total=res.data[0].float-Number(model.send);
-
-          let s = `${app.data().globleUrl}/statistic?judge=4&total=${total}&float=${float}&company_id=${company_id}`;   
-          console.log(s);
-          this
-          .axios({
-          method: "post",
-          url: s
+        print.log('个人信息-->',res.data)
+          let float=res.data.float-Number(model.send);
+          let total=res.data.total-Number(model.send);
+          // 更新个人资产
+          req.post_Param('api/statistic',{
+            'judge':4,
+            'total':total,
+            'float':float,
+            'company_id':this.company_id
           })
-          .then(res => {
-              console.log(res.data);
-              this.init()
-          })
-          .catch(err => {
-          console.log(err);
-          });
       })
-      .catch(err => {
-          console.log(err);
-      });
     },
+    // 利率格式化
     getRate(){
       if(this.stay==0) this.rate=0;
       if(this.stay==1) this.rate=0.08;

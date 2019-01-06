@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h4 class="pull-left page-title">库存管理</h4>
+        <h4 class="pull-left page-title">公司信息</h4>
       </div>
     </div>
 
@@ -24,9 +24,8 @@
                     <th>申请状态</th>
                     <th>单价</th>
                     <th>默认最高单价</th>
-                    <th>所属商业用地</th>
                     <th>创建日期</th>
-                    <th>最后更新日期</th>
+                    <th>产品代工授权</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -38,9 +37,12 @@
                     <td>{{item.condition | formatCondition}}</td>
                     <td>{{item.price}}</td>
                     <td>{{item.maxprice}}</td>
-                    <td>{{item.commerland_id}}</td>
                     <td>{{item.created_at | formatTime}}</td>
-                    <td>{{item.updated_at | formatTime}}</td>
+                    <td>
+                      <a class="on-default" data-toggle="modal" data-target="#oem" @click="getAllCompany()">
+                        <i class="fa  fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
+                      </a>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -83,11 +85,54 @@
       </div>
     </div>
 
+    <!-- company -->
+    <div id="oem" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">产品授权</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>授权指定公司代工生产</h4></div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">                                    
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">公司名称</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" v-model="company_id">
+                                            <option v-for="(item,index) in company" :key="index" :value="item.id">{{item.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>         
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendOemToCompany()">授权到公司</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -96,7 +141,9 @@ export default {
   name: "good",
   data() {
     return {
-      showGood: "",
+      showGood: '',
+      company:'',
+      company_id:''
     };
   },
   beforeMount() {
@@ -105,6 +152,9 @@ export default {
   },
   mounted() {
       this.showMyCompete()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters:{
     formatTime(val){
@@ -118,31 +168,26 @@ export default {
   },
   methods: {
     showMyCompete() {
-    //获取自己公司竞拍情况
-    let that=this
-    let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-    let s=`${app.data().globleUrl}/ass/commerresearch_commerland?judge=3&company_id=${userinfo[0].company_id}`
-    console.log(s)
-    that.axios({
-    method: "post",
-    url: s
-    })
+    //获取自己公司产品研发情况
+    apis.getOneGoodByCompanyId(JSON.parse(ses.getSes('userinfo')).company_id)
     .then(res => {
-        console.log(res.data);
-        let arr=[] 
-        res.data.forEach(e => {
-          e.commerresearches.forEach(element => {
-            arr.push(element)
-            console.log(element)
-          });
-        });
-        this.showGood = arr;
-        console.log(arr)
+        print.log(res.data);
+        this.showGood = res.data
     })
-    .catch(err => {
-        console.log(err);
-    });
-},
+  },
+    getAllCompany(){
+        //获取公司列表
+        apis.getAllCompany()
+        .then(res => {
+          this.company = res.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    sendOemToCompany(){
+      print.log(this.company_id)
+    }
   }
 };
 </script>

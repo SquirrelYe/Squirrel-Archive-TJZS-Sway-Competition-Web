@@ -23,21 +23,19 @@
                             <div class="col-lg-4" v-for="(item,index) in showCompeteCommerland" :key="index">
                                 <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-purple' : index%3==1,'panel-success' : index%3==2}">
                                     <div class="panel-heading" style="height:40px"> 
-                                        <h3 class="panel-title" style="float:left">研究所编号  {{item.id}}</h3> 
-                                        <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(index)" v-if="showCompeteCommerland[index].research==null">配置</i>
+                                        <h3 class="panel-title" style="float:left">商业用地编号  {{item.id}}，等级 {{item.level|formatLevel}}</h3> 
+                                        <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(item)" v-if="showCompeteCommerland[index].research==null">配置研究所 </i>
                                     </div> 
                                     <div class="panel-body"> 
                                       <div class='row' v-if="showCompeteCommerland[index].research==null">
-                                        <p>
-                                          暂未配置研究所
-                                        </p>
+                                        <div style="color:yellow">暂未配置研究所</div>
                                       </div>
                                       <div class="row" v-else>       
-                                        研究所信息如下：<br>        
+                                        <div style="color:green">研究所信息如下：</div><br>        
                                         <div class="col-lg-12">
                                           <div class="btn-group">
                                               <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
-                                                {{showCompeteCommerland[index].research.id}} 
+                                                {{showCompeteCommerland[index].research.model}} 
                                                 <span class="caret"></span>
                                               </button>
                                               <ul class="dropdown-menu" role="menu">
@@ -48,8 +46,8 @@
                                                           <strong>研究所类型：</strong>{{showCompeteCommerland[index].research.model}}<br>
                                                           <strong>品牌提升：</strong>{{showCompeteCommerland[index].research.brand}}<br>
                                                           <strong>配方工艺：</strong>{{showCompeteCommerland[index].research.formula}}<br>
-                                                          <strong>购置价值：</strong>{{showCompeteCommerland[index].research.price}}<br>
-                                                          <strong>建设要求：</strong>{{showCompeteCommerland[index].research.conrequire}}<br>
+                                                          <strong>购置价值：</strong>{{showCompeteCommerland[index].research.price}}w<br>
+                                                          <strong>建设要求：</strong>至少{{showCompeteCommerland[index].research.conrequire|formatLevel}}<br>
                                                         </p>  
                                                       </div>
                                                     </a>
@@ -69,10 +67,9 @@
                   </div>
                   <hr>
                   <p>
-                    <strong>注意</strong>：拍卖过程分为
-                    <strong>明拍</strong>与
-                    <strong>暗拍</strong>两种，以上单位均为
-                    <strong>万元</strong>。
+                    <strong>
+                     每个商业用地只能建造一个研究所，研究所建造对商业用地有要求，具体请参照赛制。
+                    </strong>
                   </p>
                 </div>
           </div>
@@ -81,8 +78,6 @@
     </div>
 
     
-    <!-- <button class="btn btn-primary waves-effect waves-light" data-toggle="modal" data-target="#myModal">StandardModal</button> -->
-    <!-- Modal Content is Responsive -->
     <div id="accordion-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
       <div class="modal-dialog">
           <div class="modal-content p-0">
@@ -125,7 +120,7 @@
                             type="button"
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
-                            @click="sendPrice(index,item.price,item.id)">提交订单</button>
+                            @click="sendPrice(item,item.price,item.id)">提交订单</button>
                         </div>
                     </div> 
                   </div> 
@@ -140,6 +135,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 const moment = require("moment");
 const notify = require("bootstrap-notify");
 import app from "../../App.vue";
@@ -149,6 +149,9 @@ export default {
   name: "mine",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+      // 显示信息
       showCompeteCommerland:'',
       showResearchItems:'',
       //购买研究所
@@ -156,48 +159,47 @@ export default {
       judgeShowResearch:[]
     };
   },
-  beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+  beforeMount(){
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-    this.showMyCommerland();
-    this.showResearch()
+    this.init()
+    // 实时获取info
+    setTimeout(() => {
+      this.getInfo();
+    }, 10000);
   },
   filters: {
-    formatTime(val) {
-      //console.log(val)
+    formatTime(x) {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
     sumPrice(x, y) {
       return x * y;
-      console.log(x, y);
+      print.log(x, y);
     },
-    formatDiggerNumber(x){
-      // console.log(x)
-      if(x==null) return '暂未配置挖掘机';
-      else return x;
+    formatLevel(x){
+      if(x==1) return '投契级';
+      if(x==2) return '机构级';
+      if(x==3) return '投资级';
+      if(x==4) return '地标级';
     }
   },
-  //s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
   methods: {
-    info() {
-      $.notify(
-        {
-          // options
-          message: "Hello World"
-        },
-        {
-          // settings
-          type: "success"
-        }
-      );
+    getInfo(){
+      this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
     },
-    openSetting(index) {
+    init(){
+      this.showMyCommerland();
+      this.showResearch()
+    },
+    // 打开设置
+    openSetting(item) {
       this.judgeShowResearch=[]
-      this.temp=this.showCompeteCommerland[index]
-      let level=this.showCompeteCommerland[index].level
-      
+      this.temp=item
+      let level=item.level
+      // 根据商业用地等级确定显示生产线
       if(level==4){
         this.judgeShowResearch=this.showResearchItems
       }else if(level==3){
@@ -213,89 +215,50 @@ export default {
           }
         });
       }
-      console.log(this.temp)
-      this.showResearch()
+      print.log(this.temp)
     },
-    sendPrice(index,money,research_id) {
-      //购买研究所 绑定 到 商业用地
+    //购买研究所 绑定 到 商业用地
+    sendPrice(item,money,research_id) {
       let that=this
-      let s=`${app.data().globleUrl}/ass/commerland_research?judge=6&commerland_id=${this.temp.id}&research_id=${this.showResearchItems[index].id}`
-        console.log(s)
-        that.axios({
-        method: "post",
-        url: s
-        })
+      // 购买研究所
+      req.post_Param('api/ass/commerland_research',{
+        'judge':6,
+        'commerland_id':that.temp.id,
+        'research_id':item.id
+      })
         .then(res => {          
           s_alert.Success("下单成功", "正在加载……", "success");
           that.showMyCommerland();
-
-            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-            this.axios({
-            method: "post",
-            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-            })
+            // 查询个人资产
+            apis.getOneStatisticByCompanyId(that.company_id)
             .then(res => {
-              let float=res.data[0].float-money;
-              let fixed=res.data[0].fixed+money;
-              let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${company_id}`;   
-              this.axios({
-                method: "post",
-                url: s
-                })
+              let float=res.data.float-money;
+              let fixed=res.data.fixed+money;
+              // 更新个人资产
+              req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
             })
-
-            let year=window.sessionStorage.getItem('year')
-              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=${money}&number=1&me=${company_id}&research_id=${research_id}`;   
-              console.log(e)
-              this.axios({
-                method: "post",
-                url: e
-                })
-
+              // 写入交易
+              req.post(`api/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money}&number=1&me=${that.company_id}&research_id=${research_id}`)
         })
-        .catch(err => {
-          s_alert.Success("下单失败", "正在加载……", "success");
-        });
-
     },
-    checkMaxNumber(){
-      console.log(Number(this.number)+Number(this.haveNumber))
-      if(Number(this.number)+Number(this.haveNumber)>4){
-          s_alert.Success("矿区挖掘机数量不超过4个", "正在加载……", "warning");
-      }
-    },
+    //显示已购 商业用地
     showMyCommerland() {
-      //显示已购 商业用地
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/commerland_research?judge=4&company_id=${userinfo[0].company_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/ass/commerland_research',{
+        'judge':4,
+        'company_id':this.company_id
+      })
         .then(res => {
           this.showCompeteCommerland=res.data;
-          console.log(this.showCompeteCommerland)
+          print.log(this.showCompeteCommerland)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //显示 研究所 信息
     showResearch() {
-      //显示 研究所 信息
-      let s=`${app.data().globleUrl}/research?judge=0`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/research',{'judge':0})
         .then(res => {
-          console.log(res.data);
+          print.log(res.data);
           this.showResearchItems = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     }
   }
 };

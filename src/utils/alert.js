@@ -15,7 +15,7 @@ module.exports = {
     },
 
     //Warning Message
-    Warning(t1,t2,) {
+    Warning(t1,t2) {
         swal({
             title: t1,
             text: t2,

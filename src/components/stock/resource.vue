@@ -18,8 +18,7 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>矿区</th>
-                    <th>原料联系</th>
+                    <th>原料类型</th>
                     <th>所属公司</th>
                     <th>总量</th>
                     <th>创建时间</th>
@@ -28,18 +27,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showMiniYield" :key="item.name" v-if="item.sum!=0">
+                  <tr class="gradeX" v-for="(item,index) in showMiniYield" :key="index" v-if="item.sum>0">
                     <td>{{index}}</td>
-                    <td>{{item.mining_id}}</td>
-                    <td>{{item.source_id}}</td>
-                    <td>{{item.company_id}}</td>
+                    <td v-if="item.source">{{item.source.name}}</td><td v-else></td>
+                    <td v-if="item.company">{{item.company.name}}</td><td v-else></td>
                     <td>{{item.sum}}</td>
                     <td>{{item.created_at|formatTime}}</td>
                     <td>{{item.updated_at|formatTime}}</td>
-                    <td class="actions" align="center" @click="openSetting(item,index)">
-                      <!-- @click="chooseGoodItem(item.kind,index)" -->
-                      <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal1">
-                        <i class="fa  fa-tags"></i>
+                    <td class="actions" align="center" @click="openSetting(item)">
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架">
+                        <i class="fa fa-tags" data-toggle="modal" data-target="#myModal1"></i>
                       </a>
                     </td>
                   </tr>
@@ -73,7 +70,6 @@
                 <div class="tab-content"> 
                     <div class="tab-pane active" id="profile-2" v-if="currentChooseditem">
                       <address class="ng-scope" align='center'>
-                        <strong>原料ID:</strong>{{currentChooseditem.source_id}}<br>
                         <strong>原料名称:</strong>{{currentChooseditem.source.name}}<br> 
                         <strong>产品库存:</strong>{{currentChooseditem.sum}}<br> 
                       </address>
@@ -96,6 +92,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -104,16 +105,15 @@ export default {
   name: "resource",
   data() {
     return {
-      showMiniYield: "",
+      showMiniYield: '',
       currentChooseditem:''
     };
   },
-  beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
-  },
   mounted() {
     this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters:{
     formatTime(val) {
@@ -124,65 +124,55 @@ export default {
     init(){
       this.showMyCompete()
     },
+    //获取自己的 industryyield_commerresearch 的产品
     showMyCompete() {
-      //获取自己的 industryyield_commerresearch 的产品
-      let that=this
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/miniyield?judge=4&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/miniyield',{
+        'judge':4,
+        'company_id':JSON.parse(ses.getSes('userinfo')).company_id
       })
       .then(res => {
-        console.log(res.data);
-        that.showMiniYield = res.data;
+        print.log(res.data);
+        this.showMiniYield = res.data;
       })
-      .catch(err => {
-          console.log(err);
-      });
     },
-    openSetting(item,index){
+    // 选择
+    openSetting(item){
       this.currentChooseditem=item
-      console.log(item,index)
+      print.log(item)
     },
+    // 上架
     toPublic(model){
-      console.log(model)
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      if(model.company_id==userinfo[0].company_id){
-        let s=`${app.data().globleUrl}/transaction?judge=1&Yearid=${1}&inout=1&type=2&kind=1&price=${model.source.price}&number=${model.sum}&me=${userinfo[0].company_id}&source_id=${model.source.id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
+      print.log(model)
+      let company_id=JSON.parse(ses.getSes('userinfo')).company_id
+      let Yearid=JSON.parse(ses.getSes('gameinfo')).Yearid
+        req.post_Param('api/transaction',{
+          'judge':1,
+          'Yearid':Yearid,
+          'inout':1,
+          'type':2,
+          'kind':1,
+          'price':model.source.price,
+          'number':model.sum,
+          'me':company_id,
+          'source_id':model.source_id
         })
         .then(res => {
-          console.log(res.data);
+          print.log(res.data);
           s_alert.Success("产品上架成功", "正在加载……", "success");
           this.updateSumToZero(model)
-          this.init()
         })
-        .catch(err => {
-          console.log(err);
-        });
-      }else{
-        s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
-      }
     },
+    // 更新库存
     updateSumToZero(model){
-      let s=`${app.data().globleUrl}/miniyield?judge=2&id=${model.id}&sum=0`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/miniyield',{
+        'judge':2,
+        'id':model.id,
+        'sum':0
       })
       .then(res => {        
         this.init()
         s_alert.Success("库存更新成功", "正在加载……", "success");
       })
-      .catch(err => {
-        console.log(err);
-      }); 
     }
   }
 };

@@ -15,7 +15,7 @@
                         </ul> -->
                     </div>
                     <h4 class="page-title" style="color:red" v-if="showStasticsItem">欢迎 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{showStasticsItem.Yearid}}</h4>
-                    <h4 class="page-title" style="color:red" v-if="info">欢迎 {{info[0].name}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="info">欢迎 {{info.cname}}</h4>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                         <div class="panel-heading"> </div>
                         <div class="panel-body">
                         <div class="h2 text-purple">{{showStasticsItem.float}}</div>
-                        <span class="text-muted">流动资金</span>
+                        <span class="text-muted">流动资金(单位万)</span>
                         <div class="text-right">
                             <i class="ion-social-usd fa-2x text-purple"></i>
                         </div>
@@ -99,7 +99,7 @@
                         <div class="panel-heading"> </div>
                         <div class="panel-body">
                         <div class="h2 text-pink">{{showStasticsItem.fixed}}</div>
-                        <span class="text-muted">固定资金</span>
+                        <span class="text-muted">固定资金(单位万)</span>
                         <div class="text-right">
                             <i class="ion-ios7-cart fa-2x text-pink"></i>
                         </div>
@@ -112,7 +112,7 @@
                         <div class="panel-heading"> </div>
                         <div class="panel-body">
                         <div class="h2 text-primary">{{showStasticsItem.total}}</div>
-                        <span class="text-muted">总资产</span>
+                        <span class="text-muted">总资产(单位万)</span>
                         <div class="text-right">
                             <i class="ion-android-contacts fa-2x text-primary"></i>
                         </div>
@@ -125,7 +125,7 @@
                         <div class="panel-heading"> </div>
                         <div class="panel-body">
                         <div class="h2 text-success">{{showStasticsItem.brand}}</div>
-                        <span class="text-muted">品牌价值</span>
+                        <span class="text-muted">品牌价值(初始值1)</span>
                         <div class="text-right">
                             <i class="ion-eye fa-2x text-success"></i>
                         </div>
@@ -140,6 +140,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 const moment = require("moment");
 const notify= require('bootstrap-notify');
 import app from "../../App.vue";
@@ -170,38 +175,24 @@ export default {
       this.showStastics();
       this.getinfo()
     },
+    // 获取资产信息
     showStastics(){
-        let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-        let s=`${app.data().globleUrl}/ass/company_statistic?judge=5&company_id=${company_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+        let company_id=JSON.parse(ses.getSes('userinfo')).company_id
+        apis.getOneStatisticByCompanyId(company_id)
         .then(res => {   
-          console.log(res.data)
-          this.showStasticsItem=res.data[0] 
+          print.log(res.data)
+          this.showStasticsItem=res.data
         })
-        .catch(err => {
-          console.log(err)
-        });
     },
+    // 获取个人信息
     getinfo(){
-        let info=JSON.parse(window.sessionStorage.getItem('userinfo'))
-        this.info=info
+        this.info=JSON.parse(ses.getSes('userinfo'))
+        print.log(this.info)
     }
-}
+    }
 };
 </script>
 
 <style scoped>
-#app {
-  color: #2c3e50;
-  margin-top: 0px;
-  height: 100%;
-}
-#allmap {
-  height: 100%;
-  overflow: hidden;
-}
+
 </style>

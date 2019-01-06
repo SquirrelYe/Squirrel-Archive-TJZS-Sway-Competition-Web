@@ -76,7 +76,7 @@
                 </tbody>
               </table>
             </div>
-            <p><strong>注意:上图所示己方与对方均为对方公司ID，详细公司信息请前往 公司-> 公司信息中查看。</strong></p>
+            <p><strong>注意:上图所示价格单位均为万元。</strong></p>
           </div>
         </div>
       </div>
@@ -86,6 +86,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -94,19 +99,19 @@ export default {
   name: "showtransaction",
   data() {
     return {
-      showTransaction: "",
+      company_id:'',
+      showTransaction: '',
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    this.company_id=JSON.parse(ses.getSes('userinfo')).company_id
   },
   mounted() {
       this.showMyCompete()
   },
   filters:{
-    formatTime(val) {
-      return moment(val).format("YYYY-MM-DD HH:mm:ss");
+    formatTime(x) {
+      return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
     formatInOut(x){
       if(x==1) return '买入';
@@ -153,22 +158,12 @@ export default {
   },
   methods: {
     showMyCompete() {
-    //获取自己公司竞拍情况
-    let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id
-    let s=`${app.data().globleUrl}/transaction?judge=8&company_id=${company_id}`
-    console.log(s)
-    this.axios({
-    method: "post",
-    url: s
-    })
-    .then(res => {
-        console.log(res.data);
-        this.showTransaction = res.data;
-    })
-    .catch(err => {
-        console.log(err);
-    });
-},
+      apis.getOneTransationByCompanyId(this.company_id)
+      .then(res => {
+          console.log(res.data);
+          this.showTransaction = res.data;
+      })
+    },
   }
 };
 </script>

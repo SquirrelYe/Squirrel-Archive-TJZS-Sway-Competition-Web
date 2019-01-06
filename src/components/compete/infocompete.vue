@@ -30,7 +30,7 @@
                   <tr class="gradeX" v-for="(item,index) in showCompete" :key="item.name">
                     <td>{{index}}</td>
                     <td>{{item.Yearid}}</td>
-                    <td>{{item.type}}</td>
+                    <td>{{item.type|formatType}}</td>
                     <td>{{item.thingid}}</td>
                     <td>{{item.auction}}</td>
                     <td>{{item.condition | formatCondition}}</td>
@@ -49,6 +49,12 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -69,7 +75,6 @@ export default {
   },
   filters:{
     formatTime(val) {
-      //console.log(val)
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
     formatCondition(val){
@@ -78,25 +83,24 @@ export default {
       if(val==0) return '竞拍中'
       if(val==1) return '竞拍已结束'
       if(val==2) return '定向公司发送'
+    },
+    formatType(x){
+      if(x==1) return '矿区'
+      if(x==2) return '工业用地'
+      if(x==3) return '商业用地'
     }
   },
   methods: {
     showMyCompete() {
       //获取自己公司竞拍情况
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/compete?judge=6&company_id=${userinfo[0].company_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+      req.post_Param('api/compete',{
+        'judge':6,
+        'company_id':JSON.parse(ses.getSes('userinfo')).company_id
+      })
         .then(res => {
           console.log(res.data);
           this.showCompete = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     }
   }
 };

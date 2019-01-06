@@ -13,66 +13,61 @@
           </div>
         <!-- 外层div 判断是否隐藏 主list -->
         <div v-if="mainList" style="margin-top:20px">
-          <table class="table table-bordered table-striped" style id="datatable-editable">
-            <thead>
-              <tr>
-                <th>
-                  <i>#</i>
-                </th>
-                <th>公司ID</th>
-                <th>公司名称</th>
-                <th>公司法人</th>
-                <th>统一社会信用代码</th>
-                <th>经营范围</th>
-                <th>人数</th>
-                <th>状态</th>
-                <th>创建日期</th>
-                <th>选择加入</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
-                <td>{{index}}</td>
-                <td>{{item.id}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.legal}}</td>
-                <td>{{item.code}}</td>
-                <td>{{item.area}}</td>
-                <td>3</td>
-                <td>{{item.condition}}</td>
-                <td>{{item.created_at | formatTime}}</td>
-                <td class="actions" align="center">
-                  <a class="on-default edit-row" @click="joinCompany(index)">
-                    <i class="fa fa-paper-plane-o"></i>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped" style id="datatable-editable">
+                    <thead>
+                      <tr>
+                        <th>
+                          <i>#</i>
+                        </th>
+                        <th>公司ID</th>
+                        <th>公司名称</th>
+                        <th>公司法人</th>
+                        <th>统一社会信用代码</th>
+                        <th>经营范围</th>
+                        <th>人数</th>
+                        <th>状态</th>
+                        <th>创建日期</th>
+                        <th>选择加入</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
+                        <td>{{index}}</td>
+                        <td>{{item.id}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.legal}}</td>
+                        <td>{{item.code}}</td>
+                        <td>{{item.area}}</td>
+                        <td>3</td>
+                        <td>{{item.condition}}</td>
+                        <td>{{item.created_at | formatTime}}</td>
+                        <td class="actions" align="center">
+                          <a class="on-default edit-row" @click="joinCompany(item)" data-toggle="tooltip" data-placement="top" title="加入此公司">
+                            <i class="fa fa-paper-plane-o"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-sm-6">
-              <div
-                class="dataTables_info float-left"
-                id="datatable-editable_info"
-                role="status"
-                aria-live="polite"
-              >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
             </div>
             <div class="col-sm-6">
-              <div
-                class="dataTables_paginate paging_simple_numbers"
-                id="datatable-editable_paginate"
-              >
+              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
                 <ul class="pagination" style="float:right">
                   <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
                     <a href="javascript:void(0)" @click="previousPage()">上一页</a>
                   </li>
-                  <li
-                    class="paginate_button"
-                    v-for="(item,index) in sumPage"
-                    :key="index"
-                    :class="{ active: currentPage==index }"
-                  >
+                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
                     <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
                   </li>
                   <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
@@ -91,55 +86,106 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
+const async=require('async')
+const notify = require("bootstrap-notify");
+
 import app from "../../App.vue";
 const moment = require('moment');
 var App = app;
+
 export default {
   name: "doclist",
   data() {
     return {
       items: [],
-      filterItems: [],
       showItems: [],
       searchItems: [],
       select: [],
       isSelectedAll: false,
-      PageShowSum: 3,
+      PageShowSum: 10,
       currentPage: "0",
       sumPage: null,
       doSearchText: null,
+
       mainList: true,
       searchList: false
     };
   },
   mounted() {
-    // setInterval(() => {
-      this.getCompany();
-    // }, 5000);
+    this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters:{
     formatTime(val){
-      //console.log(val)
       return moment(val).format('YYYY-MM-DD HH:mm:ss')
     }
   },
   methods: {
-    toDocCreate() {
-      this.$router.push("doccreate");
+    init(){
+      this.getAllCompany();
+    },    
+    //获取所有公司列表
+    getAllCompany() {
+      apis.getAllCompany()
+      .then(res => {
+        print.log('获取到 公司列表信息',res.data);
+        this.items = res.data;
+        // 初始化显示列表
+        this.show();
+      })
     },
-    getCompany() {
-      this.axios
-        // .post("/companylist/api", { withCredentials: true })
-        .post(`${app.data().globleUrl}/company?judge=0`)
-        .then(res => {
-          console.log(res.data);
-          this.items = res.data;
-          this.show();
+    //加入公司流程
+    joinCompany(item) {
+      this.judgeBlong(item);
+    },
+    // 判断是否已有公司
+    judgeBlong(item){
+      let uid=JSON.parse(ses.getSes('userinfo')).id
+      req.post_Param('/api/sway',{
+        'judge':9,
+        'sway_id':uid
+      })
+      .then(res => {
+        print.log(res.data)
+        if(res.data.success) this.enterCompany(item,uid);
+        else s_alert.Timer("加入失败，只能加入一个公司……");
+      })
+    },
+    // 加入公司
+    enterCompany(item,uid){
+      req.post_Param('/api/ass/company_sway',{
+        'judge':0,
+        'sway_id':uid,
+        'company_id':item.id
+      })
+      .then(res => {
+        if(res.data.success){
+          this.updateUserInfoSession(uid)
+        }else{
+          s_alert.Timer("加入失败，请检查……");
+        }
+      })
+    },
+    // 更新用户 session信息
+    updateUserInfoSession(uid){
+        apis.getOneSwayById(uid)
+        .then(res=>{
+            ses.setSes("userinfo", JSON.stringify(res.data));
+            s_alert.Success("用户信息更新成功", "2秒后自动跳转到公司……", "success");
+            setTimeout(() => {                
+                this.$router.push({name:'infocompany'})
+            }, 2000);
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show() {
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
@@ -188,46 +234,6 @@ export default {
         this.showEachPage(p + 1);
       }
     },
-    joinCompany(index) {
-      let com=this.showItems[index];
-      let ses=JSON.parse(window.sessionStorage.getItem('userinfo'));
-      console.log(ses)
-      //查询是否已属于公司
-      let sql=`${app.data().globleUrl}/sway?judge=9&sway_id=${ses[0].id}`
-      console.log(sql)
-      this.axios
-        .post(sql)
-        .then(res => {
-          console.log(res.data)
-          if(res.data.success){
-
-              //加入公司
-              let that=this
-              let ses=JSON.parse(window.sessionStorage.getItem('userinfo'));
-              let sql=`${app.data().globleUrl}/ass/company_sway?judge=0&sway_id=${ses[0].id}&company_id=${com.id}`
-              console.log(sql)
-              that.axios
-              .post(sql)
-              .then(res => {
-                console.log(res.data)
-                if(res.data.success){
-                  s_alert.Success("加入成功，请去公司信息查看", "正在加载……", "success");
-                }else{
-                  s_alert.Timer("加入失败，只能加入一个公司……");
-                }
-              })
-              .catch(err => {
-                console.log(err);
-              });
-            
-          }else{
-            s_alert.Timer("加入失败，只能加入一个公司……");
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
     deleteItem(index) {
       // alert('delete'+index)
       var j = confirm("确认删除吗？");
@@ -263,6 +269,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 
 </style>

@@ -19,26 +19,22 @@
                   <tr>
                     <th>#</th>
                     <th>产品名称</th>
-                    <!-- <th>产品类型</th> -->
                     <th>库存</th>
                     <th>创建时间</th>
                     <th>最后更新时间</th>
-                    <!-- <th>是否上架</th> -->
                     <th>操作</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showStock" :key="item.name" v-if="item.sum!=0">
+                  <tr class="gradeX" v-for="(item,index) in showStock" :key="index" v-if="item.sum>0">
                     <td>{{index}}</td>
-                    <td>{{item.commerresearch.name}}</td>
-                    <!-- <td>{{item.kind|judgeType}}</td> -->
+                    <td v-if="item.commerresearch">{{item.commerresearch.name}}</td><td v-else></td>                    
                     <td>{{item.sum}}</td>
                     <td>{{item.created_at|formatTime}}</td>
                     <td>{{item.updated_at|formatTime}}</td>
-                    <!-- <td>{{item.ispublic|formatIsPublic}}</td> -->
-                    <td class="actions" align="center" @click="chooseGoodItem(item.kind,index)">
-                      <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal1">
-                        <i class="fa  fa-tags"></i>
+                    <td class="actions" align="center" @click="chooseGoodItem(item)">
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架">
+                        <i class="fa fa-tags" data-toggle="modal" data-target="#myModal1"></i>
                       </a>
                     </td>
                   </tr>
@@ -65,14 +61,13 @@
                     <li class="active"> 
                         <a href="#profile-2" data-toggle="tab" aria-expanded="true"> 
                             <span class="visible-xs"><i class="fa fa-user"></i></span> 
-                            <span class="hidden-xs" style="font-size:23px">普通产品上架</span> 
+                            <span class="hidden-xs" style="font-size:23px;">普通产品上架</span> 
                         </a> 
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
                     <div class="tab-pane active" id="profile-2" v-if="currentShowGoodItem">
-                      <!-- <h5> {{currentShowGoodItem}}</h5> -->
-                      <address class="ng-scope" align='center'>
+                      <address class="ng-scope" align='center' v-if="currentShowGoodItem.commerresearch">
                         <strong>产品名称:</strong>{{currentShowGoodItem.commerresearch.name}}<br>
                         <strong>产品单价:</strong>{{currentShowGoodItem.commerresearch.price}}<br> 
                         <strong>产品配方:</strong><br> 
@@ -102,6 +97,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -110,19 +110,19 @@ export default {
   name: "resource",
   data() {
     return {
-      showStock: "",
+      showStock: '',
       judgeShow:0,
       currentShowGoodItem:'',
-      Func:0,
-      giveToOEM:0
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    
   },
   mounted() {
       this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters:{
     formatTime(val) {
@@ -144,70 +144,54 @@ export default {
     init(){
       this.showMyCompete()
     },
+    //获取自己的 industryyield_commerresearch 的产品
     showMyCompete() {
-      //获取自己的 industryyield_commerresearch 的产品
-      let that=this
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/industryyield_commerresearch?judge=3&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/ass/industryyield_commerresearch',{
+        'judge':3,
+        'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
       })
       .then(res => {
-          console.log(res.data);
+          print.log(res.data);
           this.showStock = res.data;
       })
-      .catch(err => {
-          console.log(err);
-      });
     },
-    chooseGoodItem(kind,index){
-      this.judgeShow=kind
-      this.currentShowGoodItem=this.showStock[index]
-      console.log(kind,this.showStock[index])
+    // 选择产品
+    chooseGoodItem(item){
+      this.currentShowGoodItem=item
     },
-    chooseFunc(x){
-      this.Func=x;
-    },
+    // 上架
     toPublic(model){
-      console.log(model)
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      if(model.commerresearch.company_id!=userinfo[0].company_id){
-        let s=`${app.data().globleUrl}/transaction?judge=1&Yearid=${1}&inout=1&type=2&kind=2&price=${model.commerresearch.price}&number=${model.sum}&me=${userinfo[0].company_id}&commerresearch_id=${model.commerresearch_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
-        .then(res => {
-          console.log(res.data);
-          s_alert.Success("产品上架成功", "正在加载……", "success");
-          this.updateSumToZero(model)
-          this.init()
-        })
-        .catch(err => {
-          console.log(err);
-        });
-      }else{
-        s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
-      }
+      print.log(model)
+      let company_id=JSON.parse(ses.getSes('userinfo')).company_id
+      let Yearid=JSON.parse(ses.getSes('gameinfo')).Yearid
+      req.post_Param('api/transaction',{
+        'judge':1,
+        'Yearid':Yearid,
+        'inout':1,
+        'type':2,
+        'kind':2,
+        'price':model.commerresearch.price,
+        'number':model.sum,
+        'me':company_id,
+        'commerresearch_id':model.commerresearch_id
+      })
+      .then(res => {
+        console.log(res.data);
+        s_alert.Success("产品上架成功", "正在加载……", "success");
+        this.updateSumToZero(model)
+      })
     },
+    // 更新库存
     updateSumToZero(model){
-      let s=`${app.data().globleUrl}/industryyield?judge=2&id=${model.id}&sum=0`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/industryyield',{
+        'judge':2,
+        'id':model.id,
+        'sum':0
       })
       .then(res => {        
         this.init()
-        this.chooseFactoryIndex(this.factoryIndex) //更新页面
         s_alert.Success("库存更新成功", "正在加载……", "success");
       })
-      .catch(err => {
-        console.log(err);
-      }); 
     }
   }
 };
