@@ -108,7 +108,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showGoodsItems" :key="index">
+                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch'>
                             <td>{{index}}</td>
                             <td>{{item.commerresearch.name}}</td>
                             <td>{{item.company.name}}</td>

@@ -31,7 +31,7 @@
                                         <div style="color:yellow">暂未配置研究所</div>
                                       </div>
                                       <div class="row" v-else>       
-                                        <div style="color:green">研究所信息如下：</div><br>        
+                                        <div style="color:white">研究所信息如下：</div><br>        
                                         <div class="col-lg-12">
                                           <div class="btn-group">
                                               <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
@@ -47,7 +47,7 @@
                                                           <strong>品牌提升：</strong>{{showCompeteCommerland[index].research.brand}}<br>
                                                           <strong>配方工艺：</strong>{{showCompeteCommerland[index].research.formula}}<br>
                                                           <strong>购置价值：</strong>{{showCompeteCommerland[index].research.price}}w<br>
-                                                          <strong>建设要求：</strong>至少{{showCompeteCommerland[index].research.conrequire|formatLevel}}<br>
+                                                          <strong>建设要求：</strong>{{showCompeteCommerland[index].research.conrequire|formatConrequire}}<br>
                                                         </p>  
                                                       </div>
                                                     </a>
@@ -181,6 +181,11 @@ export default {
     formatLevel(x){
       if(x==1) return '投契级';
       if(x==2) return '机构级';
+      if(x==3) return '投资级';
+      if(x==4) return '地标级';
+    },
+    formatConrequire(x){
+      if(x==0) return '无要求';
       if(x==3) return '投资级';
       if(x==4) return '地标级';
     }

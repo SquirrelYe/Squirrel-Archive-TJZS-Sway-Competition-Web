@@ -72,7 +72,7 @@
                                     <td>{{item.research.formula}}</td>
                                     <td>{{item.research.conrequire}}</td>
                                     <td>
-                                      <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="openSetting(index)"></i>  
+                                      <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="openSetting(item)"></i>  
                                     </td>
                                   </tr>
                                 </tbody>
@@ -257,6 +257,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 const moment = require("moment");
 const notify = require("bootstrap-notify");
 const co = require("co")
@@ -267,6 +272,9 @@ export default {
   name: "exploit",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showCompeteCommer:'',
       // 研发产品信息
       name:'',
@@ -292,11 +300,15 @@ export default {
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
-  mounted() {    
-      this.init()
+  mounted() {
+    this.init()
+    // 实时获取info
+    setTimeout(() => {
+      this.getInfo();
+    }, 10000);
   },
   filters: {
     formatTime(val) {
@@ -310,10 +322,12 @@ export default {
     }
   },
   methods: {
+    getInfo(){
+      this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    },
     init(){      
-      let that=this
-      that.showMyCommer();
-      // that.showResearch();
+      this.showMyCommer();
     },
     initFormulaNumber(){
       this.s1=0
@@ -322,99 +336,112 @@ export default {
       this.s4=0
       this.s5=0
     },
-    openSetting(index){
+    openSetting(item){
       this.initFormulaNumber()
-      this.sumSource=this.showCompeteCommer[index].research.formula
-      this.currentCommerlandInfo=this.showCompeteCommer[index]
-      console.log(this.showCompeteCommer[index])
+      this.sumSource=item.research.formula
+      this.currentCommerlandInfo=item
+      print.log(item)
     },
     sendPrice(){
       if(this.name==''||this.func==''||this.intro==''||this.price==''){
         s_alert.Success("下单失败", "产品研发信息不能为空", "warning");
       }else{
         //执行 发送产品研发信息清单
-        console.log(this.name,this.func,this.intro,this.price,this.law)
+        print.log(this.name,this.func,this.intro,this.price,this.law)
         let tempLaw=0;
-          if(this.law) tempLaw=1;
-          else tempLaw=0;
-        let s=`${app.data().globleUrl}/commerresearch?judge=1&commerland_id=${this.currentCommerlandInfo.id}&name=${this.name}&function=${this.func}&introduction=${this.intro}&price=${this.price}&condition=0&maxprice=${this.max}&law=${tempLaw}&s1=${this.s1}&s2=${this.s2}&s3=${this.s3}&s4=${this.s4}&s5=${this.s5}&company_id=${JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
+        if(this.law) tempLaw=1;
+        else tempLaw=0;
+        req.post_Param('api/commerresearch',{
+          'judge':1,
+          'commerland_id':this.currentCommerlandInfo.id,
+          'name':this.name,
+          'function':this.func,
+          'introduction':this.intro,
+          'price':this.price,
+          'condition':0,
+          'maxprice':this.max,
+          'law':tempLaw,
+          's1':this.s1,
+          's2':this.s2,
+          's3':this.s3,
+          's4':this.s4,
+          's5':this.s5,
+          'company_id':this.company_id,
         })
         .then(res => {
+          print.log('申请产品信息->',res.data)
+          let commerresearch_id=res.data.id;
           s_alert.Success("产品研发申请发送成功", "请到 公司—>公司产品 中查看", "success");
-
-            let company_id=JSON.parse(window.sessionStorage.getItem('userinfo'))[0].company_id   //***钱***/
-            this.axios({
-            method: "post",
-            url: `${app.data().globleUrl}/statistic?judge=5&company_id=${company_id}`
-            })
+            // 查询个人资产
+            apis.getOneStatisticByCompanyId(this.company_id)
             .then(res => {
-              if(this.law){
-                let float=res.data[0].float-160;
-                let total=res.data[0].total-160;
-                let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&total=${total}&company_id=${company_id}`;  
-                this.axios({
-                method: "post",
-                url: s
+              if(this.law){     //申请专利
+                let float=res.data.float-160;
+                let total=res.data.total-160;
+                // 更新资产
+                req.post_Param('api/statistic',{
+                  'judge':4,
+                  'total':total,
+                  'float':float,
+                  'company_id':this.company_id
+                })
+                // 写入交易表
+                req.post_Param('api/transaction',{
+                  'judge':1,
+                  'id':0,
+                  'Yearid':this.Yearid,
+                  'inout':1,
+                  'type':4,
+                  'kind':3,
+                  'price':160,
+                  'number':1,
+                  'me':this.company_id,
+                  'commerresearch_id':commerresearch_id
                 })
 
-             let year=window.sessionStorage.getItem('year')
-              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=160&number=1&me=${company_id}&commerresearch_id=0`;   
-              console.log(e)
-              this.axios({
-                method: "post",
-                url: e
+              }
+              else{     //不申请专利
+                let float=res.data.float-60;
+                let total=res.data.total-60;
+                // 更新资产
+                req.post_Param('api/statistic',{
+                  'judge':4,
+                  'total':total,
+                  'float':float,
+                  'company_id':this.company_id
                 })
-
-              }else{
-                let float=res.data[0].float-60;
-                let total=res.data[0].total-60;
-                let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&total=${total}&company_id=${company_id}`;  
-                this.axios({
-                method: "post",
-                url: s
-                })
-
-             let year=window.sessionStorage.getItem('year')
-              let e=`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${year}&inout=1&type=4&kind=3&price=60&number=1&me=${company_id}&commerresearch_id=0`;   
-              console.log(e)
-              this.axios({
-                method: "post",
-                url: e
-                })
-              }              
+                // 写入交易表
+                req.post_Param('api/transaction',{
+                  'judge':1,
+                  'id':0,
+                  'Yearid':this.Yearid,
+                  'inout':1,
+                  'type':4,
+                  'kind':3,
+                  'price':60,
+                  'number':1,
+                  'me':this.company_id,
+                  'commerresearch_id':commerresearch_id
+                })   
+              }
             })
-
-            
         })
-        .catch(err => {
-          console.log(err);
-        });
       }
     },
+    //显示已购 商业用地
     showMyCommer() {
-        //显示已购 商业用地
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/commerland_research?judge=4&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/ass/commerland_research',{
+        judge:4,
+        company_id:this.company_id
       })
       .then(res => {
         this.showCompeteCommer=res.data;
-        console.log(this.showCompeteCommer)
+        print.log(this.showCompeteCommer)
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
     getMax(){
       //获取价格变化
-      console.log(this.s1,this.s2,this.s3,this.s4,this.s5)
+      print.log(this.s1,this.s2,this.s3,this.s4,this.s5)
       let sum=0;
       if(this.s1!=0) sum++;
       if(this.s2!=0) sum++;
@@ -423,14 +450,16 @@ export default {
       if(this.s5!=0) sum++;
       this.max=this.sumSource*Math.sqrt(sum)*(1+this.brand)*0.1
       //获取此产品是否存在
-      let s=`${app.data().globleUrl}/commerresearch?judge=4&s1=${this.s1}&s2=${this.s2}&s3=${this.s3}&s4=${this.s4}&s5=${this.s5}`
-      console.log('获取此产品是否存在',s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/commerresearch',{
+        'judge':4,
+        's1':this.s1,
+        's2':this.s2,
+        's3':this.s3,
+        's4':this.s4,
+        's5':this.s5
       })
       .then(res => {
-        console.log(res.data)
+        print.log(res.data)
         this.judgeGoodHave=res.data
         if(res.data.rows.length!=0){
           this.canICreatGood=false
@@ -443,12 +472,8 @@ export default {
           }
         }else{
           this.canICreatGood=true
-        }
-        
+        }        
       })
-      .catch(err => {
-        console.log(err);
-      });
     }
   }
 };

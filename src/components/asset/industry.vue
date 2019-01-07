@@ -187,8 +187,9 @@
                         </table>
                         <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
                         <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>条</strong><br>
-                        <strong style='color:green'>当前工厂允许容纳的最大生产线数量:{{currentChoosedFactoryItem.includeline}}</strong><br>
-                        <strong style='color:red'>当前工厂已配置生产线数量:{{currentChoosedFactoryHaveLineTotal}}</strong><br>                        
+                        <strong style='color:green' v-if="temp.indusland_factory">当前工厂允许容纳的最大生产线数量:</strong><br>
+                        <strong style='color:green'>工厂数量{{temp.indusland_factory.number}}*单个工厂允许容纳生产线{{currentChoosedFactoryItem.includeline}}={{temp.indusland_factory.number*currentChoosedFactoryItem.includeline}}</strong><br>
+                        <strong style='color:red'>当前工厂已配置生产线数量:{{currentChoosedFactoryHaveLineTotal}}</strong><br>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
@@ -197,7 +198,7 @@
                             class="btn btn-primary waves-effect waves-light"
                             data-dismiss="modal"
                             @click="sendPriceToLine(item,index,number*item.price,number,item.id)"
-                            v-if="number!='' && number>0 && Number(currentChoosedFactoryHaveLineTotal)+Number(number)<=Number(currentChoosedFactoryItem.includeline)"
+                            v-if="number!='' && number>0 && Number(currentChoosedFactoryHaveLineTotal)+Number(number)<=Number(temp.indusland_factory.number*currentChoosedFactoryItem.includeline)"
                           >提交订单</button>
                         </div>
                       </div>

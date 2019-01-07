@@ -328,6 +328,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 const moment = require("moment");
 const notify = require("bootstrap-notify");
 const co = require("co")
@@ -338,6 +343,9 @@ export default {
   name: "exploit",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showCompeteIndusland:'',
       showDiggerItems:'',
       showGoodItems:'',  //显示所有 已通过的 公司产品
@@ -360,11 +368,15 @@ export default {
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {    
-      this.init()
+    this.init()
+    // 实时获取info
+    setTimeout(() => {
+      this.getInfo();
+    }, 10000);
   },
   filters: {
     formatTime(val) {
@@ -390,6 +402,10 @@ export default {
     }
   },
   methods: {
+    getInfo(){
+      this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    },
     init(){      
       this.showMyIndusland();
     },
@@ -499,25 +515,17 @@ export default {
         console.log(err);
       });      
     },
+    //显示已购 工业用地
     showMyIndusland() {
-      //显示已购 工业用地
-      let that=this
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/indusland_factory?judge=4&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/ass/indusland_factory',{
+        judge:4,
+        company_id:this.company_id
       })
       .then(res => {
-        that.showCompeteIndusland=res.data;
+        this.showCompeteIndusland=res.data;
         console.log(res.data)
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
-
     chooseInduslandIndex(index){
       console.log(index)
       this.induslandIndex=index
