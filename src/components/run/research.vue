@@ -71,7 +71,7 @@
                                     <td>{{item.research.brand}}</td>
                                     <td>{{item.research.formula}}</td>
                                     <td>{{item.research.conrequire}}</td>
-                                    <td>
+                                    <td data-toggle="tooltip" data-placement="top" title="研发产品">
                                       <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="openSetting(item)"></i>  
                                     </td>
                                   </tr>
@@ -302,6 +302,9 @@ export default {
   beforeMount() {
     this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   mounted() {
     this.init()

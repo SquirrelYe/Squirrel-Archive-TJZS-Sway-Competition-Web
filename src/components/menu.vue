@@ -479,9 +479,9 @@
                   <li class="has_sub">
                     <a href="javascript:void(0)" @click="showTransaction()">订单列表</a>
                   </li>
-                  <!-- <li class="has_sub">
+                  <li class="has_sub">
                     <a href="javascript:void(0)" @click="trade()">交易明细</a>
-                  </li> -->
+                  </li>
                 </ul>
               </li>
             </ul>

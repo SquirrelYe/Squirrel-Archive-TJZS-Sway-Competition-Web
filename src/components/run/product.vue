@@ -70,6 +70,7 @@
                                     <th>占用面积</th>
                                     <th>容纳生产线数量</th>
                                     <th>建设成本</th>
+                                    <th>数量</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -78,6 +79,7 @@
                                     <td>{{currentFactoryItem.measure}}</td>
                                     <td>{{currentFactoryItem.includeline}}</td>
                                     <td>{{currentFactoryItem.price}}</td>
+                                    <td>{{currentFactoryItem.indusland_factory.number}}</td>
                                   </tr>
                                 </tbody>
                             </table>
@@ -99,9 +101,9 @@
                                 <strong>建设要求:</strong>{{item.conrequire}}<br>   
                                 <strong>已有数量:</strong>{{item.indusland_factory_line.number}}<br>                            
                                 <hr>
-                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(index)" v-if="item.indusland_factory_line.condition==1"> <i class="fa fa-spin fa-circle-o-notch"></i> </button> 
-                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(index)" v-if="item.indusland_factory_line.condition==0"> <i class="fa fa-wrench"></i> </button> 
-                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(index)" v-if="item.indusland_factory_line.condition==2"> <i class="fa fa-check"></i> </button> 
+                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(item)" v-if="item.indusland_factory_line.condition==1"> <i class="fa fa-spin fa-circle-o-notch"></i> </button> 
+                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(item)" v-if="item.indusland_factory_line.condition==0"> <i class="fa fa-wrench"></i> </button> 
+                                <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(item)" v-if="item.indusland_factory_line.condition==2"> <i class="fa fa-check"></i> </button> 
                             </div>
                           </div>
                         </div>
@@ -242,10 +244,10 @@
                                               </tr>
                                             </thead>
                                             <tbody>
-                                              <tr v-for="(item,index) in showGoodItems.rows" :key="index" :class="{'active' : index==1}">
+                                              <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}">
                                                 <td>
                                                   <div class="radio radio-success radio-single">
-                                                      <input type="radio" @input="getResearch(index)" name="sigle" aria-label="Single radio One">
+                                                      <input type="radio" @input="getResearch(item)" name="sigle" aria-label="Single radio One">
                                                       <label></label>
                                                   </div>
                                                 </td>
@@ -315,7 +317,7 @@
                   <div class="modal-footer">
                     <div v-if="tLine.indusland_factory_line">
                       <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge">开始生产</button>
+                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(FinishedResearchItem,tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge">开始生产</button>
                       <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="reBuild(FinishedResearchItem)" v-if="tLine.indusland_factory_line.condition==2">存入库存</button>
                     </div>
                   </div>
@@ -409,11 +411,11 @@ export default {
     init(){      
       this.showMyIndusland();
     },
-    openSetting(index){
-      this.tLine=this.currentLineItem.lines[index]
-      console.log('....',this.tLine)
+    openSetting(item){
+      this.tLine=item
+      print.log('选中的生产线->',this.tLine)
       this.chooseResearch=''
-      this.currentLineNumber=this.currentLineItem.lines[index].indusland_factory_line.number
+      this.currentLineNumber=item.indusland_factory_line.number
       this.number=0
       this.research=''
       this.judge=true
@@ -421,54 +423,32 @@ export default {
       this.getTotalSource()
       //如果 生产状态 condition=2 （已完成），获取已生产产品信息
       if(this.tLine.indusland_factory_line.condition==2){
-        this.showFinishedResearchItem(this.tLine.indusland_factory_line.commerresearch_id)
+        this.showFinishedResearchItem(item.indusland_factory_line.commerresearch_id)
       }
     },
-    showFinishedResearchItem(commerresearch_id){
-      //获取已完成生产 产品信息
-      let that=this
-      let s=`${app.data().globleUrl}/commerresearch?judge=7&id=${commerresearch_id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+    //获取已完成生产 产品信息
+    showFinishedResearchItem(commerresearch_id){      
+      req.post_Param('api/commerresearch',{
+        'judge':7,
+        'id':commerresearch_id
       })
       .then(res => {
-        that.FinishedResearchItem=res.data;
+        this.FinishedResearchItem=res.data;
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
+    //获取公司 通过的 所有商品
     getShowGoodItems(){
-      //获取公司 通过的 所有商品
-      let that=this
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/commerresearch?judge=6&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
-      })
+      apis.getOneGoodByCompanyId(this.company_id)
       .then(res => {
-        that.showGoodItems=res.data;
+        this.showGoodItems=res.data;
+        print.log('所有的公司产品',res.data)
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
-    getTotalSource(){
-      //显示开采的原料  用于生产产品
-      let that=this
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/miniyield?judge=4&company_id=${userinfo[0].company_id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
-      })
+    //显示开采的原料  用于生产产品
+    getTotalSource(){      
+      apis.getOneSourceStockByCompanyId(this.company_id)
       .then(res => {
-        console.log(res.data)
+        print.log(res.data)
         let s1=0,s2=0,s3=0,s4=0,s5=0;
         res.data.forEach(e => {
           if(e.source_id==1) s1+=e.sum;
@@ -478,11 +458,8 @@ export default {
           if(e.source_id==5) s5+=e.sum;
         });
         this.showHaveTotalSource=[s1,s2,s3,s4,s5]
-        console.log('仓库库存的储量为',this.showHaveTotalSource)
+        print.log('仓库库存的储量为',this.showHaveTotalSource)
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
     //判断 需要原料数 与 库存原料数 差值
     judgeTotalSurce(){
@@ -493,27 +470,46 @@ export default {
         this.judge=false
       }
     },
-    sendPrice1(){
-      s_alert.Success("矿区-挖掘机配置成功，挖掘机开始开采ing", "正在加载……", "success");
-      console.log(Date.now())
-    },
-    sendPrice(){
+    // 点击生产
+    sendPrice(researchitem,stay,capacity,number){     //研发产品信息，持续时间，产能，生产线数量
       //配置生产线 开始工作
-      let time=this.number/this.tLine.capacity
-      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=2&stay=${time}&start=${moment(Date.now()).format("YYYY-MM-DD HH:mm:ss")}&indusland_factory_line_id=${this.tLine.indusland_factory_line.id}&condition=1&commerresearch_id=${this.chooseResearch.id}` //chooseResearch
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      let time=this.number/this.tLine.capacity;
+      req.post_Param('api/ass/indusland_factory_line',{
+        'judge':2,
+        'stay':time,
+        'start':moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+        'indusland_factory_line_id':this.tLine.indusland_factory_line.id,
+        'condition':1,
+        'commerresearch_id':this.chooseResearch.id
       })
       .then(res => {        
         s_alert.Success("工业用地-工厂-生产线配置成功，开始生产", "正在加载……", "success");
         this.init()
         this.chooseFactoryIndex(this.factoryIndex)
+      }) 
+      
+      // 更新每一个原料数量
+      let usedSource=[researchitem.s1*stay*capacity*number,researchitem.s2*stay*capacity*number,researchitem.s3*stay*capacity*number,researchitem.s4*stay*capacity*number,researchitem.s5*stay*capacity*number];
+      // 循环更改数量
+      for (let i = 0; i < this.showHaveTotalSource.length; i++) {
+        const have = this.showHaveTotalSource[i];
+        const used = usedSource[i]
+        let sum = Number(have)-Number(used);
+        // 执行减少原料逻辑
+        let source_id=i+1
+        this.updateSourceStock(source_id,sum);
+      }
+      print.log('仓库原料数量更新成功！','已使用',usedSource)
+      
+    },
+    // 减少 原料库存
+    updateSourceStock(source_id,sum){
+      req.post_Param('api/miniyield',{
+        'judge':6,
+        'source_id':source_id,
+        'company_id':this.company_id,
+        'sum':sum
       })
-      .catch(err => {
-        console.log(err);
-      });      
     },
     //显示已购 工业用地
     showMyIndusland() {
@@ -523,58 +519,54 @@ export default {
       })
       .then(res => {
         this.showCompeteIndusland=res.data;
-        console.log(res.data)
+        print.log(res.data)
       })
     },
+    // 选择工业用地
     chooseInduslandIndex(index){
-      console.log(index)
+      print.log('选中工业用地',this.showCompeteIndusland[index])
       this.induslandIndex=index
       this.tIndusland= this.showCompeteIndusland[index]
       this.tFactory=this.showCompeteIndusland[index].factories  //获取对应工业用地 下的 工厂
       this.currentFactoryItem=''
       this.currentLineItem=''
     },
+    // 选择工厂
     chooseFactoryIndex(index){
-      console.log(index)
       this.factoryIndex=index
       // 显示 选择 工业用地->工厂 后对应的 工厂信息
       this.currentFactoryItem= this.showCompeteIndusland[this.induslandIndex].factories[this.factoryIndex]
+      print.log('工业用地->工厂 后对应的 工厂信息',this.currentFactoryItem)
       this.getInduslandFactoryHaveLineItem()
     },
     //获取工业用地->工厂 一一对应后的 生产线信息
     getInduslandFactoryHaveLineItem(){
-      //工业用地->工厂 一一对应后的 生产线信息
-      let that=this
-      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=8&indusland_factory_id=${this.showCompeteIndusland[this.induslandIndex].factories[this.factoryIndex].indusland_factory.id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/ass/indusland_factory_line',{
+        'judge':8,
+        'indusland_factory_id':this.showCompeteIndusland[this.induslandIndex].factories[this.factoryIndex].indusland_factory.id
       })
       .then(res => {
         this.currentLineItem=res.data[0]
-        console.log('工业用地->工厂 一一对应后的 生产线信息',res.data)
+        print.log('工业用地->工厂 一一对应后的 生产线信息',res.data)
         this.forToChangeCondition(res.data[0].lines)
       })
-      .catch(err => {
-        console.log(err);
-      });
     },
-
-    getResearch(index){ //获得选择的 生产线
-      console.log(index)
-      this.research=this.showGoodItems.rows[index]
-      this.chooseResearch=this.showGoodItems.rows[index];
+    //获得选择的 生产产品
+    getResearch(item){ 
+      print.log('选择的 生产产品',item)
+      this.research=item
+      this.chooseResearch=item;
     },
+    // 循环遍历，更改生产状态
     forToChangeCondition(data){
       let that =this
-      console.log('forToChangeCondition',data)
+      print.log('forToChangeCondition',data)
           for (let s = 0; s < data.length; s++) {
-            console.log(data[s].indusland_factory_line)
+            print.log(data[s].indusland_factory_line)
             if(Number(data[s].indusland_factory_line.condition)==1){
                 let now=moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
                 let endTime=moment(data[s].indusland_factory_line.start).add(data[s].indusland_factory_line.stay, 'minutes').format('YYYY-MM-DD HH:mm:ss');
-                console.log(now,endTime)
+                print.log(now,endTime)
                 if(now > endTime){
                   that.updateConditionToFinished(data[s].indusland_factory_line.id)
                 }
@@ -583,35 +575,32 @@ export default {
             }            
           }     
       },
+    //生产完成，重新配置挖掘机 开始工作
     updateConditionToFinished(indusland_factory_line_id){
-      //配置挖掘机 开始工作
-      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=2&indusland_factory_line_id=${indusland_factory_line_id}&condition=2`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/ass/indusland_factory_line',{
+        'judge':2,
+        'indusland_factory_line_id':indusland_factory_line_id,
+        'condition':2
       })
       .then(res => {        
         this.init()
         this.chooseFactoryIndex(this.factoryIndex) //更新页面
-      })
-      .catch(err => {
-        console.log(err);
-      });      
+      })      
     },
+    // 加入库存，重新生产
     reBuild(FinishedResearchItem){
-      //加入到 库存
-      console.log(FinishedResearchItem,this.tLine.indusland_factory_line.commerresearch_id)
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
+      //加入到 产品库存
+      print.log('加入库存，重新生产->',FinishedResearchItem,this.tLine.indusland_factory_line.commerresearch_id)
       let sum=this.tLine.indusland_factory_line.stay*this.tLine.capacity*this.tLine.indusland_factory_line.number
-      let s=`${app.data().globleUrl}/industryyield?judge=1&commerresearch_id=${this.tLine.indusland_factory_line.commerresearch_id}&company_id=${userinfo[0].company_id}&kind=1&sum=${sum}`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/industryyield',{
+        'judge':1,
+        'commerresearch_id':this.tLine.indusland_factory_line.commerresearch_id,
+        'company_id':this.company_id,
+        'kind':1,
+        'sum':sum
       })
       .then(res => {        
-        console.log(res.data)
+        print.log(res.data)
         if(res.data[1]){
           this.changeConditionToZero()
         }else{
@@ -620,41 +609,31 @@ export default {
           this.updateTotal(total,id)
         }
       })
-      .catch(err => {
-        console.log(err);
-      }); 
     },
+    // 更新产品库存
     updateTotal(total,id){
-      let s=`${app.data().globleUrl}/industryyield?judge=2&sum=${total}&id=${id}`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/industryyield',{
+        'judge':2,
+        'sum':total,
+        'id':id
       })
       .then(res => {     
         this.changeConditionToZero()
       })
-      .catch(err => {
-        console.log(err);
-      }); 
     },
+    // 更新状态
     changeConditionToZero(){
       let indusland_factory_line_id=this.tLine.indusland_factory_line.id
-      //更新状态
-      let s=`${app.data().globleUrl}/ass/indusland_factory_line?judge=2&indusland_factory_line_id=${indusland_factory_line_id}&condition=0`
-      console.log(s)
-      this.axios({
-      method: "post",
-      url: s
+      req.post_Param('api/ass/indusland_factory_line',{
+        'judge':2,
+        'indusland_factory_line_id':indusland_factory_line_id,
+        'condition':0
       })
       .then(res => {        
         this.init()
         this.chooseFactoryIndex(this.factoryIndex) //更新页面
         s_alert.Success("库存更新成功", "正在加载……", "success");
       })
-      .catch(err => {
-        console.log(err);
-      }); 
     }
       
   }

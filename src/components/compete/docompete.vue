@@ -406,7 +406,8 @@ export default {
       model:"",
       price:'',
       givePrice:'',
-
+      
+      // 分页数据
       items: [],
       showItems: [],
       PageShowSum: 10,
@@ -527,7 +528,8 @@ export default {
           this.show(res.data)
         })
     },
-// -----------------------------------------------------------分页模板-------------------------------------------------------------
+
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
       this.items=items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);

@@ -40,7 +40,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showTransaction" :key="index">
+                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                     <td>{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
                     <td>{{item.inout|formatInOut}}</td>
@@ -76,6 +76,25 @@
                 </tbody>
               </table>
             </div>
+            <!-- 分页 -->
+            <div class="col-sm-6">
+              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                <ul class="pagination" style="float:right">
+                  <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                    <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                  </li>
+                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                    <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                  </li>
+                  <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                    <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
             <p><strong>注意:上图所示价格单位均为万元。</strong></p>
           </div>
         </div>
@@ -101,6 +120,12 @@ export default {
     return {
       company_id:'',
       showTransaction: '',
+      // 分页数据
+      items: [],
+      showItems: [],
+      PageShowSum: 10,
+      currentPage: "0",
+      sumPage: null,
     };
   },
   beforeMount() {
@@ -162,8 +187,62 @@ export default {
       .then(res => {
           console.log(res.data);
           this.showTransaction = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
       })
     },
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
+    show(items) {
+      this.items=items;
+      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+      //页面加载完成，默认加载第一页
+      let page = Number(this.currentPage) + 1;
+      this.showEachPage(page);
+      print.log("当前数据总页为：--->", this.sumPage);
+    },
+    switchPage(page) {
+      let p = page - 1;
+      this.currentPage = `${p}`;
+      print.log("当前-->", page);
+      this.showEachPage(page);
+    },
+    showEachPage(page) {
+      let all = this.items;
+      this.showItems = [];
+      for (
+        let i = (page - 1) * this.PageShowSum;
+        i < page * this.PageShowSum;
+        i++
+      ) {
+        if (all[i] == null) {
+          break;
+        } else {
+          this.showItems.push(all[i]);
+        }
+      }
+    },
+    nextPage() {
+      if (this.currentPage == this.sumPage - 1) {
+        s_alert.basic("已经到达最后一页了……");
+      } else {
+        let p = Number(this.currentPage) + 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+    previousPage() {
+      if (this.currentPage == "0") {
+        s_alert.basic("已经到达最前面了……");
+      } else {
+        let p = Number(this.currentPage) - 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    }
+    //结束分页
   }
 };
 </script>
