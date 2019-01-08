@@ -72,7 +72,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showMiningItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
                             <td>{{item.star}}</td>
                             <td>{{item.source_id|formatSource}}</td>
@@ -85,24 +85,44 @@
                             <td v-if="item.company">{{item.company.name}}</td>
                             <td v-else></td>
                             <td>{{item.Yearid}}</td>
-                            <td class="actions" align="center">
-                              <a class="waves-effect waves-light" @click="start(item,1)">
+                            <td class="actions">
+                              <a class="waves-effect waves-light" @click="start(item,1)" data-toggle="tooltip" data-placement="top" title="开始竞拍">
                                 <i class="fa  fa-play"></i>
                               </a>
-                              <a class="waves-effect waves-light" @click="stop(item,1)">
+                              <a class="waves-effect waves-light" @click="stop(item,1)" data-toggle="tooltip" data-placement="top" title="结束竞拍">
                                 <i class="fa  fa-stop"></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#company" @click="opensetting(item,1,1)">
-                                <i class="fa  fa-tags"></i>
+                              <a class="waves-effect waves-light" @click="opensetting(item,1,1)" data-toggle="tooltip" data-placement="top" title="定向公司发送">
+                                <i class="fa  fa-tags"  data-toggle="modal" data-target="#company" ></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#desc" @click="opensetting(item,1,2)">
-                                <i class="fa  fa-sort-amount-desc"></i>
+                              <a class="waves-effect waves-light" @click="opensetting(item,1,2)" data-toggle="tooltip" data-placement="top" title="竞价排名">
+                                <i class="fa  fa-sort-amount-desc" data-toggle="modal" data-target="#desc"></i>
                               </a>
                             </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
+                    <div class="row">
+                    <div class="col-sm-6">
+                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                        <ul class="pagination" style="float:right">
+                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                          </li>
+                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                          </li>
+                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                   </div>
                   <hr>
                   <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上价钱单位均为<strong>万元</strong>。</p>
@@ -136,7 +156,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showInduslandItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
                             <td>{{item.model}}</td>
                             <td>{{item.measure}}</td>
@@ -149,24 +169,44 @@
                             <td v-if="item.company">{{item.company.name}}</td>
                             <td v-else></td>
                             <td>{{item.Yearid}}</td>
-                            <td class="actions" align="center">
-                              <a class="waves-effect waves-light" @click="start(item,2)">
+                            <td class="actions">
+                              <a class="waves-effect waves-light" @click="start(item,2)" data-toggle="tooltip" data-placement="top" title="开始竞拍">
                                 <i class="fa  fa-play"></i>
                               </a>
-                              <a class="waves-effect waves-light" @click="stop(item,2)">
+                              <a class="waves-effect waves-light" @click="stop(item,2)" data-toggle="tooltip" data-placement="top" title="结束竞拍">
                                 <i class="fa  fa-stop"></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#company" @click="opensetting(item,2,1)">
-                                <i class="fa  fa-tags"></i>
+                              <a class="waves-effect waves-light" @click="opensetting(item,2,1)" data-toggle="tooltip" data-placement="top" title="定向公司发送">
+                                <i class="fa  fa-tags"  data-toggle="modal" data-target="#company" ></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#desc" @click="opensetting(item,2,2)">
-                                <i class="fa  fa-sort-amount-desc"></i>
+                              <a class="waves-effect waves-light" @click="opensetting(item,2,2)" data-toggle="tooltip" data-placement="top" title="竞价排名">
+                                <i class="fa  fa-sort-amount-desc" data-toggle="modal" data-target="#desc"></i>
                               </a>
                             </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
+                    <div class="row">
+                    <div class="col-sm-6">
+                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                        <ul class="pagination" style="float:right">
+                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                          </li>
+                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                          </li>
+                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                   </div>
                   <hr>
                   <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上价钱单位均为<strong>万元</strong>。</p>
@@ -198,7 +238,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showCommerlandItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
                             <td>{{item.level}}</td>
                             <td>{{item.brand}}</td>
@@ -209,24 +249,44 @@
                             <td v-if="item.company">{{item.company.name}}</td>
                             <td v-else></td>
                             <td>{{item.Yearid}}</td>
-                            <td class="actions" align="center">
-                              <a class="waves-effect waves-light" @click="start(item,3)">
+                            <td class="actions">
+                              <a class="waves-effect waves-light" @click="start(item,3)" data-toggle="tooltip" data-placement="top" title="开始竞拍">
                                 <i class="fa  fa-play"></i>
                               </a>
-                              <a class="waves-effect waves-light" @click="stop(item,3)">
+                              <a class="waves-effect waves-light" @click="stop(item,3)" data-toggle="tooltip" data-placement="top" title="结束竞拍">
                                 <i class="fa  fa-stop"></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#company" @click="opensetting(item,3,1)">
-                                <i class="fa  fa-tags"></i>
+                              <a class="waves-effect waves-light" @click="opensetting(item,3,1)" data-toggle="tooltip" data-placement="top" title="定向公司发送">
+                                <i class="fa  fa-tags"  data-toggle="modal" data-target="#company" ></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="modal" data-target="#desc" @click="opensetting(item,3,2)">
-                                <i class="fa  fa-sort-amount-desc"></i>
+                              <a class="waves-effect waves-light" @click="opensetting(item,3,2)" data-toggle="tooltip" data-placement="top" title="竞价排名">
+                                <i class="fa  fa-sort-amount-desc" data-toggle="modal" data-target="#desc"></i>
                               </a>
                             </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
+                    <div class="row">
+                    <div class="col-sm-6">
+                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                        <ul class="pagination" style="float:right">
+                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                          </li>
+                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                          </li>
+                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                   </div>
                   <hr>
                   <p><strong>注意</strong>：拍卖过程分为<strong>明拍</strong>与<strong>暗拍</strong>两种，以上价钱单位均为<strong>万元</strong>。</p>
@@ -517,11 +577,11 @@
                         <tbody>
                           <tr v-for="(item,index) in showDesc" :key="index">
                             <td>{{index}}</td>
-                            <td v-if="item.companies">{{item.companies[0].name}}</td>
+                            <td v-if="item.company">{{item.company.name}}</td>
                             <td v-else></td>
                             <td>{{item.auction}}</td>
                             <td class="actions" align="center">
-                              <a class="waves-effect waves-light" data-dismiss="modal" @click="getit(item)">
+                              <a class="waves-effect waves-light" data-dismiss="modal" @click="getit(item)"  data-toggle="tooltip" data-placement="top" title="发送给此公司">
                                 <i class="fa fa-tags"></i>
                               </a>
                             </td>
@@ -542,6 +602,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -550,6 +615,9 @@ export default {
   name: "docompete",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showMiningItems: "",
       showInduslandItems: "",
       showCommerlandItems: "",
@@ -602,20 +670,33 @@ export default {
       showDesc:'',
 
       //储存钱
-      money:''
+      money:'',
 
+      // 分页数据
+      items: [],
+      showItems: [],
+      PageShowSum: 10,
+      currentPage: "0",
+      sumPage: null,
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
     this.init()
+    // 实时获取info
+    setTimeout(() => {
+    this.getInfo();
+    }, 10000);
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters: {
-    formatTime(val) {
-      return moment(val).format("YYYY-MM-DD HH:mm:ss");
+    formatTime(x) {
+      return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
     formatCondition(val){
       if(val==-2) return '竞拍未开始'
@@ -658,6 +739,10 @@ export default {
     }
   },
   methods: {
+    getInfo(){
+      this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    },
     init(){
         this.showMining();
         this.showIndus();
@@ -668,167 +753,155 @@ export default {
       //矿区
       if(index==1){
         let s=`${app.data().globleUrl}/mining?judge=1&star=${this.mstar}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
-        console.log(s)
+        print.log(s)
         this.tempSendCompete(s)
       }
       //工业用地
       if(index==2){
         let s=`${app.data().globleUrl}/indusland?judge=1&model=${this.imodel}&measure=${this.imeasure}&efficient=${this.iefficient}&repurchase=${this.irepurchase}&isimprove=0&improve=${this.iimprove}&startprice=${this.istartprice}&condition=-2&Yearid=${this.iyear}`
-        console.log(s)
+        print.log(s)
         this.tempSendCompete(s)
       }
       //商业用地
       if(index==3){
         let s=`${app.data().globleUrl}/commerland?judge=1&level=${this.clevel}&brand=${this.cbrand}&increment=${this.cincrement}&startprice=${this.istartprice}&condition=-2&Yearid=${this.cyear}`
-        console.log(s)
+        print.log(s)
         this.tempSendCompete(s)          
       }
     },
-    tempSendCompete(s){ //发布订单模板      *********************
-        this.axios({
-        method: "post",
-        url: s
-        })
+    //发布订单模板
+    tempSendCompete(s){
+        req.post(s)
         .then(res => {
-            console.log(res.data);
+            print.log(res.data);
             s_alert.Success("发布竞拍成功", "注意，默认为未开启竞拍状态，点击开始按钮开始竞拍", "success");
             this.init()
         })
-        .catch(err => {
-        console.log(err);
-        });
     },
     //开始竞拍
     start(item,index){
         if(index==1){
             let s=`${app.data().globleUrl}/mining?judge=2&condition=0&id=${item.id}`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }
         else if(index==2){
             let s=`${app.data().globleUrl}/indusland?judge=2&condition=0&id=${item.id}`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }
         else if(index==3){
             let s=`${app.data().globleUrl}/commerland?judge=2&condition=0&id=${item.id}`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }else{
             s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
         }
     },
+    // 结束竞拍 
     stop(item,index){
         if(index==1){
             let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${item.id}`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }
         else if(index==2){
             let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${item.id}`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }
         else if(index==3){
             let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${item.id}`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }else{
             s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
         }
     },
+    // 定向公司发布 & 竞价排名
     opensetting(item,type,func){    //选择发放
         this.chooseItem=item
         this.chooseType=type
-        console.log(item,type)
+        print.log(item,type)
         if(func==2){
+            // 获取竞价排名
             this.getDesc(item,type)
         }
     },
+    // 定向公司发布
     sendToCompany(){
         if(this.chooseType==1){
             let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }else if(this.chooseType==2){
             let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }else if(this.chooseType==3){
             let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
-            this.tempStartCompete(s)
+            this.StartCompeteUpdateCondition(s)
         }
     },
+    // 获取竞价排名
     getDesc(item,type){
-        let s=`${app.data().globleUrl}/ass/company_compete?judge=5&type=${type}&thingid=${item.id}`
-        console.log(s)
-        this.axios({
-        method: "post",
-        url: s
+        req.post_Param('api/compete',{
+            'judge':7,
+            'type':type,
+            'thingid':item.id
         })
         .then(res => {
             this.showDesc=res.data;
-            console.log('showDesc',this.showDesc)
+            print.log('竞价排名',this.showDesc)
         })
-        .catch(err => {
-        console.log(err);
-        });
     },
+    // 根据竞价排名发给公司
     getit(item){
         if(this.chooseType==1){
             let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
-            console.log(s)
-            this.tempStartCompete(s)            
+            print.log(s)
+            this.StartCompeteUpdateCondition(s)            
             //－钱
             let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
-            this.tempPrice(m,item.auction,item.companies[0].id)   
+            this.updateFixedAssets(m,item.auction,item.companies[0].id)   
         }else if(this.chooseType==2){
             let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
-            console.log(s)
-            this.tempStartCompete(s)
+            print.log(s)
+            this.StartCompeteUpdateCondition(s)
             //－钱
             let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
-            this.tempPrice(m,item.auction,item.companies[0].id)   
+            this.updateFixedAssets(m,item.auction,item.companies[0].id)   
         }else if(this.chooseType==3){
             let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
-            console.log(s)
-            this.tempStartCompete(s)
+            print.log(s)
+            this.StartCompeteUpdateCondition(s)
             //－钱
             let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
             //查询商业用地 固定资产
-            this.tempPriceFixed(m,item)
+            this.updateFixedAssetsForCommerland(m,item)
         }
-    },        
-    tempPriceFixed(m,item){           //查钱模板   *********************
-        this.axios({
-        method: "post",
-        url: m
-        })
+    },     
+    //更新资产信息  
+    updateFixedAssetsForCommerland(m,item){  
+        // 获取资产信息
+        req.post(m)
         .then(res => {
             this.money=res.data
-            console.log(res.data)
-
+            print.log(res.data)
+            // 计算资产差值
             let fix=this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
-            let fixed=res.data[0].fixed+fix;
-            let total=res.data[0].total+fix-item.auction;
-            let float=res.data[0].float-item.auction;
-
-            let s = `${app.data().globleUrl}/statistic?judge=4&fixed=${fixed}&total=${total}&float=${float}&company_id=${item.companies[0].id}`;   
-            console.log(s);
-            this
-            .axios({
-            method: "post",
-            url: s
+            let fixed=res.data.fixed+fix;
+            let total=res.data.total+fix-item.auction;
+            let float=res.data.float-item.auction;
+            // 更新资产信息
+            req.post_Param('api/statistic',{
+                'judge':4,
+                'fixed':fixed,
+                'total':total,
+                'float':float,
+                'company_id':item.companies[0].id
             })
             .then(res => {
-                console.log(res.data);
+                print.log(res.data);
                 this.init()
             })
-            .catch(err => {
-            console.log(err);
-            });
         })
-        .catch(err => {
-            console.log(err);
-        });
     },
-    tempStartCompete(s){        //竞拍状态更新模板   *********************
-        this.axios({
-        method: "post",
-        url: s
-        })
+     //竞拍状态更新模板
+    StartCompeteUpdateCondition(s){    
+        req.post(s)
         .then(res => {
             if(res.data.success){
                 s_alert.Success("竞拍状态更新成功", "", "success");
@@ -838,59 +911,35 @@ export default {
                 this.init()
             }
         })
-        .catch(err => {
-        console.log(err);
-        });
     },
-    tempPrice(s,m,c){           //查钱模板   *********************
-        this.axios({
-        method: "post",
-        url: s
-        })
+    //更新固定资产
+    updateFixedAssets(s,m,c){
+        req.post(s)
         .then(res => {
             this.money=res.data
-            // console.log(res.data)
-            let float=res.data[0].float-m;
-            let total=res.data[0].total-m;
-
-            let s = `${app.data().globleUrl}/statistic?judge=4&float=${float}&total=${total}&company_id=${c}`;
-            console.log(s);
-            this
-            .axios({
-            method: "post",
-            url: s
+            let float=res.data.float-m;
+            let total=res.data.total-m;
+            // 更新拍得公司资产信息
+            req.post_Param('api/statistic',{
+                'judge':4,
+                'total':total,
+                'float':float,
+                'company_id':c
             })
             .then(res => {
-                // console.log(res.data);
                 swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
                 this.init()
             })
-            .catch(err => {
-            console.log(err);
-            });
         })
-        .catch(err => {
-            console.log(err);
-        });
     },
-
-    getAllCompany(){
-        //获取公司列表
-        let s=`${app.data().globleUrl}/company?judge=0`
-        // console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+    //获取公司列表
+    getAllCompany(){        
+        apis.getAllCompany()
         .then(res => {
-        //   console.log(res.data);
           this.company = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
-
+    // 根据星级设置矿区储量
     getstar(){
         if(this.mstar==1){ this.mreserve = Math.round(Math.random()*(6000-4000)+4000);this.mdeprelief=0;this.mrepurchase=120;}
         if(this.mstar==2){ this.mreserve = Math.round(Math.random()*(10000-8000)+8000);this.mdeprelief=0.1;this.mrepurchase=160;}
@@ -898,55 +947,88 @@ export default {
         if(this.mstar==4){ this.mreserve = Math.round(Math.random()*(24000-18000)+18000);this.mdeprelief=0.25;this.mrepurchase=300;}
         if(this.mstar==5){ this.mreserve = Math.round(Math.random()*(32000-26000)+26000);this.mdeprelief=0.3;this.mrepurchase=450;}
     },
-
+    //获取政府矿区竞拍汇总表
     showMining() {
-      //获取政府矿区竞拍汇总表
-      let s=`${app.data().globleUrl}/mining?judge=0`
-        // console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+        req.post_Param('api/mining',{'judge':0})
         .then(res => {
-        //   console.log(res.data);
           this.showMiningItems = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //获取政府工业用地竞拍汇总表
     showIndus() {
-      //获取政府工业用地竞拍汇总表
-      let s=`${app.data().globleUrl}/indusland?judge=0`
-        // console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+        req.post_Param('api/indusland',{'judge':0})
         .then(res => {
-        //   console.log(res.data);
           this.showInduslandItems = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    //获取政府商业用地竞拍汇总表
     showCommer() {
-      //获取政府商业用地竞拍汇总表
-      let s=`${app.data().globleUrl}/commerland?judge=0`
-        // console.log(s)
-        this.axios({
-        method: "post",
-        url: s
-        })
+        req.post_Param('api/commerland',{'judge':0})
         .then(res => {
-        //   console.log(res.data);
           this.showCommerlandItems = res.data;
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
-    }
+    },
+
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
+    show(items) {
+      this.items=items;
+      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+      //页面加载完成，默认加载第一页
+      let page = Number(this.currentPage) + 1;
+      this.showEachPage(page);
+      print.log("当前数据总页为：--->", this.sumPage);
+    },
+    switchPage(page) {
+      let p = page - 1;
+      this.currentPage = `${p}`;
+      print.log("当前-->", page);
+      this.showEachPage(page);
+    },
+    showEachPage(page) {
+      let all = this.items;
+      this.showItems = [];
+      for (
+        let i = (page - 1) * this.PageShowSum;
+        i < page * this.PageShowSum;
+        i++
+      ) {
+        if (all[i] == null) {
+          break;
+        } else {
+          this.showItems.push(all[i]);
+        }
+      }
+    },
+    nextPage() {
+      if (this.currentPage == this.sumPage - 1) {
+        s_alert.basic("已经到达最后一页了……");
+      } else {
+        let p = Number(this.currentPage) + 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+    previousPage() {
+      if (this.currentPage == "0") {
+        s_alert.basic("已经到达最前面了……");
+      } else {
+        let p = Number(this.currentPage) - 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+
   }
 };
 </script>

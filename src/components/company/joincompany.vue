@@ -54,29 +54,30 @@
                     </tbody>
                   </table>
                 </div>
+                <div class="row">
+                <div class="col-sm-6">
+                  <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                    <ul class="pagination" style="float:right">
+                      <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                        <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                      </li>
+                      <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                        <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                      </li>
+                      <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                        <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-6">
-              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-            </div>
-            <div class="col-sm-6">
-              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                <ul class="pagination" style="float:right">
-                  <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                    <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                  </li>
-                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                    <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                  </li>
-                  <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                    <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
@@ -102,15 +103,12 @@ export default {
   name: "doclist",
   data() {
     return {
+      // 分页数据
       items: [],
       showItems: [],
-      searchItems: [],
-      select: [],
-      isSelectedAll: false,
       PageShowSum: 10,
       currentPage: "0",
       sumPage: null,
-      doSearchText: null,
 
       mainList: true,
       searchList: false
@@ -137,8 +135,9 @@ export default {
       .then(res => {
         print.log('获取到 公司列表信息',res.data);
         this.items = res.data;
-        // 初始化显示列表
-        this.show();
+        // 分页
+        this.currentPage='0'
+        this.show(res.data)
       })
     },
     //加入公司流程

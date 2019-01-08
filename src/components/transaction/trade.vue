@@ -14,35 +14,31 @@
           </div>
           <div class="panel-body">
             <div class="table-responsive">
-              <table class="table table-striped" style id="datatable-editable">
+              <table class="table table-hover" style id="datatable-editable">
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>金额</th>
+                    <th>金额(w)</th>
                     <th>收支情况</th>
-                    <th>备注</th>
+                    <th>事件</th>
                     <th>创建时间</th>
-                    <th>最后更新时间</th>
-                    <th>操作</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showCompete" :key="item.name">
+                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                     <td>{{index}}</td>
-                    <td>{{item.mining_id}}</td>
-                    <td>{{item.source_id}}</td>
-                    <td>{{item.company_id}}</td>
-                    <td>{{item.created_at}}</td>
-                    <td>{{item.updated_at}}</td>
-                    <td class="actions" align="center">
-                      <a
-                        class="waves-effect waves-light"
-                        data-toggle="modal"
-                        data-target="#con-close-modal"
-                      >
-                        <i class="fa fa-tags"></i>
-                      </a>
-                    </td>
+                    <td>{{item.price}}*{{item.number}}={{item.price*item.number}}</td>
+                    <td>{{item.inout|formatInOut}}</td>
+                    <td v-if="item.source">{{item.source.name}}</td>
+                    <td v-if="item.commerresearch">{{item.commerresearch.name}}</td>
+                    <td v-if="item.mining">{{item.mining.star|formatStar}}</td>
+                    <td v-if="item.indusland">{{item.indusland.model|formatModel}}</td>
+                    <td v-if="item.commerland">{{item.commerland.level|formatLevel}}</td>
+                    <td v-if="item.digger">{{item.digger.model}}</td>
+                    <td v-if="item.factory">{{item.factory.model}}</td>
+                    <td v-if="item.line">{{item.line.model}}</td>
+                    <td v-if="item.research">{{item.research.model}}</td>
+                    <td>{{item.created_at|formatTime}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -108,11 +104,38 @@ export default {
   mounted() {
       this.showMyCompete()
   },
+  filters:{
+    formatTime(x) {
+      return moment(x).format("YYYY-MM-DD HH:mm:ss");
+    },
+    formatInOut(x){
+      if(x==1) return '买入';
+      if(x==2) return '卖出';
+    },
+    formatStar(x){
+      if(x==1) return '一星矿区';
+      if(x==2) return '二星矿区';
+      if(x==3) return '三星矿区';
+      if(x==4) return '四星矿区';
+      if(x==5) return '五星矿区';
+    },
+    formatModel(x){
+      if(x==1) return 'A';
+      if(x==2) return 'Z';
+      if(x==3) return 'C';
+      if(x==4) return 'S';
+    },
+    formatLevel(x){
+      if(x==1) return '投契级';
+      if(x==2) return '机构级';
+      if(x==3) return '投资级';
+      if(x==4) return '地标级';
+    },
+  },
   methods: {
     showMyCompete() {
       //获取自己公司竞拍情况
-      this.axios
-      .post("/resource/api")
+      apis.getOneTransationByCompanyId(this.company_id)
       .then(res => {
           console.log(res.data);
           this.showCompete = res.data;
