@@ -42,6 +42,7 @@
                                                     <a
                                                         class="on-default remove-row font-weight-bold"
                                                         @click="nextYear(showGameItems)"
+                                                        href="javascript:void(0)"
                                                     >进入下一财年</a>
                                                 </td>
                                             </tr>
@@ -77,7 +78,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="gradeX" v-for="(item,index) in showStasticsItems" :key="index">
+                                            <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                                                 <td>{{index}}</td>
                                                 <td>{{item.company.name}}</td>
                                                 <td>{{item.float}}</td>
@@ -86,14 +87,35 @@
                                                 <td>{{item.brand}}</td>
                                                 <td>{{item.updated_at|formatTime}}</td>
                                                 <td class="actions" align="center">
-                                                    <a class="waves-effect waves-light" data-toggle="modal" data-target="#myModal2" @click="tran(item)">
-                                                        <i class="fa  fa-tags"></i>
+                                                    <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="转账到此公司"  @click="tran(item)">
+                                                        <i class="fa  fa-tags" data-toggle="modal" data-target="#myModal2" ></i>
                                                     </a>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                                        <ul class="pagination" style="float:right">
+                                            <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                                            </li>
+                                            <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                                            </li>
+                                            <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                                            </li>
+                                        </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -127,6 +149,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const async=require('async')
 const notify = require("bootstrap-notify");
@@ -135,22 +162,34 @@ export default {
   name: "syear",
   data() {
     return {
-      userinfo: "",
+      company_id:'',
+      Yearid:'',
+      
       showGameItems: "",
       showStasticsItems: "",
       givePrice:0,
 
       // 计算折旧
       diggerDeprelief:0,
-      lineDeprelief:0
+      lineDeprelief:0,
+
+      // 分页数据
+      items: [],
+      showItems: [],
+      PageShowSum: 10,
+      currentPage: "0",
+      sumPage: null,
     };
   },
-  beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+  beforeMount(){
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-    this.init();
+      this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   filters: {
     formatTime(val) {
@@ -162,130 +201,114 @@ export default {
       this.getshowGameItems();
       this.getStasticsItems();
     },
+    // 显示比赛信息
     getshowGameItems() {
-      let s = `${app.data().globleUrl}/game?judge=4&id=1`;
-      console.log(s);
-      this
-        .axios({
-          method: "post",
-          url: s
+        req.post_Param('api/game',{
+            'judge':5,
+            'condition':1
         })
         .then(res => {
-          console.log(res.data);
-          this.showGameItems = res.data;
+            print.log('显示比赛信息',res.data);
+            this.showGameItems = res.data;
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    // 点击进入下一财年
     nextYear(showGameItems) {
+        print.log('当前比赛信息',showGameItems)
       if (confirm("你确定要进入下一财年？这将对参赛者资产进行清算！")) {
         this.init()
         this.updateYear(showGameItems);
       }
     },
+    // 更新财年信息
     updateYear(showGameItems) {
-      let next=showGameItems.Yearid+1
-      let s = `${app.data().globleUrl}/game?judge=2&Yearid=${next}&id=1`;
-      console.log(s);
-      this
-        .axios({
-          method: "post",
-          url: s
+        req.post_Param('api/game',{
+            'judge':2,
+            'Yearid':showGameItems.Yearid+1,
+            'id':showGameItems.id
         })
         .then(res => {
-          console.log(res.data);
-          this.showGameItems = res.data;
+          print.log(res.data);
           if(res.data.success){
             swal("更新财年信息成功!", "参赛者资产信息更新成功", "success");
+            this.init()
             this.updateRelief()
           }
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    // 获取参赛公司资产信息
     getStasticsItems() {
-      let userinfo = JSON.parse(window.sessionStorage.getItem("userinfo"));
-      let s = `${app.data().globleUrl}/ass/company_statistic?judge=4`;
-      console.log(s);
-      this
-        .axios({
-          method: "post",
-          url: s
-        })
+        req.post_Param('api/ass/company_statistic',{'judge':4})
         .then(res => {
-          console.log(res.data);
-          this.showStasticsItems = res.data;
+          print.log(res.data);
+          this.showStasticsItems=res.data
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
+    // 点击转账到此公司，中转信息
     tran(model){
-        console.log('currentStastics',model)
+        print.log('当前选中转移资产公司资产信息',model)
         this.currentStastics=model
     },
+    // 转账
     updateMoney(){
         let float=Number(this.givePrice)+Number(this.currentStastics.float);
         let total=Number(this.givePrice)+Number(this.currentStastics.total);
-        let s = `${app.data().globleUrl}/statistic?judge=2&id=1&float=${float}&total=${total}`;
-        console.log(s);
-        this
-        .axios({
-          method: "post",
-          url: s
+        // 更新资产信息
+        req.post_Param('api/statistic',{
+            'judge':2,
+            'id':this.currentStastics.id,
+            'float':float,
+            'total':total
         })
         .then(res => {
-            console.log(res.data);
+            print.log(res.data);
             swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
             this.init()
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
     // ---------------------------------------------------计算折旧---------------------------------------------------
     updateRelief(){
         
         this.getStasticsItems() //初始化资产列表
+        print.log('最新统计资产信息',this.showStasticsItems)
         for (let i = 0; i < this.showStasticsItems.length; i++) {
+            print.log('执行公司资产信息更新--->',this.showStasticsItems[i])
             //对折旧价值初始化
             this.diggerDeprelief=0
             this.lineDeprelief=0
             //循环计算折旧价值
             const re = this.showStasticsItems[i];
             let cid=re.company_id;
-            //计算挖掘机折旧
-            // this.getMiningDigger(cid);
-            // 计算生产线折旧
-            // this.getInduslandFactory(cid);
             let that=this
-            async.parallel([//并行同时执行
-                function(callback) {                
+            async.series([
+                //串行同时执行
+                function(callback) {          
+                    //计算挖掘机折旧      
                     that.getMiningDigger(cid,callback);
                 },
                 function(callback) {
+                    // 计算生产线折旧
                     that.getInduslandFactory(cid,callback);
                 }],
                 function(err, results) {
                     //等上面两个执行完返回结果
-                    console.log(results)
-                    that.updateFixedMoney(re,results)
+                    print.log('更新固定资产统计信息',results)
+                    that.updateFixedMoney(cid,re,results)
                 })
         }
     },
     // 获取 矿区 - 挖掘机
     getMiningDigger(cid,callback){
-        let s = `${app.data().globleUrl}/ass/mining_digger?judge=5&company_id=${cid}`;
-        // console.log(s);
-        this
-        .axios({
-          method: "post",
-          url: s
+        req.post_Param('api/ass/mining_digger',{
+            'judge':5,
+            'company_id':cid
         })
         .then(res => {
-            // console.log('矿区 - 挖掘机',res.data)
+            // print.log('矿区 - 挖掘机',res.data)
+            this.diggerDeprelief=0
             for (let i = 0; i < res.data.length; i++) {  //对矿区 循环，找到某一个矿区
                 const w = res.data[i];
                 let kdepre=w.deprelief; //找到某一矿区 折旧减免值
@@ -295,55 +318,69 @@ export default {
                     this.diggerDeprelief+=totalDepre
                 }
             }
-            console.log('totalDiggerDepre',this.diggerDeprelief)   
+            print.log('统计所有的挖掘机折旧',this.diggerDeprelief)   
             callback(null, this.diggerDeprelief);
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
     // 获取 工业用地 - 工厂
     getInduslandFactory(cid,callback){
-        let s = `${app.data().globleUrl}/ass/indusland_factory?judge=4&company_id=${cid}`;
-        // console.log(s);
-        this
-        .axios({
-          method: "post",
-          url: s
+        req.post_Param('api/ass/indusland_factory',{
+            'judge':4,
+            'company_id':cid
         })
         .then(res => {
-            console.log('工业用地 - 工厂',res.data)
-            for (let i = 0; i < res.data.length; i++) {  //对工业用地循环 找到 工业用地-工厂 中间表，从而获取到 对应的生产线
-                const w = res.data[i];
-                let idepre=w.repurchase; //找到某一工业用地 折旧减免值
-                for (let j = 0; j < w.factories.length; j++) {  //对工业用地下的 工厂 进行循环，找到中间表id，从而找到 对应的生产线
-                    const infa = w.factories[j].indusland_factory.id;
-                    //对找到的 中间表id，寻找生产线，计算折旧
-                    // console.log('工业用地 - 工厂、中间表id',infa)
-                    //逐层回调，找到最终结果
-                    if(i==res.data.length-1 && j==w.factories.length-1){
-                        this.getLineDepre(infa,idepre,callback,true);
-                    }else{
-                        this.getLineDepre(infa,idepre,callback,false);
+            print.log('工业用地 - 工厂',res.data)
+            this.lineDeprelief=0
+            if(res.data.length>0){      //如果存在工业用地
+                let judgeHaveFactory=0;
+                for (let i = 0; i < res.data.length; i++) {  //对工业用地循环 找到 工业用地-工厂 中间表，从而获取到 对应的生产线
+                    const w = res.data[i];
+                    let idepre=w.repurchase; //找到某一工业用地 折旧减免值
+                    // 判定有工业用地 是否有 工厂                    
+                    if( w.factories.length!=0){            // 有工厂
+                        judgeHaveFactory++;
+                        for (let j = 0; j < w.factories.length; j++) {  //对工业用地下的 工厂 进行循环，找到中间表id，从而找到 对应的生产线
+                            let judgeHaveLine=0;
+                            if(w.factories[j].indusland_factory!=null){     //有生产线
+                                judgeHaveLine++;
+                                const infa = w.factories[j].indusland_factory.id;
+                                //对找到的 中间表id，寻找生产线，计算折旧
+                                // print.log('工业用地 - 工厂、中间表id',infa)
+                                //逐层回调，找到最终结果
+                                if(i==res.data.length-1 && j==w.factories.length-1){
+                                    this.getLineDepre(infa,idepre,callback,true);
+                                }else{
+                                    this.getLineDepre(infa,idepre,callback,false);
+                                }
+                            }else{
+                                if(j==w.factories.length-1 && judgeHaveLine==0){
+                                    this.lineDeprelief=0
+                                    callback(null,this.lineDeprelief)
+                                }
+                            }
+                            
+                        }
+                    }else{          // 无工厂
+                        if(i==res.data.length-1 && judgeHaveFactory==0){
+                            this.lineDeprelief=0
+                            callback(null,this.lineDeprelief)
+                        }
                     }
+                    
                 }
+            }else{      //如果不存在工业用地
+                callback(null, this.lineDeprelief);
             }
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
     // 获取 工业用地 - 工厂 - 生产线
     getLineDepre(infa,idepre,callback,sure){  //infa,idepre 分别为 中间表id与 工业用地 折旧减免值
-        let s = `${app.data().globleUrl}/ass/indusland_factory_line?judge=8&indusland_factory_id=${infa}`;
-        // console.log(s);
-        this
-        .axios({
-          method: "post",
-          url: s
+        req.post_Param('api/ass/indusland_factory_line',{
+            'judge':8,
+            'indusland_factory_id':infa
         })
         .then(res => {
-            // console.log('工业用地 - 工厂 - 生产线',res.data)
+            // print.log('工业用地 - 工厂 - 生产线',res.data)
             for (let i = 0; i < res.data.length; i++) {  //对中间表-生产线 信息 循环，从而获取到 对应的生产线 & 数量
                 const w = res.data[i];
                 for (let j = 0; j < w.lines.length; j++) {  //对工业用地 - 工厂 - 生产线 进行循环，找到生产线，从而找到 对应的生产线 折旧率
@@ -353,25 +390,22 @@ export default {
                 }
             }
             if(sure){
-                console.log('totalLineDepre',this.lineDeprelief)   
+                print.log('统计所有的生产线折旧',this.lineDeprelief)   
                 callback(null, this.lineDeprelief);
             }
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
-    updateFixedMoney(re,result){
-        console.log(re,result)
-        let fixed=Number(re.fixed)-Number(result[0]);
-        let total=Number(re.total)-Number(result[1]);
-        // console.log(fixed,total)
-        let s = `${app.data().globleUrl}/statistic?judge=2&id=1&fixed=${fixed}&total=${total}`;
-        console.log(s);
-        this
-        .axios({
-          method: "post",
-          url: s
+    // 更新公司资产
+    updateFixedMoney(cid,re,result){
+        print.log(re,result)
+        let fixed=Number(re.fixed)-(Number(result[0])+Number(result[1]));
+        let total=Number(re.total)-(Number(result[0])+Number(result[1]));
+        // 更新个人资产
+        req.post_Param('api/statistic',{
+            'judge':4,
+            'company_id':cid,
+            'fixed':fixed,
+            'total':total
         })
         .then(res => {
             if(res.data.success){
@@ -388,11 +422,58 @@ export default {
                 this.init()
             }
         })
-        .catch(err => {
-          console.log(err);
-            swal(`${re.company.name}->资产更新失败！请检查！！`, "资产更新失败", "warning");
-        });
     },
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
+    show(items) {
+      this.items=items;
+      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+      //页面加载完成，默认加载第一页
+      let page = Number(this.currentPage) + 1;
+      this.showEachPage(page);
+      print.log("当前数据总页为：--->", this.sumPage);
+    },
+    switchPage(page) {
+      let p = page - 1;
+      this.currentPage = `${p}`;
+      print.log("当前-->", page);
+      this.showEachPage(page);
+    },
+    showEachPage(page) {
+      let all = this.items;
+      this.showItems = [];
+      for (
+        let i = (page - 1) * this.PageShowSum;
+        i < page * this.PageShowSum;
+        i++
+      ) {
+        if (all[i] == null) {
+          break;
+        } else {
+          this.showItems.push(all[i]);
+        }
+      }
+    },
+    nextPage() {
+      if (this.currentPage == this.sumPage - 1) {
+        s_alert.basic("已经到达最后一页了……");
+      } else {
+        let p = Number(this.currentPage) + 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+    previousPage() {
+      if (this.currentPage == "0") {
+        s_alert.basic("已经到达最前面了……");
+      } else {
+        let p = Number(this.currentPage) - 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    }
+    //结束分页
 
   }
 };

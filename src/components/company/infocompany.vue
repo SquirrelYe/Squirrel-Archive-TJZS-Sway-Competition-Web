@@ -175,7 +175,7 @@ export default {
         'company_id':JSON.parse(ses.getSes('userinfo')).company_id
       })
       .then(res => {
-        console.log(res.data);
+        print.log(res.data);
         this.showItems = res.data;
       })
     },
@@ -187,7 +187,7 @@ export default {
         'office':this.office
       })
       .then(res => {
-        console.log(res.data);
+        print.log(res.data);
         this.init()
       })
     },
@@ -207,7 +207,7 @@ export default {
         'sway_id':item.id
       })
       .then(res => {
-        console.log(res.data);
+        print.log(res.data);
         this.init()
         swal("删除成功!", "你开除了一名成员", "success");
       })

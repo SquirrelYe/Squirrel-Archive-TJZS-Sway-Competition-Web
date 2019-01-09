@@ -781,35 +781,35 @@ export default {
     //开始竞拍
     start(item,index){
         if(index==1){
-            let s=`${app.data().globleUrl}/mining?judge=2&condition=0&id=${item.id}`
-            this.StartCompeteUpdateCondition(s)
+          let s=`${app.data().globleUrl}/mining?judge=2&condition=0&id=${item.id}`
+          this.StartCompeteUpdateCondition(s)
         }
         else if(index==2){
-            let s=`${app.data().globleUrl}/indusland?judge=2&condition=0&id=${item.id}`
-            this.StartCompeteUpdateCondition(s)
+          let s=`${app.data().globleUrl}/indusland?judge=2&condition=0&id=${item.id}`
+          this.StartCompeteUpdateCondition(s)
         }
         else if(index==3){
-            let s=`${app.data().globleUrl}/commerland?judge=2&condition=0&id=${item.id}`
-            this.StartCompeteUpdateCondition(s)
+          let s=`${app.data().globleUrl}/commerland?judge=2&condition=0&id=${item.id}`
+          this.StartCompeteUpdateCondition(s)
         }else{
-            s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
+          s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
         }
     },
     // 结束竞拍 
     stop(item,index){
         if(index==1){
-            let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${item.id}`
-            this.StartCompeteUpdateCondition(s)
+          let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${item.id}`
+          this.StartCompeteUpdateCondition(s)
         }
         else if(index==2){
-            let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${item.id}`
-            this.StartCompeteUpdateCondition(s)
+          let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${item.id}`
+          this.StartCompeteUpdateCondition(s)
         }
         else if(index==3){
-            let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${item.id}`
-            this.StartCompeteUpdateCondition(s)
+          let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${item.id}`
+          this.StartCompeteUpdateCondition(s)
         }else{
-            s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
+          s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
         }
     },
     // 定向公司发布 & 竞价排名
@@ -818,8 +818,8 @@ export default {
         this.chooseType=type
         print.log(item,type)
         if(func==2){
-            // 获取竞价排名
-            this.getDesc(item,type)
+          // 获取竞价排名
+          this.getDesc(item,type)
         }
     },
     // 定向公司发布
@@ -853,21 +853,21 @@ export default {
             let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
             print.log(s)
             this.StartCompeteUpdateCondition(s)            
-            //－钱
+            //更新资产
             let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
             this.updateFixedAssets(m,item.auction,item.companies[0].id)   
         }else if(this.chooseType==2){
             let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
             print.log(s)
             this.StartCompeteUpdateCondition(s)
-            //－钱
+            //更新资产
             let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
             this.updateFixedAssets(m,item.auction,item.companies[0].id)   
         }else if(this.chooseType==3){
             let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
             print.log(s)
             this.StartCompeteUpdateCondition(s)
-            //－钱
+            //更新资产
             let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
             //查询商业用地 固定资产
             this.updateFixedAssetsForCommerland(m,item)

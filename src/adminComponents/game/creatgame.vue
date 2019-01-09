@@ -59,13 +59,20 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 
 export default {
   name: "docCreate",
   data() {
     return {
-        userinfo:'',
+        company_id:'',
+        Yearid:'',
+
         name:'',
         start:'',
         stay:'',
@@ -73,8 +80,8 @@ export default {
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo =JSON.parse(ses.getItem("userinfo"));    
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   methods: {
     submitForm() {
@@ -85,26 +92,26 @@ export default {
       }
     },
     submit(){
-        let url=`${app.data().globleUrl}/game?judge=1&id=0&name=${this.name}&Yearid=0&start=${this.start}&stay=${this.stay}&detail=${this.detail}&condition=0`
-        console.log(url)
-        this.axios({
-          method: "post",
-          url: url
+        req.post_Param('api/game',{
+            'judge':1,
+            'id':0,
+            'name':this.name,
+            'Yearid':0,
+            'start':this.start,
+            'stay':this.stay,
+            'detail':this.detail,
+            'condition':0
         })
         .then(res => {
-        if (res.data.success) {
-            s_alert.Success("赛事创建成功", "正在加载……", "success"); 
-            setTimeout(() => {
-                this.$router.push({name:'listgame'})
-            }, 2000);           
-        } else {
-            s_alert.Timer("赛事创建失败", "。。。");
-        }
+            if (res.data.success) {
+                s_alert.Success("赛事创建成功", "正在加载……", "success"); 
+                setTimeout(() => {
+                    this.$router.push({name:'listgame'})
+                }, 2000);           
+            } else {
+                s_alert.Timer("赛事创建失败", "。。。");
+            }
         })
-        .catch(error => {
-        console.log(error);
-        s_alert.Timer("赛事创建失败", "请检查网络状况");
-        });
     }
   }
 };

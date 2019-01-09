@@ -7,6 +7,16 @@ module.exports={
     getOneSwayById(id){
         return req.post_Param('/api/sway',{'judge':8,'id':id})
     },
+    // 管理员信息
+    getAllAdmin(){
+        return req.post_Param('/api/admin',{'judge':1})
+    },
+    getOneAdminById(id){
+        return req.post_Param('/api/admin',{'judge':3,'id':id})
+    },
+    getAllGame(){
+        return req.post_Param('/api/game',{'judge':0})
+    },
     //公司信息
     getAllCompany(){
         return req.post_Param('/api/company',{'judge':0})

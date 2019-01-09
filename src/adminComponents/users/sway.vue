@@ -30,7 +30,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="gradeX" v-for="(item,index) in showItems" :key="item.name">
+                      <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                         <td>{{index}}</td>
                         <td>{{item.id}}</td>
                         <td>{{item.name}}</td>
@@ -40,14 +40,35 @@
                         <td v-else>未加入公司</td>
                         <td>{{item.created_at|formatTime}}</td>
                         <td class="actions" align='center'>
-                          <a class="on-default remove-row" @click="deleteItem(index)">
-                            <i class="fa fa-trash-o"></i>
+                          <a class="on-default remove-row" @click="isDeleteItem(item)">
+                            <i class="fa fa-trash-o" data-toggle="tooltip" data-placement="top" title="删除参赛者"></i>
                           </a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                      <ul class="pagination" style="float:right">
+                        <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                          <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                        </li>
+                        <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                          <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                        </li>
+                        <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                          <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -59,6 +80,11 @@
 
 <script>
 const s_alert = require("../../utils/alert");
+const ses = require("../../utils/ses");
+const req = require("../../utils/axios");
+const print = require("../../utils/print");
+const apis = require("../../utils/api/apis");
+
 import app from "../../App.vue";
 const moment = require('moment');
 var App = app;
@@ -67,74 +93,122 @@ export default {
   name: "sway",
   data() {
     return {
-      showItems: "",
-      select: [],
-      isSelectedAll: false,
-      //显示在修改栏
-      model:'',
-      office:''
+      company_id:'',
+      Yearid:'',
+      
+      // 分页数据
+      items: [],
+      showItems: [],
+      PageShowSum: 10,
+      currentPage: "0",
+      sumPage: null,
     };
   },
   filters:{
-    formatTime(val){
-      return moment(val).format('YYYY-MM-DD HH:mm:ss')
+    formatTime(x){
+      return moment(x).format('YYYY-MM-DD HH:mm:ss')
     }
+  },
+  beforeMount(){
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
       this.init()
+  },
+  updated() {    
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
   },
   methods: {
     init(){
         this.getSway();
     },
     getSway() {
-      var that = this;
-      let userinfo=JSON.parse(window.sessionStorage.getItem('userinfo'))
-      let s=`${app.data().globleUrl}/ass/company_sway?judge=3`
-      console.log(s)
-      that.axios({
-        method: "post",
-        url: s
-        })
+      apis.getAllSway()
         .then(res => {
-          console.log(res.data);
-          that.showItems = res.data;
+          print.log(res.data);
+          // 分页
+          this.currentPage='0'
+          this.show(res.data)
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
-    deleteItem(index) {
-      console.log(index);
-      let del=this.showItems[index]
+    isDeleteItem(item) {
+      print.log(item);
+      let del=item
       let that=this
       if(confirm('确定删除吗')){
-        that.dele(del)
+        that.DeleteItem(del)
       }else{
 
       }      
     },    
-    dele(del){
-      let that=this
-      let s=`${app.data().globleUrl}/sway?judge=6&id=${del.id}`
-      console.log(s)
-      that.axios({
-      method: "post",
-      url: s
+    DeleteItem(del){
+      req.post_Param('api/sway',{
+        'judge':6,
+        'id':del.id
       })
       .then(res => {
         if(res.data.success){
-            that.init()
+            this.init()
             swal("删除成功!", "你开除了一名成员", "success");
           }else{
-            that.init()
+            this.init()
             swal("删除失败!", "请检查", "warning");
           }
       })
-      .catch(err => {
-        console.log(err);
-      });
+    },
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
+    show(items) {
+      this.items=items;
+      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+      //页面加载完成，默认加载第一页
+      let page = Number(this.currentPage) + 1;
+      this.showEachPage(page);
+      print.log("当前数据总页为：--->", this.sumPage);
+    },
+    switchPage(page) {
+      let p = page - 1;
+      this.currentPage = `${p}`;
+      print.log("当前-->", page);
+      this.showEachPage(page);
+    },
+    showEachPage(page) {
+      let all = this.items;
+      this.showItems = [];
+      for (
+        let i = (page - 1) * this.PageShowSum;
+        i < page * this.PageShowSum;
+        i++
+      ) {
+        if (all[i] == null) {
+          break;
+        } else {
+          this.showItems.push(all[i]);
+        }
+      }
+    },
+    nextPage() {
+      if (this.currentPage == this.sumPage - 1) {
+        s_alert.basic("已经到达最后一页了……");
+      } else {
+        let p = Number(this.currentPage) + 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+    previousPage() {
+      if (this.currentPage == "0") {
+        s_alert.basic("已经到达最前面了……");
+      } else {
+        let p = Number(this.currentPage) - 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
     }
+    //结束分页
+
   }
 };
 </script>

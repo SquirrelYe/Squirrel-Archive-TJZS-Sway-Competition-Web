@@ -600,12 +600,21 @@ export default {
     // 更新个人信息
     refreshUserinfo(){
       if(ses.getSes('name')!=null||ses.getSes('pass')!=null){
-        apis.getOneSwayById(JSON.parse(ses.getSes('userinfo')).id)
-        .then(res => {
-          let uinfo = JSON.stringify(res.data);
-          ses.setSes('userinfo',uinfo);
-          // print.log('个人信息',res.data)
-        })
+        if(ses.getSes('type')==0){
+          apis.getOneSwayById(JSON.parse(ses.getSes('userinfo')).id)
+          .then(res => {
+            let uinfo = JSON.stringify(res.data);
+            ses.setSes('userinfo',uinfo);
+            print.log('个人信息',res.data)
+          })
+        }else{
+          apis.getOneAdminById(JSON.parse(ses.getSes('userinfo')).id)
+          .then(res => {
+            let uinfo = JSON.stringify(res.data);
+            ses.setSes('userinfo',uinfo);
+            print.log('个人信息',res.data)
+          })
+        }
       }    
     },
     
@@ -615,7 +624,7 @@ export default {
       .then(res => {
         let ginfo=JSON.stringify(res.data)
         ses.setSes('gameinfo',ginfo)
-        // print.log('财年信息',res.data)
+        print.log('财年信息',res.data)
       })    
     },
 

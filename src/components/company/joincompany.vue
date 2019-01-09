@@ -55,25 +55,25 @@
                   </table>
                 </div>
                 <div class="row">
-                <div class="col-sm-6">
-                  <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-                </div>
-                <div class="col-sm-6">
-                  <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                    <ul class="pagination" style="float:right">
-                      <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                        <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                      </li>
-                      <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                        <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                      </li>
-                      <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                        <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                      </li>
-                    </ul>
+                  <div class="col-sm-6">
+                    <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
+                      <ul class="pagination" style="float:right">
+                        <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
+                          <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                        </li>
+                        <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
+                          <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                        </li>
+                        <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                          <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
               </div>
             </div>
           </div>
@@ -103,15 +103,15 @@ export default {
   name: "doclist",
   data() {
     return {
+      mainList: true,
+      searchList: false,
+
       // 分页数据
       items: [],
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
       sumPage: null,
-
-      mainList: true,
-      searchList: false
     };
   },
   mounted() {
@@ -185,17 +185,17 @@ export default {
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
-    show() {
-      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+    show(items) {
+      this.sumPage = Math.ceil(items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let p = Number(this.currentPage) + 1;
       this.showEachPage(p);
-      console.log("当前数据总页为：--->", this.sumPage);
+      print.log("当前数据总页为：--->", this.sumPage);
     },
     switchPage(page) {
       let p = page - 1;
       this.currentPage = `${p}`;
-      console.log("当前-->", page);
+      print.log("当前-->", page);
       this.showEachPage(page);
     },
     showEachPage(page) {
@@ -219,7 +219,7 @@ export default {
       } else {
         let p = Number(this.currentPage) + 1;
         this.currentPage = `${p}`;
-        console.log("当前-->", p + 1);
+        print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
     },
@@ -229,7 +229,7 @@ export default {
       } else {
         let p = Number(this.currentPage) - 1;
         this.currentPage = `${p}`;
-        console.log("当前-->", p + 1);
+        print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
     },
@@ -247,7 +247,7 @@ export default {
       this.show();
     },
     doSearch(e) {
-      console.log(this.doSearchText);
+      print.log(this.doSearchText);
       if (this.doSearchText.length == 0) {
         this.mainList = true;
         this.searchList = false;
@@ -258,7 +258,7 @@ export default {
         this.searchItems = [];
         for (let i = 0; i < this.items.length; i++) {
           if (String(this.items[i].plantid).indexOf(this.doSearchText) == -1) {
-            // console.log(String(this.items[i].plantid).indexOf(this.doSearchText))
+            // print.log(String(this.items[i].plantid).indexOf(this.doSearchText))
           } else {
             this.searchItems.push(this.items[i]);
           }
