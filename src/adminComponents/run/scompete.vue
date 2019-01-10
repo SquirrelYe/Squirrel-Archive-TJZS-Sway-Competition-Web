@@ -54,7 +54,7 @@
                 </div>
                   <div class="row">                      
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table class="table table-striped table-hover" style id="datatable-editable">
                         <thead>
                           <tr>
                             <th>#</th>
@@ -138,7 +138,7 @@
                 </div>
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table class="table table-striped table-hover" style id="datatable-editable">
                         <thead>
                           <tr>
                             <th>#</th>
@@ -222,7 +222,7 @@
                 </div>
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table class="table table-striped table-hover" style id="datatable-editable">
                         <thead>
                           <tr>
                             <th>#</th>
@@ -565,7 +565,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading"><h4>发放固定资产到指定公司</h4></div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table class="table table-striped table-hover" style id="datatable-editable">
                         <thead>
                           <tr>
                             <th>#</th>
@@ -685,7 +685,8 @@ export default {
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-    this.init()
+    this.showMining();
+    this.getAllCompany();
     // 实时获取info
     setTimeout(() => {
     this.getInfo();
@@ -752,19 +753,19 @@ export default {
     sendCompete(index){
       //矿区
       if(index==1){
-        let s=`${app.data().globleUrl}/mining?judge=1&star=${this.mstar}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
+        let s=`api/mining?judge=1&star=${this.mstar}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
         print.log(s)
         this.tempSendCompete(s)
       }
       //工业用地
       if(index==2){
-        let s=`${app.data().globleUrl}/indusland?judge=1&model=${this.imodel}&measure=${this.imeasure}&efficient=${this.iefficient}&repurchase=${this.irepurchase}&isimprove=0&improve=${this.iimprove}&startprice=${this.istartprice}&condition=-2&Yearid=${this.iyear}`
+        let s=`api/indusland?judge=1&model=${this.imodel}&measure=${this.imeasure}&efficient=${this.iefficient}&repurchase=${this.irepurchase}&isimprove=0&improve=${this.iimprove}&startprice=${this.istartprice}&condition=-2&Yearid=${this.iyear}`
         print.log(s)
         this.tempSendCompete(s)
       }
       //商业用地
       if(index==3){
-        let s=`${app.data().globleUrl}/commerland?judge=1&level=${this.clevel}&brand=${this.cbrand}&increment=${this.cincrement}&startprice=${this.istartprice}&condition=-2&Yearid=${this.cyear}`
+        let s=`api/commerland?judge=1&level=${this.clevel}&brand=${this.cbrand}&increment=${this.cincrement}&startprice=${this.istartprice}&condition=-2&Yearid=${this.cyear}`
         print.log(s)
         this.tempSendCompete(s)          
       }
@@ -781,15 +782,15 @@ export default {
     //开始竞拍
     start(item,index){
         if(index==1){
-          let s=`${app.data().globleUrl}/mining?judge=2&condition=0&id=${item.id}`
+          let s=`api/mining?judge=2&condition=0&id=${item.id}`
           this.StartCompeteUpdateCondition(s)
         }
         else if(index==2){
-          let s=`${app.data().globleUrl}/indusland?judge=2&condition=0&id=${item.id}`
+          let s=`api/indusland?judge=2&condition=0&id=${item.id}`
           this.StartCompeteUpdateCondition(s)
         }
         else if(index==3){
-          let s=`${app.data().globleUrl}/commerland?judge=2&condition=0&id=${item.id}`
+          let s=`api/commerland?judge=2&condition=0&id=${item.id}`
           this.StartCompeteUpdateCondition(s)
         }else{
           s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
@@ -798,15 +799,15 @@ export default {
     // 结束竞拍 
     stop(item,index){
         if(index==1){
-          let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${item.id}`
+          let s=`api/mining?judge=2&condition=1&id=${item.id}`
           this.StartCompeteUpdateCondition(s)
         }
         else if(index==2){
-          let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${item.id}`
+          let s=`api/indusland?judge=2&condition=1&id=${item.id}`
           this.StartCompeteUpdateCondition(s)
         }
         else if(index==3){
-          let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${item.id}`
+          let s=`api/commerland?judge=2&condition=1&id=${item.id}`
           this.StartCompeteUpdateCondition(s)
         }else{
           s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
@@ -825,13 +826,13 @@ export default {
     // 定向公司发布
     sendToCompany(){
         if(this.chooseType==1){
-            let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
+            let s=`api/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
             this.StartCompeteUpdateCondition(s)
         }else if(this.chooseType==2){
-            let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
+            let s=`api/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
             this.StartCompeteUpdateCondition(s)
         }else if(this.chooseType==3){
-            let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
+            let s=`api/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${this.company_id}&price=0`
             this.StartCompeteUpdateCondition(s)
         }
     },
@@ -849,26 +850,27 @@ export default {
     },
     // 根据竞价排名发给公司
     getit(item){
+        print.log('根据竞价排名发给公司',item)
         if(this.chooseType==1){
-            let s=`${app.data().globleUrl}/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
+            let s=`api/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
             print.log(s)
             this.StartCompeteUpdateCondition(s)            
             //更新资产
-            let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
-            this.updateFixedAssets(m,item.auction,item.companies[0].id)   
+            let m=`api/statistic?judge=5&company_id=${item.company.id}`
+            this.updateFixedAssets(m,item.auction,item.company.id)
         }else if(this.chooseType==2){
-            let s=`${app.data().globleUrl}/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
+            let s=`api/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
             print.log(s)
             this.StartCompeteUpdateCondition(s)
             //更新资产
-            let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
-            this.updateFixedAssets(m,item.auction,item.companies[0].id)   
+            let m=`api/statistic?judge=5&company_id=${item.company.id}`
+            this.updateFixedAssets(m,item.auction,item.company.id)   
         }else if(this.chooseType==3){
-            let s=`${app.data().globleUrl}/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.companies[0].id}&price=${item.auction}`
+            let s=`api/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
             print.log(s)
             this.StartCompeteUpdateCondition(s)
             //更新资产
-            let m=`${app.data().globleUrl}/statistic?judge=5&company_id=${item.companies[0].id}`
+            let m=`api/statistic?judge=5&company_id=${item.company.id}`
             //查询商业用地 固定资产
             this.updateFixedAssetsForCommerland(m,item)
         }
@@ -895,7 +897,9 @@ export default {
             })
             .then(res => {
                 print.log(res.data);
-                this.init()
+                if(this.chooseType==1) this.showMining();
+                if(this.chooseType==2) this.showIndus();
+                if(this.chooseType==3) this.showCommer();
             })
         })
     },
@@ -905,10 +909,14 @@ export default {
         .then(res => {
             if(res.data.success){
                 s_alert.Success("竞拍状态更新成功", "", "success");
-                this.init()
+                if(this.chooseType==1) this.showMining();
+                if(this.chooseType==2) this.showIndus();
+                if(this.chooseType==3) this.showCommer();
             }else{
                 s_alert.Success("竞拍状态更新失败", "", "warning");
-                this.init()
+                if(this.chooseType==1) this.showMining();
+                if(this.chooseType==2) this.showIndus();
+                if(this.chooseType==3) this.showCommer();
             }
         })
     },
@@ -928,7 +936,9 @@ export default {
             })
             .then(res => {
                 swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
-                this.init()
+                if(this.chooseType==1) this.showMining();
+                if(this.chooseType==2) this.showIndus();
+                if(this.chooseType==3) this.showCommer();
             })
         })
     },
@@ -937,6 +947,7 @@ export default {
         apis.getAllCompany()
         .then(res => {
           this.company = res.data;
+          print.log('所有公司列表->',res.data)
         })
     },
     // 根据星级设置矿区储量

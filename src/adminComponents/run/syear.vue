@@ -170,8 +170,8 @@ export default {
       givePrice:0,
 
       // 计算折旧
-      diggerDeprelief:0,
-      lineDeprelief:0,
+      diggerDeprelief:[],
+      lineDeprelief:[],
 
       // 分页数据
       items: [],
@@ -215,7 +215,7 @@ export default {
     // 点击进入下一财年
     nextYear(showGameItems) {
         print.log('当前比赛信息',showGameItems)
-      if (confirm("你确定要进入下一财年？这将对参赛者资产进行清算！")) {
+      if (confirm("你确定要进入下一财年？这将对参赛者固定资产进行清算！")) {
         this.init()
         this.updateYear(showGameItems);
       }
@@ -270,15 +270,16 @@ export default {
         })
     },
     // ---------------------------------------------------计算折旧---------------------------------------------------
-    updateRelief(){
-        
+    updateRelief(){        
         this.getStasticsItems() //初始化资产列表
         print.log('最新统计资产信息',this.showStasticsItems)
+
         for (let i = 0; i < this.showStasticsItems.length; i++) {
             print.log('执行公司资产信息更新--->',this.showStasticsItems[i])
-            //对折旧价值初始化
-            this.diggerDeprelief=0
-            this.lineDeprelief=0
+            //对折旧价值初始化.
+            let index=i
+            this.diggerDeprelief[index]=0
+            this.lineDeprelief[index]=0
             //循环计算折旧价值
             const re = this.showStasticsItems[i];
             let cid=re.company_id;
@@ -287,11 +288,11 @@ export default {
                 //串行同时执行
                 function(callback) {          
                     //计算挖掘机折旧      
-                    that.getMiningDigger(cid,callback);
+                    that.getMiningDigger(index,cid,callback);
                 },
                 function(callback) {
                     // 计算生产线折旧
-                    that.getInduslandFactory(cid,callback);
+                    that.getInduslandFactory(index,cid,callback);
                 }],
                 function(err, results) {
                     //等上面两个执行完返回结果
@@ -301,36 +302,36 @@ export default {
         }
     },
     // 获取 矿区 - 挖掘机
-    getMiningDigger(cid,callback){
+    getMiningDigger(index,cid,callback){
         req.post_Param('api/ass/mining_digger',{
             'judge':5,
             'company_id':cid
         })
         .then(res => {
             // print.log('矿区 - 挖掘机',res.data)
-            this.diggerDeprelief=0
+            this.diggerDeprelief[index]=0
             for (let i = 0; i < res.data.length; i++) {  //对矿区 循环，找到某一个矿区
                 const w = res.data[i];
                 let kdepre=w.deprelief; //找到某一矿区 折旧减免值
                 for (let j = 0; j < w.diggers.length; j++) {  //对挖掘机 进行循环，找到某一类挖掘机
                     const wjj = w.diggers[j];
                     let totalDepre=(1-kdepre)*wjj.deprelief*wjj.mining_digger.number*wjj.price;
-                    this.diggerDeprelief+=totalDepre
+                    this.diggerDeprelief[index]+=totalDepre
                 }
             }
-            print.log('统计所有的挖掘机折旧',this.diggerDeprelief)   
-            callback(null, this.diggerDeprelief);
+            print.log('统计所有的挖掘机折旧',this.diggerDeprelief[index])   
+            callback(null, this.diggerDeprelief[index]);
         })
     },
     // 获取 工业用地 - 工厂
-    getInduslandFactory(cid,callback){
+    getInduslandFactory(index,cid,callback){
         req.post_Param('api/ass/indusland_factory',{
             'judge':4,
             'company_id':cid
         })
         .then(res => {
             print.log('工业用地 - 工厂',res.data)
-            this.lineDeprelief=0
+            this.lineDeprelief[index]=0
             if(res.data.length>0){      //如果存在工业用地
                 let judgeHaveFactory=0;
                 for (let i = 0; i < res.data.length; i++) {  //对工业用地循环 找到 工业用地-工厂 中间表，从而获取到 对应的生产线
@@ -348,33 +349,34 @@ export default {
                                 // print.log('工业用地 - 工厂、中间表id',infa)
                                 //逐层回调，找到最终结果
                                 if(i==res.data.length-1 && j==w.factories.length-1){
-                                    this.getLineDepre(infa,idepre,callback,true);
+                                    this.getLineDepre(index,infa,idepre,callback,true);
                                 }else{
-                                    this.getLineDepre(infa,idepre,callback,false);
+                                    this.getLineDepre(index,infa,idepre,callback,false);
                                 }
                             }else{
                                 if(j==w.factories.length-1 && judgeHaveLine==0){
-                                    this.lineDeprelief=0
-                                    callback(null,this.lineDeprelief)
+                                    this.lineDeprelief[index]=0
+                                    callback(null,this.lineDeprelief[index])
                                 }
                             }
                             
                         }
                     }else{          // 无工厂
                         if(i==res.data.length-1 && judgeHaveFactory==0){
-                            this.lineDeprelief=0
-                            callback(null,this.lineDeprelief)
+                            this.lineDeprelief[index]=0
+                            callback(null,this.lineDeprelief[index])
                         }
                     }
                     
                 }
             }else{      //如果不存在工业用地
-                callback(null, this.lineDeprelief);
+                this.lineDeprelief[index]=0
+                callback(null, this.lineDeprelief[index]);
             }
         })
     },
     // 获取 工业用地 - 工厂 - 生产线
-    getLineDepre(infa,idepre,callback,sure){  //infa,idepre 分别为 中间表id与 工业用地 折旧减免值
+    getLineDepre(index,infa,idepre,callback,sure){  //infa,idepre 分别为 中间表id与 工业用地 折旧减免值
         req.post_Param('api/ass/indusland_factory_line',{
             'judge':8,
             'indusland_factory_id':infa
@@ -386,12 +388,12 @@ export default {
                 for (let j = 0; j < w.lines.length; j++) {  //对工业用地 - 工厂 - 生产线 进行循环，找到生产线，从而找到 对应的生产线 折旧率
                     const line = w.lines[j];
                     let totalDepre=(1-idepre)*line.relief*line.indusland_factory_line.number*line.price;
-                    this.lineDeprelief+=totalDepre
+                    this.lineDeprelief[index]+=totalDepre
                 }
             }
             if(sure){
-                print.log('统计所有的生产线折旧',this.lineDeprelief)   
-                callback(null, this.lineDeprelief);
+                print.log('统计所有的生产线折旧',this.lineDeprelief[index])   
+                callback(null, this.lineDeprelief[index]);
             }
         })
     },

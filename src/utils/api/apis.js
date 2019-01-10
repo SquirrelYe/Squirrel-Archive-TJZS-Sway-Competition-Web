@@ -31,6 +31,9 @@ module.exports={
     getOneStatisticByCompanyId(company_id){
         return req.post_Param('/api/ass/company_statistic',{'judge':5,'company_id':company_id})
     },
+    getAllStatisticWithCompanyInfo(){
+        return req.post_Param('/api/ass/company_statistic',{'judge':4})
+    },
     //财年更新
     getGameYear(id){
         return req.post_Param('/api/game',{'judge':4,'id':id})
