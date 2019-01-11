@@ -25,8 +25,8 @@
                     <th>单价</th>
                     <th>数量</th>
                     <th>交易明细</th>
-                    <th>己方</th>
-                    <th>对方</th>
+                    <th>卖方</th>
+                    <th>买方</th>
                     <th>交易原料名称</th>
                     <th>交易产品名称</th>
                     <th>矿区</th>
@@ -36,7 +36,7 @@
                     <th>工厂</th>
                     <th>生产线</th>
                     <th>研究所</th>
-                    <th>创建日期</th>
+                    <th>最近日期</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -71,7 +71,7 @@
                     <td v-else></td>
                     <td v-if="item.research">{{item.research.model}}</td>
                     <td v-else></td>
-                    <td>{{item.created_at|formatTime}}</td>
+                    <td>{{item.updated_at|formatTime}}</td>
                   </tr>
                 </tbody>
               </table>

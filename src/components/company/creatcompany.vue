@@ -79,6 +79,7 @@ export default {
   data() {
     return {
         userinfo:'',
+
         name:'',
         legal:'',
         code:'',
@@ -87,8 +88,7 @@ export default {
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo =JSON.parse(ses.getItem("userinfo"));    
+    this.userinfo =JSON.parse(ses.getSes("userinfo"));    
   },
   methods: {
     submitForm() {
@@ -137,10 +137,9 @@ export default {
     },
     enterCompany(cid,callback){
         //加入公司
-        let userinfo=ses.getSes('userinfo')[0]
         req.get_Param('/api/ass/company_sway',{
             'judge':0,
-            'sway_id':userinfo.id,
+            'sway_id':this.userinfo.id,
             'company_id':cid
         })
         .then(res => {
@@ -151,9 +150,6 @@ export default {
                 s_alert.Timer("加入失败，请检查……");
             }
         })
-        .catch(err => {
-          console.log(err);
-        });
     },
     updateOffice(uid,callback){
         //更新职位
@@ -189,20 +185,30 @@ export default {
         // apis.getOneStatisticByCompanyId(1)
         // apis.getAllTransation()
         // apis.getOneTransationByCompanyId(1)
-        apis.getGameYear(1)
+        // apis.getGameYear(1)
         // apis.getAllGoodsStock()
         // apis.getOneGoodsStockByCompanyId(1)
         // apis.getAllSourceStock()
         // apis.getOneSourceStockByCompanyId(1)
         // apis.getAllGoods()
         // apis.getOneGoodByCompanyId(1)
-
-        .then(res => {
-            print.log(res.data)
-        })
-        .catch(err => {
-            console.warn(err);
-        });
+        for (let i = 0; i < 1000; i++) {
+            req.get_Param('api/company',{
+            'judge':1,
+            'name':'test',
+            'legal':'test',
+            'code':'test',
+            'area':'test',
+            'condition':0
+            })
+            .then(res => {
+                print.log(res.data)
+            })
+            .catch(err => {
+                print.warn(err);
+            });
+        }
+        
     }
 
   }

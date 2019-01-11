@@ -7,82 +7,121 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-9">
+      <div class="col-sm-12">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title">Sway商战大赛-产品研发情况</h3>
           </div>
-          <div class="panel-body">
-            <div class="table-responsive">
-              <table class="table table-striped" style id="datatable-editable">
-                <thead>
-                  <tr>
-                    <th>产品ID</th>
-                    <th>产品名称</th>
-                    <th>产品原理</th>
-                    <th>产品介绍</th>
-                    <th>申请状态</th>
-                    <th>单价</th>
-                    <th>默认最高单价</th>
-                    <th>创建日期</th>
-                    <th>产品代工授权</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showGood" :key="index">
-                    <td>{{item.id}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.function}}</td>
-                    <td>{{item.introduction}}</td>
-                    <td>{{item.condition | formatCondition}}</td>
-                    <td>{{item.price}}</td>
-                    <td>{{item.maxprice}}</td>
-                    <td>{{item.created_at | formatTime}}</td>
-                    <td>
-                      <a class="on-default" data-toggle="modal" data-target="#oem" @click="getAllCompany()">
-                        <i class="fa  fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+
+          <div class="panel-body"> 
+            <ul class="nav nav-tabs navtab-bg"> 
+                <li class="active"> 
+                    <a href="#me" data-toggle="tab" aria-expanded="true"> 
+                        <span class="visible-xs"><i class="fa fa-home"></i></span> 
+                        <span class="hidden-xs" @click="showMyGoods()">自研产品</span> 
+                    </a> 
+                </li> 
+                <li class=""> 
+                    <a href="#showoem" data-toggle="tab" aria-expanded="false"> 
+                        <span class="visible-xs"><i class="fa fa-user"></i></span> 
+                        <span class="hidden-xs" @click="showMyOEM()">代工产品</span> 
+                    </a> 
+                </li>
+            </ul> 
+            <div class="tab-content"> 
+                <div class="tab-pane active" id="me"> 
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover" style id="datatable-editable">
+                      <thead>
+                        <tr>
+                          <th>产品ID</th>
+                          <th>产品名称</th>
+                          <th>产品原理</th>
+                          <th>产品介绍</th>
+                          <th>申请状态</th>
+                          <th>单价</th>
+                          <th>默认最高单价</th>
+                          <th>创建日期</th>
+                          <th>产品代工授权</th>
+                          <th>金</th>
+                          <th>木</th>
+                          <th>水</th>
+                          <th>火</th>
+                          <th>土</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="gradeX" v-for="(item,index) in showGood" :key="index">
+                          <td>{{item.id}}</td>
+                          <td>{{item.name}}</td>
+                          <td>{{item.function}}</td>
+                          <td>{{item.introduction}}</td>
+                          <td>{{item.condition | formatCondition}}</td>
+                          <td>{{item.price}}</td>
+                          <td>{{item.maxprice}}</td>
+                          <td>{{item.created_at | formatTime}}</td>
+                          <td>
+                            <a class="on-default" data-toggle="modal" data-target="#oem" @click="getAllCompany()">
+                              <i class="fa  fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
+                            </a>
+                          </td>
+                          <td>{{item.s1}}</td>
+                          <td>{{item.s2}}</td>
+                          <td>{{item.s3}}</td>
+                          <td>{{item.s4}}</td>
+                          <td>{{item.s5}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div> 
+                <div class="tab-pane" id="showoem">                  
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover" style id="datatable-editable">
+                      <thead>
+                        <tr>
+                          <th>产品ID</th>
+                          <th>产品名称</th>
+                          <th>产品原理</th>
+                          <th>产品介绍</th>
+                          <th>申请状态</th>
+                          <th>单价</th>
+                          <th>默认最高单价</th>
+                          <th>创建日期</th>
+                          <th>产品授权方</th>
+                          <th>金</th>
+                          <th>木</th>
+                          <th>水</th>
+                          <th>火</th>
+                          <th>土</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="gradeX" v-for="(item,index) in showOEM" :key="index" v-if='item.commerresearch'>
+                          <td>{{item.id}}</td>
+                          <td>{{item.commerresearch.name}}</td>
+                          <td>{{item.commerresearch.function}}</td>
+                          <td>{{item.commerresearch.introduction}}</td>
+                          <td>{{item.commerresearch.condition | formatCondition}}</td>
+                          <td>{{item.commerresearch.price}}</td>
+                          <td>{{item.commerresearch.maxprice}}</td>
+                          <td>{{item.created_at | formatTime}}</td>
+                          <td>{{item.me_2.name}}</td>
+                          <td>{{item.commerresearch.s1}}</td>
+                          <td>{{item.commerresearch.s2}}</td>
+                          <td>{{item.commerresearch.s3}}</td>
+                          <td>{{item.commerresearch.s4}}</td>
+                          <td>{{item.commerresearch.s5}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+            </div> 
+        </div>
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Sway商战大赛-产品研发原料组成</h3>
-          </div>
-          <div class="panel-body">
-            <div class="table-responsive">
-              <table class="table table-striped" style id="datatable-editable">
-                <thead>
-                  <tr>
-                    <th>产品ID</th>
-                    <th>金</th>
-                    <th>木</th>
-                    <th>水</th>
-                    <th>火</th>
-                    <th>土</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showGood" :key="index">
-                    <td>{{item.id}}</td>
-                    <td>{{item.s1}}</td>
-                    <td>{{item.s2}}</td>
-                    <td>{{item.s3}}</td>
-                    <td>{{item.s4}}</td>
-                    <td>{{item.s5}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
 
     <!-- company -->
@@ -141,17 +180,23 @@ export default {
   name: "good",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showGood: '',
+      showOEM:'',
       company:'',
       company_id:''
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo = JSON.parse(ses.getItem("userinfo"));
+    this.userinfo = JSON.parse(ses.getSes("userinfo"));
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-      this.showMyCompete()
+      this.showMyGoods()
+      this.showMyOEM()
   },
   updated() {    
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
@@ -167,16 +212,27 @@ export default {
     }
   },
   methods: {
-    showMyCompete() {
     //获取自己公司产品研发情况
-    apis.getOneGoodByCompanyId(JSON.parse(ses.getSes('userinfo')).company_id)
-    .then(res => {
-        print.log(res.data);
-        this.showGood = res.data
-    })
-  },
+    showMyGoods() {
+      apis.getOneGoodByCompanyId(JSON.parse(ses.getSes('userinfo')).company_id)
+      .then(res => {
+          print.log(res.data);
+          this.showGood = res.data
+      })
+    },
+    // 获取代工产品
+    showMyOEM(){
+      req.post_Param('api/oem',{
+        judge:8,
+        other:this.company_id
+      })
+      .then(res => {
+          print.log(res.data);
+          this.showOEM = res.data
+      })
+    },
+    //获取公司列表
     getAllCompany(){
-        //获取公司列表
         apis.getAllCompany()
         .then(res => {
           this.company = res.data;
@@ -185,6 +241,7 @@ export default {
           console.log(err);
         });
     },
+    // 授权代工
     sendOemToCompany(){
       print.log(this.company_id)
     }

@@ -21,7 +21,7 @@
                     <th>金额(w)</th>
                     <th>收支情况</th>
                     <th>事件</th>
-                    <th>创建时间</th>
+                    <th>最近时间</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -38,7 +38,7 @@
                     <td v-if="item.factory">{{item.factory.model}}</td>
                     <td v-if="item.line">{{item.line.model}}</td>
                     <td v-if="item.research">{{item.research.model}}</td>
-                    <td>{{item.created_at|formatTime}}</td>
+                    <td>{{item.updated_at|formatTime}}</td>
                   </tr>
                 </tbody>
               </table>

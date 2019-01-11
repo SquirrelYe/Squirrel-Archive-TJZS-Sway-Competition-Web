@@ -16,7 +16,7 @@
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="table-responsive">
-                  <table class="table table-bordered table-striped" style id="datatable-editable">
+                  <table class="table table-bordered table-striped table-hover" style id="datatable-editable">
                     <thead>
                       <tr>
                         <th>#</th>

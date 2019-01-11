@@ -571,20 +571,18 @@ export default {
     };
   },
   beforeMount() {
-    var ses = window.sessionStorage;
-    this.userinfo =JSON.parse(ses.getItem("userinfo"));    
+    this.userinfo =JSON.parse(ses.getSes("userinfo"));    
   },
   mounted() {
-    var ses = window.sessionStorage;
-    if (ses.getItem("userinfo")== null) {
+    if (ses.getSes("userinfo")== null) {
       s_alert.basic("登录会话过期，请重新登录！");
       this.$router.push("/");
     } else {
       //默认加载 index
       this.$router.push("/menu/index");
-      if (ses.getItem("type") && this.userinfo!='') {
-        print.log("用户类别：-->", ses.getItem("type"));
-        this.judgeUserType = ses.getItem("type");
+      if (ses.getSes("type") && this.userinfo!='') {
+        print.log("用户类别：-->", ses.getSes("type"));
+        this.judgeUserType = ses.getSes("type");
       }
     }
     

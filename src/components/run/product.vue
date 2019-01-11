@@ -213,59 +213,109 @@
                             </div>
                         </div>         
                         <div class="col-lg-12" v-if="tLine.indusland_factory_line">
-                                <div class="portlet" v-if="tLine.indusland_factory_line.condition==0">
-                                    <div class="portlet-heading portlet-default">
-                                        <h3 class="portlet-title text-dark">
-                                            选择要生产的产品
-                                        </h3>
-                                        <div class="portlet-widgets">
-                                            <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
-                                            <span class="divider"></span>
-                                            <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i class="ion-minus-round"></i></a>
-                                            <span class="divider"></span>
-                                            <a ><i class="ion-close-round"></i></a>
-                                        </div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div id="bg-default" class="panel-collapse collapse in">
-                                        <div class="panel-heading"> 
-                                          <!-- {{item}} -->
-                                          <table class="table table-striped" style id="datatable-editable">
-                                            <thead>
-                                              <tr>
-                                                <th>#</th>
-                                                <th>产品编号</th>
-                                                <th>产品名称</th>
-                                                <th>元素金</th>
-                                                <th>元素木</th>
-                                                <th>元素水</th>
-                                                <th>元素火</th>
-                                                <th>元素土</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}">
-                                                <td>
-                                                  <div class="radio radio-success radio-single">
-                                                      <input type="radio" @input="getResearch(item)" name="sigle" aria-label="Single radio One">
-                                                      <label></label>
-                                                  </div>
-                                                </td>
-                                                <td>{{item.id}}</td>
-                                                <td>{{item.name}}</td>
-                                                <td>{{item.s1}}</td>
-                                                <td>{{item.s2}}</td>
-                                                <td>{{item.s3}}</td>
-                                                <td>{{item.s4}}</td>
-                                                <td>{{item.s5}}</td>
-                                              </tr>
-                                            </tbody>
+                          <div class="portlet" v-if="tLine.indusland_factory_line.condition==0">
+                              <div class="portlet-heading portlet-default">
+                                  <h3 class="portlet-title text-dark">
+                                      选择要生产的产品
+                                  </h3>
+                                  <div class="portlet-widgets">
+                                      <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
+                                      <span class="divider"></span>
+                                      <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default"><i class="ion-minus-round"></i></a>
+                                      <span class="divider"></span>
+                                      <a ><i class="ion-close-round"></i></a>
+                                  </div>
+                                  <div class="clearfix"></div>
+                              </div>
+                              <div id="bg-default" class="panel-collapse collapse in">
+                                  <div class="panel-heading"> 
+                                    <!-- {{item}} -->
+                                    <ul class="nav nav-tabs navtab-bg"> 
+                                      <li class="active"> 
+                                          <a href="#me" data-toggle="tab" aria-expanded="true" @click='getShowGoodItems()'> 
+                                              <span class="visible-xs"><i class="fa fa-home"></i></span> 
+                                              <span class="hidden-xs">自研产品</span> 
+                                          </a> 
+                                      </li> 
+                                      <li class=""> 
+                                          <a href="#oem" data-toggle="tab" aria-expanded="false" @click='getMyOEMItems()'> 
+                                              <span class="visible-xs"><i class="fa fa-user"></i></span> 
+                                              <span class="hidden-xs">代工产品</span> 
+                                          </a> 
+                                      </li>
+                                  </ul> 
+                                  <div class="tab-content"> 
+                                      <div class="tab-pane active" id="me"> 
+                                        <table class="table table-striped" style id="datatable-editable">
+                                          <thead>
+                                            <tr>
+                                              <th>#</th>
+                                              <th>产品编号</th>
+                                              <th>产品名称</th>
+                                              <th>元素金</th>
+                                              <th>元素木</th>
+                                              <th>元素水</th>
+                                              <th>元素火</th>
+                                              <th>元素土</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}">
+                                              <td>
+                                                <div class="radio radio-success radio-single">
+                                                    <input type="radio" @input="getResearch(1,item)" name="sigle" aria-label="Single radio One">
+                                                    <label></label>
+                                                </div>
+                                              </td>
+                                              <td>{{item.id}}</td>
+                                              <td>{{item.name}}</td>
+                                              <td>{{item.s1}}</td>
+                                              <td>{{item.s2}}</td>
+                                              <td>{{item.s3}}</td>
+                                              <td>{{item.s4}}</td>
+                                              <td>{{item.s5}}</td>
+                                            </tr>
+                                          </tbody>
                                         </table>
                                       </div>
-                                    </div>
+                                      <div class="tab-pane" id="oem"> 
+                                        <table class="table table-striped" style id="datatable-editable">
+                                          <thead>
+                                            <tr>
+                                              <th>#</th>
+                                              <th>产品编号</th>
+                                              <th>产品名称</th>
+                                              <th>元素金</th>
+                                              <th>元素木</th>
+                                              <th>元素水</th>
+                                              <th>元素火</th>
+                                              <th>元素土</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr v-for="(item,index) in showOEMItems" :key="index" :class="{'active' : index==1}">
+                                              <td>
+                                                <div class="radio radio-success radio-single">
+                                                    <input type="radio" @input="getResearch(2,item)" name="sigle" aria-label="Single radio One">
+                                                    <label></label>
+                                                </div>
+                                              </td>
+                                              <td>{{item.id}}</td>
+                                              <td>{{item.commerresearch.name}}</td>
+                                              <td>{{item.commerresearch.s1}}</td>
+                                              <td>{{item.commerresearch.s2}}</td>
+                                              <td>{{item.commerresearch.s3}}</td>
+                                              <td>{{item.commerresearch.s4}}</td>
+                                              <td>{{item.commerresearch.s5}}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                  </div>
                                 </div>
-                            </div>                  
-                        
+                              </div>
+                          </div>
+                      </div>   
                     </div>
 
                     <hr>
@@ -351,6 +401,7 @@ export default {
       showCompeteIndusland:'',
       showDiggerItems:'',
       showGoodItems:'',  //显示所有 已通过的 公司产品
+      showOEMItems:'',
       showHaveTotalSource:[],
       chooseResearch:'',  //显示选择的产品信息
       research:'',  //保存选择的 产品
@@ -420,6 +471,7 @@ export default {
       this.research=''
       this.judge=true
       this.getShowGoodItems()
+      this.getMyOEMItems()
       this.getTotalSource()
       //如果 生产状态 condition=2 （已完成），获取已生产产品信息
       if(this.tLine.indusland_factory_line.condition==2){
@@ -442,6 +494,23 @@ export default {
       .then(res => {
         this.showGoodItems=res.data;
         print.log('所有的公司产品',res.data)
+        // 初始化选择产品
+        this.research=''
+        this.chooseResearch='';
+      })
+    },
+    // 获取代工产品
+    getMyOEMItems(){
+      req.post_Param('api/oem',{
+        judge:8,
+        other:this.company_id
+      })
+      .then(res => {
+          print.log('所有的代工产品',res.data);
+          this.showOEMItems = res.data
+          // 初始化选择产品
+          this.research=''
+          this.chooseResearch='';
       })
     },
     //显示开采的原料  用于生产产品
@@ -552,10 +621,16 @@ export default {
       })
     },
     //获得选择的 生产产品
-    getResearch(item){ 
-      print.log('选择的 生产产品',item)
-      this.research=item
-      this.chooseResearch=item;
+    getResearch(index,item){ 
+      if(index==1){
+        print.log('选择的 自研产品',item)
+        this.research=item
+        this.chooseResearch=item;
+      }else if(index==2){
+        print.log('选择的 代工产品',item)
+        this.research=item.commerresearch
+        this.chooseResearch=item.commerresearch;  
+      }
     },
     // 循环遍历，更改生产状态
     forToChangeCondition(data){

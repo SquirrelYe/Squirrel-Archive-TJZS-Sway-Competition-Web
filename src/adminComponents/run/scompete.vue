@@ -393,7 +393,7 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">型号</label>
                                     <div class="col-md-10">
-                                        <select class="form-control" v-model="imodel">
+                                        <select class="form-control" v-model="imodel" @change="getModel()">
                                             <option v-for="(item,index) in model" :key="index" :value="item">{{item | formatmodel}}</option>
                                         </select>
                                     </div>
@@ -401,27 +401,25 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="example-email">土地面积</label>
                                     <div class="col-md-10">
-                                        <select class="form-control" v-model="imeasure">
-                                            <option v-for="(item,index) in measure" :key="index" :value="item">{{item | formatmeasure}}</option>
-                                        </select>
+                                      <input type="number" disabled class="form-control" v-model="imeasure">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">效率提升</label>
                                     <div class="col-md-10">
-                                        <input type="number" class="form-control" v-model="iefficient">
+                                        <input type="number" disabled class="form-control" v-model="iefficient">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">折旧减免</label>
                                     <div class="col-md-10">
-                                        <input type="number" class="form-control" v-model="irepurchase">
+                                        <input type="number" disabled class="form-control" v-model="irepurchase">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">改良花费</label>
                                     <div class="col-md-10">
-                                        <input type="number" class="form-control" v-model="iimprove">
+                                        <input type="number" disabled class="form-control" v-model="iimprove">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -469,7 +467,7 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">土地等级</label>
                                     <div class="col-md-10">
-                                        <select class="form-control" v-model="clevel">
+                                        <select class="form-control" v-model="clevel" @change="getLevel()">
                                             <option v-for="(item,index) in level" :key="index" :value="item">{{item | formatlevel}}</option>
                                         </select>
                                     </div>
@@ -477,13 +475,13 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">品牌提升</label>
                                     <div class="col-md-10">
-                                        <input type="number" class="form-control" v-model="cbrand">
+                                        <input type="number" disabled class="form-control" v-model="cbrand">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">增值空间</label>
                                     <div class="col-md-10">
-                                        <input type="number" class="form-control" v-model="cincrement">
+                                        <input type="number" disabled class="form-control" v-model="cincrement">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -755,28 +753,30 @@ export default {
       if(index==1){
         let s=`api/mining?judge=1&star=${this.mstar}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
         print.log(s)
-        this.tempSendCompete(s)
+        this.tempSendCompete(s,index)
       }
       //工业用地
       if(index==2){
         let s=`api/indusland?judge=1&model=${this.imodel}&measure=${this.imeasure}&efficient=${this.iefficient}&repurchase=${this.irepurchase}&isimprove=0&improve=${this.iimprove}&startprice=${this.istartprice}&condition=-2&Yearid=${this.iyear}`
         print.log(s)
-        this.tempSendCompete(s)
+        this.tempSendCompete(s,index)
       }
       //商业用地
       if(index==3){
         let s=`api/commerland?judge=1&level=${this.clevel}&brand=${this.cbrand}&increment=${this.cincrement}&startprice=${this.istartprice}&condition=-2&Yearid=${this.cyear}`
         print.log(s)
-        this.tempSendCompete(s)          
+        this.tempSendCompete(s,index)          
       }
     },
     //发布订单模板
-    tempSendCompete(s){
+    tempSendCompete(s,index){
         req.post(s)
         .then(res => {
             print.log(res.data);
             s_alert.Success("发布竞拍成功", "注意，默认为未开启竞拍状态，点击开始按钮开始竞拍", "success");
-            this.init()
+            if(index==1) this.showMining();
+            if(index==2) this.showIndus();
+            if(index==3) this.showCommer();
         })
     },
     //开始竞拍
@@ -957,6 +957,20 @@ export default {
         if(this.mstar==3){ this.mreserve = Math.round(Math.random()*(15000-12000)+12000);this.mdeprelief=0.2;this.mrepurchase=200;}
         if(this.mstar==4){ this.mreserve = Math.round(Math.random()*(24000-18000)+18000);this.mdeprelief=0.25;this.mrepurchase=300;}
         if(this.mstar==5){ this.mreserve = Math.round(Math.random()*(32000-26000)+26000);this.mdeprelief=0.3;this.mrepurchase=450;}
+    },
+    // 根据工业用地型号设置面积等等信息
+    getModel(){
+      if(this.imodel==1){ this.imeasure=5; this.iefficient=0; this.irepurchase=0; this.iimprove=0}
+      if(this.imodel==2){ this.imeasure=5; this.iefficient=0.1; this.irepurchase=0.4; this.iimprove=500}
+      if(this.imodel==3){ this.imeasure=10; this.iefficient=0.2; this.irepurchase=0.1; this.iimprove=500}
+      if(this.imodel==4){ this.imeasure=8; this.iefficient=0.3; this.irepurchase=0.1; this.iimprove=500}
+    },
+    // 根据商业用地等级设置品牌提升等等信息
+    getLevel(){
+      if(this.clevel==1){ this.cbrand=0; this.cincrement=0.1; }
+      if(this.clevel==2){ this.cbrand=0.1; this.cincrement=0.3; }
+      if(this.clevel==3){ this.cbrand=0.2; this.cincrement=0.8; }
+      if(this.clevel==4){ this.cbrand=0.3; this.cincrement=1.2; }
     },
     //获取政府矿区竞拍汇总表
     showMining() {

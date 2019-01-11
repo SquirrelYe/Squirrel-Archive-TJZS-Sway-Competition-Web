@@ -125,7 +125,7 @@
                         <div class="panel-heading"> </div>
                         <div class="panel-body">
                         <div class="h2 text-success">{{showStasticsItem.brand}}</div>
-                        <span class="text-muted">品牌价值(初始值1)</span>
+                        <span class="text-muted">品牌价值(初始值100)</span>
                         <div class="text-right">
                             <i class="ion-eye fa-2x text-success"></i>
                         </div>
