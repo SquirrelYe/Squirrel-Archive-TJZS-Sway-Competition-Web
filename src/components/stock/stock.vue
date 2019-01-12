@@ -32,9 +32,12 @@
                     <td>{{item.sum}}</td>
                     <td>{{item.created_at|formatTime}}</td>
                     <td>{{item.updated_at|formatTime}}</td>
-                    <td class="actions" align="center" @click="chooseGoodItem(item)">
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架">
-                        <i class="fa fa-tags" data-toggle="modal" data-target="#myModal1"></i>
+                    <td class="actions" align="center">
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架"  @click="chooseGoodItem(item)">
+                        <i class="fa fa-tags" data-toggle="modal" data-target="#toPublic"></i>
+                      </a>
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="代工发送" @click="chooseOEMItem(item)">
+                        <i class="fa  fa-external-link-square" data-toggle="modal" data-target="#toOEM"></i>
                       </a>
                     </td>
                   </tr>
@@ -66,7 +69,7 @@
     </div>
 
     <!-- model -->
-    <div id="myModal1" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="toPublic" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -111,6 +114,50 @@
       </div>
     </div>
 
+    <!-- toOEM -->
+    <div id="toOEM" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">代工产品发送</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><h4>代工产品信息</h4></div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">                                    
+                                <div class="form-group">
+                                  <label class="col-md-2 control-label">公司名称</label>
+                                  <div class="col-md-10">
+                                      <select class="form-control" v-model="oemCompany">
+                                          <option v-for="(item,index) in showOemCompany" :key="index" :value="item.id">{{item.name}}</option>
+                                      </select>
+                                  </div>
+                                </div>                                      
+                                <div class="form-group">
+                                  <label class="col-md-2 control-label">产品数量</label>
+                                  <div class="col-md-10">
+                                    <input type="number" class="form-control" v-model="number">
+                                  </div>   
+                                </div>                          
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>            
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="toOem()" v-if="number>0 && number<=currentOemItem.sum && oemCompany!=company_id">发送代工产品</button>
+            </div>       
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -123,15 +170,24 @@ const apis = require("../../utils/api/apis");
 
 import app from "../../App.vue";
 const moment = require("moment");
+const async=require('async')
+const notify = require("bootstrap-notify");
 var App = app;
 
 export default {
   name: "resource",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showStock: '',
       judgeShow:0,
-      currentShowGoodItem:'',    
+      currentShowGoodItem:'',   
+      currentOemItem:'', 
+      showOemCompany:'',
+      oemCompany:'',
+      number:0,
       // 分页数据
       items: [],
       showItems: [],
@@ -141,7 +197,8 @@ export default {
     };
   },
   beforeMount() {
-    
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;    
   },
   mounted() {
       this.init()
@@ -187,6 +244,12 @@ export default {
     chooseGoodItem(item){
       this.currentShowGoodItem=item
     },
+    // 选中代工产品
+    chooseOEMItem(item){
+      this.currentOemItem=item
+      print.log('选中的代工产品',item)
+      this.getAllCompany()
+    },
     // 上架
     toPublic(model){
       print.log(model)
@@ -209,6 +272,66 @@ export default {
         this.updateSumToZero(model)
       })
     },
+    // 发送到代工公司
+    toOem(){
+      print.log(this.currentOemItem,this.number,this.oemCompany)
+      let that=this
+      async.series([
+        //串行同时执行
+        callback=>{          
+            //findOrCreate 创造并查询宿主库存信息      
+            that.getCompanyStock(that.currentOemItem,that.oemCompany,callback);
+        },
+        callback=>{
+            // 查询自己库存信息
+            that.getCompanyStock(that.currentOemItem,that.company_id,callback);            
+        }],
+        function(err, results) {
+            //等上面两个执行完返回结果，执行更新库存数量
+            print.log('更新库存统计信息',results)
+            that.updateStock(results,that.number);
+        })
+    },
+    //findOrCreate 创造宿主库存信息
+    getCompanyStock(item,oem,callback){
+      req.post_Param('api/industryyield',{
+        'judge':1,
+        'id':0,
+        'kind':1,
+        'sum':0,
+        'company_id':oem,
+        'commerresearch_id':item.commerresearch_id
+      })
+      .then(res => {
+        print.log('创造宿主库存信息',res.data)
+        callback(null,res.data)
+      })
+    },
+    // 执行更新库存数量
+    updateStock(results,number){
+      // 增加宿主方的库存数量
+      req.post_Param('api/industryyield',{
+        'judge':6,
+        'sum':results[0][0].sum+number,
+        'company_id':results[0][0].company_id,
+        'commerresearch_id':results[0][0].commerresearch_id
+      })
+      .then(res => {
+        print.log('更新自己库存信息',res.data)
+      })
+      // 减少自己（代工方）的库存数量
+      req.post_Param('api/industryyield',{
+        'judge':6,
+        'sum':results[1][0].sum-number,
+        'company_id':results[1][0].company_id,
+        'commerresearch_id':results[1][0].commerresearch_id
+      })
+      .then(res => {
+        print.log('更新自己库存信息',res.data)
+      })
+      this.init()
+      s_alert.Success("代工产品交付成功！", "正在加载……", "success");
+    },
     // 更新库存
     updateSumToZero(model){
       req.post_Param('api/industryyield',{
@@ -220,6 +343,17 @@ export default {
         this.init()
         s_alert.Success("库存更新成功", "正在加载……", "success");
       })
+    },
+    //获取公司列表-发送代工产品
+    getAllCompany(){
+        apis.getAllCompany()
+        .then(res => {
+          this.showOemCompany = res.data;
+        })
+    },
+    // 发送代工产品信息
+    sendOemCompanyItem(item){
+      print.log('代工产品信息->',item)
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------

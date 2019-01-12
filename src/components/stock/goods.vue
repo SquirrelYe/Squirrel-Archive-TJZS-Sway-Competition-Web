@@ -60,10 +60,16 @@
                           <td>{{item.price}}</td>
                           <td>{{item.maxprice}}</td>
                           <td>{{item.created_at | formatTime}}</td>
-                          <td>
-                            <a class="on-default" data-toggle="modal" data-target="#oem" @click="getAllCompany()">
-                              <i class="fa  fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
+                          <td v-if="item.condition==1">
+                            <a class="on-default" data-toggle="modal" data-target="#oem" @click="getAllCompany(item)">
+                              <i class="fa fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
                             </a>
+                            <a class="on-default" data-toggle="modal" data-target="#company" @click="getOemCompany(item)">
+                              <i class="fa  fa-reorder" data-toggle="tooltip" data-placement="top" title="查看授权公司信息"></i>
+                            </a>
+                          </td>
+                          <td v-else>
+                            
                           </td>
                           <td>{{item.s1}}</td>
                           <td>{{item.s2}}</td>
@@ -124,7 +130,7 @@
       
     </div>
 
-    <!-- company -->
+    <!-- oem -->
     <div id="oem" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -143,7 +149,7 @@
                                 <div class="form-group">
                                     <label class="col-md-2 control-label">公司名称</label>
                                     <div class="col-md-10">
-                                        <select class="form-control" v-model="company_id">
+                                        <select class="form-control" v-model="other">
                                             <option v-for="(item,index) in company" :key="index" :value="item.id">{{item.name}}</option>
                                         </select>
                                     </div>
@@ -157,6 +163,53 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
             <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendOemToCompany()">授权到公司</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!-- company -->
+    <div id="company" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">获取产品授权信息</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" v-if="currentGoodItem"><h4>{{currentGoodItem.name}}授权信息</h4></div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                              <table class="table table-striped table-hover" style id="datatable-editable">
+                                <thead>
+                                  <tr>
+                                    <th>#</th>
+                                    <th>公司名称</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr class="gradeX" v-for="(item,index) in showOemCompany" :key="index" v-if='item.other_2'>
+                                    <td>{{index}}</td>
+                                    <td>{{item.other_2.name}}</td>
+                                    <td>{{item.created_at | formatTime}}</td>
+                                    <td>
+                                      <a class="on-default remove-row" @click="deleteOemCompanyItem(item)" data-dismiss="modal">
+                                        <i class="fa fa-trash-o" data-toggle="tooltip" data-placement="top" title="撤销授权"></i>
+                                      </a>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>         
             </div>
         </div>
       </div>
@@ -186,7 +239,12 @@ export default {
       showGood: '',
       showOEM:'',
       company:'',
-      company_id:''
+      company_id:'',
+      chooseGoodToOem:'',
+      currentGoodItem:'',
+      showOemCompany:'',
+
+      other:''  //选则授权公司
     };
   },
   beforeMount() {
@@ -214,7 +272,7 @@ export default {
   methods: {
     //获取自己公司产品研发情况
     showMyGoods() {
-      apis.getOneGoodByCompanyId(JSON.parse(ses.getSes('userinfo')).company_id)
+      apis.getOneGoodByCompanyId(this.company_id)
       .then(res => {
           print.log(res.data);
           this.showGood = res.data
@@ -232,7 +290,8 @@ export default {
       })
     },
     //获取公司列表
-    getAllCompany(){
+    getAllCompany(item){
+        this.chooseGoodToOem=item;
         apis.getAllCompany()
         .then(res => {
           this.company = res.data;
@@ -243,7 +302,51 @@ export default {
     },
     // 授权代工
     sendOemToCompany(){
-      print.log(this.company_id)
+      print.log('准备授权产品信息',this.chooseGoodToOem)
+      if(this.company_id!=this.other){
+        req.post_Param('api/oem',{
+          'judge':1,
+          'me':this.company_id,
+          'other':this.other,
+          'commerresearch_id':this.chooseGoodToOem.id
+        })
+        .then(res=>{
+          print.log(res.data)
+          if(res.data[1]){
+            swal("产品授权成功!", `授权公司可以代工生产`, "success");
+          }else if(!res.data[1]){
+            swal("已经授权过此公司！", `请不要多次授权给同一公司`, "warning");
+          }
+        })
+      }else{
+        swal("不能授权给自己！", '', "warning");
+      }      
+    },
+    // 获取产品代工信息
+    getOemCompany(item){
+      print.log('选中的产品信息',item)
+      this.currentGoodItem=item
+      req.post_Param('api/oem',{
+        'judge':9,
+        'me':this.company_id,
+        'commerresearch_id':item.id
+      })
+      .then(res=>{
+        print.log('产品授权公司信息',res.data)
+        this.showOemCompany=res.data
+      })
+    },
+    // 撤销授权
+    deleteOemCompanyItem(item){
+      req.post_Param('api/oem',{
+        'judge':7,
+        'other':item.other,
+        'commerresearch_id':item.commerresearch_id
+      })
+      .then(res=>{
+        print.log('撤销产品授权公司信息',res.data)
+        swal("撤销产品授权公司信息成功!", `${item.other_2.name}不再开始代工生产${item.commerresearch.name}产品`, "success");
+      })
     }
   }
 };

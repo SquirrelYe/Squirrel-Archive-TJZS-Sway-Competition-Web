@@ -260,7 +260,7 @@
                                             </tr>
                                           </thead>
                                           <tbody>
-                                            <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}">
+                                            <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}" v-if='item.condition==1'>
                                               <td>
                                                 <div class="radio radio-success radio-single">
                                                     <input type="radio" @input="getResearch(1,item)" name="sigle" aria-label="Single radio One">
@@ -367,7 +367,7 @@
                   <div class="modal-footer">
                     <div v-if="tLine.indusland_factory_line">
                       <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(FinishedResearchItem,tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge">开始生产</button>
+                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge">开始生产</button>
                       <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="reBuild(FinishedResearchItem)" v-if="tLine.indusland_factory_line.condition==2">存入库存</button>
                     </div>
                   </div>
@@ -464,7 +464,7 @@ export default {
     },
     openSetting(item){
       this.tLine=item
-      print.log('选中的生产线->',this.tLine)
+      print.log('选中的生产线信息->',this.tLine)
       this.chooseResearch=''
       this.currentLineNumber=item.indusland_factory_line.number
       this.number=0
@@ -477,6 +477,8 @@ export default {
       if(this.tLine.indusland_factory_line.condition==2){
         this.showFinishedResearchItem(item.indusland_factory_line.commerresearch_id)
       }
+      // 清空radio状态
+      $("input[type='radio']").attr("checked",false);//取消选中
     },
     //获取已完成生产 产品信息
     showFinishedResearchItem(commerresearch_id){      
@@ -485,6 +487,7 @@ export default {
         'id':commerresearch_id
       })
       .then(res => {
+        print.log('已完成生产 产品信息',res.data)
         this.FinishedResearchItem=res.data;
       })
     },
@@ -540,9 +543,11 @@ export default {
       }
     },
     // 点击生产
-    sendPrice(researchitem,stay,capacity,number){     //研发产品信息，持续时间，产能，生产线数量
+    sendPrice(stay,capacity,number){     //研发产品信息，持续时间，产能，生产线数量
+      let researchitem=this.research   //获取生产的产品信息
       //配置生产线 开始工作
       let time=this.number/this.tLine.capacity;
+      print.log('选中的产品为->',researchitem,'生产持续时间为->',time)
       req.post_Param('api/ass/indusland_factory_line',{
         'judge':2,
         'stay':time,
@@ -555,8 +560,7 @@ export default {
         s_alert.Success("工业用地-工厂-生产线配置成功，开始生产", "正在加载……", "success");
         this.init()
         this.chooseFactoryIndex(this.factoryIndex)
-      }) 
-      
+      })      
       // 更新每一个原料数量
       let usedSource=[researchitem.s1*stay*capacity*number,researchitem.s2*stay*capacity*number,researchitem.s3*stay*capacity*number,researchitem.s4*stay*capacity*number,researchitem.s5*stay*capacity*number];
       // 循环更改数量
@@ -564,12 +568,12 @@ export default {
         const have = this.showHaveTotalSource[i];
         const used = usedSource[i]
         let sum = Number(have)-Number(used);
+        print.log('原有',have,'消耗',used)
         // 执行减少原料逻辑
         let source_id=i+1
         this.updateSourceStock(source_id,sum);
       }
-      print.log('仓库原料数量更新成功！','已使用',usedSource)
-      
+      print.log('仓库原料数量更新成功！','已使用',usedSource)      
     },
     // 减少 原料库存
     updateSourceStock(source_id,sum){
@@ -650,7 +654,7 @@ export default {
             }            
           }     
       },
-    //生产完成，重新配置挖掘机 开始工作
+    //生产完成，重新配置生产线 开始工作
     updateConditionToFinished(indusland_factory_line_id){
       req.post_Param('api/ass/indusland_factory_line',{
         'judge':2,

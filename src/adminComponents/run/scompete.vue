@@ -561,7 +561,7 @@
               <div class="row">
                 <div class="col-sm-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><h4>发放固定资产到指定公司</h4></div>
+                        <div class="panel-heading"><h4>按照出价排名发放固定资产到指定公司</h4></div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                       <table class="table table-striped table-hover" style id="datatable-editable">
                         <thead>
