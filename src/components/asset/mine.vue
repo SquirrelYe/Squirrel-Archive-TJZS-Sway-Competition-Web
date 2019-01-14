@@ -291,43 +291,42 @@ export default {
     //购买挖掘机 绑定 到矿区
     sendPrice(item,money,number,digger_id) {
       let that=this
-      req.post_Param('api/ass/mining_digger',{
-        'judge':1,
-        'mining_id':that.temp.id,
-        'digger_id':digger_id
-      })
-      .then(res => {          
-        // 更新页面
-        that.init()
-        // 更新数量
-        that.sendNumber(item)
-
-        // 获取资产信息
-        apis.getOneStatisticByCompanyId(that.company_id)
-        .then(res => {
+      // 查询个人资产
+      apis.getOneStatisticByCompanyId(that.company_id)
+      .then(res => {
+        if(res.data.float>=money){
           let float=res.data.float-money;
           let fixed=res.data.fixed+money;
-          // 更新资产信息
-          req.post_Param('api/statistic',{
-            'judge':4,
-            'float':float,
-            'fixed':fixed,
-            'company_id':that.company_id
-          })
-          // 写入交易信息
-          req.post_Param('api/transaction',{
+          // 更新个人资产
+          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
+          // 绑定挖掘机
+          req.post_Param('api/ass/mining_digger',{
             'judge':1,
-            'id':0,
-            'Yearid':that.Yearid,
-            'inout':1,
-            'type':4,
-            'kind':3,
-            'price':money,
-            'number':number,
-            'me':that.company_id,
+            'mining_id':that.temp.id,
             'digger_id':digger_id
           })
-        })
+          .then(res => {
+            // 写入交易信息
+            req.post_Param('api/transaction',{
+              'judge':1,
+              'id':0,
+              'Yearid':that.Yearid,
+              'inout':1,
+              'type':4,
+              'kind':3,
+              'price':money/number,
+              'number':number,
+              'me':that.company_id,
+              'digger_id':digger_id
+            })
+            // 更新页面
+            that.init()
+            // 更新数量
+            that.sendNumber(item)
+          })
+        }else{
+          s_alert.Success("下单失败", "可用流动资金不足……", "warning");
+        }
       })
     },
     //更改 挖掘机 数量

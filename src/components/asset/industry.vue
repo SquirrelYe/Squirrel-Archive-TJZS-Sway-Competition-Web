@@ -343,29 +343,33 @@ export default {
         this.currentIndustryHaveUsedTotalMeasure=tempMeasure
       })
     },
-    sendPriceToFactory(item,money,number,factory_id) {
-      //购买工厂 绑定 到工业用地
+    //购买工厂 绑定 到工业用地
+    sendPriceToFactory(item,money,number,factory_id) {      
       let that=this;
-      req.post(`api/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${factory_id}`)  // this.temp选择的工业用地
-        .then(res => {
-          if(res){
-            // 更新数量
-            that.sendNumber(item)
-            // 查询资产信息
-            apis.getOneStatisticByCompanyId(that.company_id)
-            .then(res => {
-              let float=res.data.float-money;
-              let fixed=res.data.fixed+money;
-              // 更新资产信息
-              req.post(`${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
-            })
-            // 写入交易
-            req.post(`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money}&number=${number}&me=${that.company_id}&factory_id=${factory_id}`)
-          }else{
-            s_alert.Success("下单失败", "正在加载……", "success");
-          }
-        })
-
+      // 查询资产信息
+      apis.getOneStatisticByCompanyId(that.company_id)
+      .then(res => {
+        if(res.data.float>=money){
+          let float=res.data.float-money;
+          let fixed=res.data.fixed+money;
+          // 更新资产信息
+          req.post(`${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
+          // 绑定工业用地
+          req.post(`api/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${factory_id}`)  // this.temp选择的工业用地
+          .then(res => {
+            if(res){
+              // 更新数量
+              that.sendNumber(item)           
+              // 写入交易
+              req.post(`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money/number}&number=${number}&me=${that.company_id}&factory_id=${factory_id}`)
+            }else{
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          })
+        }else{
+          s_alert.Success("下单失败", "可用流动资金不足……", "warning");
+        }        
+      })
     },
     sendNumber(item) {
       //更改 工厂 数量
@@ -446,43 +450,43 @@ export default {
     //购买生产线 绑定 到工厂
     sendPriceToLine(item,index,money,number,line_id) {
       let that=this
-      req.post(`api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`)
-        .then(res => {
-          if(res){
-            // 更新页面
-            that.init()
-            that.sendLineNumber(item)
-
-            // 获取资产信息
+      // 获取资产信息
             apis.getOneStatisticByCompanyId(that.company_id)
             .then(res => {
-              let float=res.data.float-money;
-              let fixed=res.data.fixed+money;
-              // 更新资产信息
-              req.post_Param('api/statistic',{
-                'judge':4,
-                'float':float,
-                'fixed':fixed,
-                'company_id':that.company_id
-              })
-              // 写入交易信息
-              req.post_Param('api/transaction',{
-                'judge':1,
-                'id':0,
-                'Yearid':that.Yearid,
-                'inout':1,
-                'type':4,
-                'kind':3,
-                'price':money,
-                'number':number,
-                'me':that.company_id,
-                'line_id':line_id
-              })
+              if(res.data.float>=money){
+                let float=res.data.float-money;
+                let fixed=res.data.fixed+money;
+                // 更新个人资产
+                req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
+                // 绑定生产线
+                req.post(`api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`)
+                .then(res => {
+                  if(res){
+                    // 更新页面
+                    that.init()
+                    that.sendLineNumber(item)
+                    // 写入交易信息
+                    req.post_Param('api/transaction',{
+                      'judge':1,
+                      'id':0,
+                      'Yearid':that.Yearid,
+                      'inout':1,
+                      'type':4,
+                      'kind':3,
+                      'price':money/number,
+                      'number':number,
+                      'me':that.company_id,
+                      'line_id':line_id
+                    })
+                  }else{
+                    s_alert.Success("下单失败", "正在加载……", "success");
+                  }
+                })
+              }else{
+                s_alert.Success("下单失败", "可用流动资金不足……", "warning");
+              }
             })
-          }else{
-            s_alert.Success("下单失败", "正在加载……", "success");
-          }
-        })
+        
     },
     sendLineNumber(item) {
       //更改 生产线 数量

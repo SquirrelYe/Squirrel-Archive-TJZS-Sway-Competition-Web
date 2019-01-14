@@ -183,7 +183,7 @@ export default {
   },
   methods: {
     showMyCompete() {
-      apis.getOneTransationByCompanyId(this.company_id)
+      apis.getOneTransationByCompanyIdAndType(this.company_id,2)
       .then(res => {
           console.log(res.data);
           this.showTransaction = res.data;

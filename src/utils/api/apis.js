@@ -64,6 +64,9 @@ module.exports={
     },
     getOneTransationByCompanyId(company_id){
         return req.post_Param('/api/transaction',{'judge':8,'company_id':company_id})
+    },
+    getOneTransationByCompanyIdAndType(company_id,type){
+        return req.post_Param('/api/transaction',{'judge':9,'company_id':company_id,'type':type})
     }
   
     

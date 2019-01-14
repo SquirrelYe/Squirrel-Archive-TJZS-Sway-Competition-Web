@@ -109,8 +109,8 @@ export default {
       return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
     formatInOut(x){
-      if(x==1) return '买入';
-      if(x==2) return '卖出';
+      if(x==1) return '支出';
+      if(x==2) return '收入';
     },
     formatStar(x){
       if(x==1) return '一星矿区';

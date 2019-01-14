@@ -317,7 +317,7 @@ export default {
         'commerresearch_id':results[0][0].commerresearch_id
       })
       .then(res => {
-        print.log('更新自己库存信息',res.data)
+        print.log('更新宿主库存信息',res.data)
       })
       // 减少自己（代工方）的库存数量
       req.post_Param('api/industryyield',{
@@ -329,6 +329,8 @@ export default {
       .then(res => {
         print.log('更新自己库存信息',res.data)
       })
+      // 写入交易
+      req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=1&type=1&kind=2&number=${number}&me=${this.company_id}&other=${results[0][0].company_id}&commerresearch_id=${results[0][0].commerresearch_id}`)
       this.init()
       s_alert.Success("代工产品交付成功！", "正在加载……", "success");
     },

@@ -225,26 +225,31 @@ export default {
     //购买研究所 绑定 到 商业用地
     sendPrice(item,money,research_id) {
       let that=this
-      // 购买研究所
-      req.post_Param('api/ass/commerland_research',{
-        'judge':6,
-        'commerland_id':that.temp.id,
-        'research_id':item.id
-      })
-        .then(res => {          
-          s_alert.Success("下单成功", "正在加载……", "success");
-          that.showMyCommerland();
-            // 查询个人资产
-            apis.getOneStatisticByCompanyId(that.company_id)
-            .then(res => {
-              let float=res.data.float-money;
-              let fixed=res.data.fixed+money;
-              // 更新个人资产
-              req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
-            })
-              // 写入交易
-              req.post(`api/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money}&number=1&me=${that.company_id}&research_id=${research_id}`)
-        })
+      // 查询个人资产
+      apis.getOneStatisticByCompanyId(that.company_id)
+      .then(res => {
+        if(res.data.float>=money){
+          let float=res.data.float-money;
+          let fixed=res.data.fixed+money;
+          let brand=res.data.brand*(1+item.brand);
+          // 更新个人资产
+          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&brand=${brand}&company_id=${that.company_id}`).then(res=>{})
+          // 绑定研究所
+          req.post_Param('api/ass/commerland_research',{
+            'judge':6,
+            'commerland_id':that.temp.id,
+            'research_id':item.id
+          })
+          .then(res => {          
+            s_alert.Success("下单成功", "正在加载……", "success");
+            that.showMyCommerland();
+            // 写入交易
+            req.post(`api/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money}&number=1&me=${that.company_id}&research_id=${research_id}`)
+          })
+        }else{
+          s_alert.Success("下单失败", "可用流动资金不足……", "warning");
+        }          
+      })      
     },
     //显示已购 商业用地
     showMyCommerland() {

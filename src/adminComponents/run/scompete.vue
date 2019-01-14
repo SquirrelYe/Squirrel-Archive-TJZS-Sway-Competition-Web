@@ -850,7 +850,7 @@ export default {
     },
     // 根据竞价排名发给公司
     getit(item){
-        print.log('根据竞价排名发给公司',item)
+        print.log('根据竞价排名发给公司',item,this.chooseItem)
         if(this.chooseType==1){
             let s=`api/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
             print.log(s)
@@ -880,20 +880,23 @@ export default {
         // 获取资产信息
         req.post(m)
         .then(res => {
-            this.money=res.data
-            print.log(res.data)
+            print.log('商业用地资产信息',res.data)
             // 计算资产差值
-            let fix=this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
+            let fix=item.auction;  //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
+            //商业用地固定资产 = 目前价值 + （平均成交价 - 目前价值）* 增值空间 ，暂时这样用着。
             let fixed=res.data.fixed+fix;
             let total=res.data.total+fix-item.auction;
             let float=res.data.float-item.auction;
+            let brand=(res.data.brand)*(1+this.chooseItem.brand);
+            print.log('更新品牌价值',brand)
             // 更新资产信息
             req.post_Param('api/statistic',{
                 'judge':4,
                 'fixed':fixed,
                 'total':total,
                 'float':float,
-                'company_id':item.companies[0].id
+                'brand':brand,
+                'company_id':item.company.id
             })
             .then(res => {
                 print.log(res.data);
@@ -977,6 +980,7 @@ export default {
         req.post_Param('api/mining',{'judge':0})
         .then(res => {
           this.showMiningItems = res.data;
+          this.chooseType=1;
           // 分页
           this.currentPage='0'
           this.show(res.data)
@@ -987,6 +991,7 @@ export default {
         req.post_Param('api/indusland',{'judge':0})
         .then(res => {
           this.showInduslandItems = res.data;
+          this.chooseType=2;
           // 分页
           this.currentPage='0'
           this.show(res.data)
@@ -997,6 +1002,7 @@ export default {
         req.post_Param('api/commerland',{'judge':0})
         .then(res => {
           this.showCommerlandItems = res.data;
+          this.chooseType=3;
           // 分页
           this.currentPage='0'
           this.show(res.data)
