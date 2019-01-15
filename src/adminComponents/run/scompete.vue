@@ -74,7 +74,7 @@
                         <tbody>
                           <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
-                            <td>{{item.star}}</td>
+                            <td>{{item.star|formatStar}}</td>
                             <td>{{item.source_id|formatSource}}</td>
                             <td>{{item.reserve}}</td>
                             <td>{{item.deprelief}}</td>
@@ -158,8 +158,8 @@
                         <tbody>
                           <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
-                            <td>{{item.model}}</td>
-                            <td>{{item.measure}}</td>
+                            <td>{{item.model|formatmodel}}</td>
+                            <td>{{item.measure|formatmeasure}}</td>
                             <td>{{item.efficient}}</td>
                             <td>{{item.repurchase}}</td>
                             <td>{{item.improve}}</td>
@@ -240,7 +240,7 @@
                         <tbody>
                           <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
-                            <td>{{item.level}}</td>
+                            <td>{{item.level|formatlevel}}</td>
                             <td>{{item.brand}}</td>
                             <td>{{item.increment}}</td>
                             <td>{{item.startprice}}</td>
@@ -1058,8 +1058,7 @@ export default {
         print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
-    },
-
+    }
   }
 };
 </script>
