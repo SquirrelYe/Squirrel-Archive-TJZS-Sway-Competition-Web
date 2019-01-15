@@ -254,6 +254,9 @@
                     <a href="javascript:void(0)" @click="scompete()">竞拍管理</a>
                   </li>
                   <li>
+                    <a href="javascript:void(0)" @click="sgood()">产品管理</a>
+                  </li>
+                  <li>
                     <a href="javascript:void(0)" @click="stransation()">交易管理</a>
                   </li>
                   <li>
@@ -653,6 +656,7 @@ export default {
     listgame(){this.$router.push({name:'listgame'})},
     scompete(){this.$router.push({name:'scompete'})},//赛事运营
     stransation(){this.$router.push({name:'stransation'})},
+    sgood(){this.$router.push({name:'sgood'})},
     sstastics(){this.$router.push({name:'sstastics'})},
     syear(){this.$router.push({name:'syear'})}
   },

@@ -410,7 +410,7 @@ export default {
             'total':total
         })
         .then(res => {
-            if(res.data.success){
+            if(res.data){
                 $.notify(
                     {message: `${re.company.name}->公司资产更新成功！`},
                     {type: "success"}

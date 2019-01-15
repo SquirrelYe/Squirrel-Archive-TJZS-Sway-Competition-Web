@@ -55,6 +55,7 @@ import scompete from '@/adminComponents/run/scompete'
 import stransation from '@/adminComponents/run/stransation'
 import sstastics from '@/adminComponents/run/sstastics'
 import syear from '@/adminComponents/run/syear'
+import sgood from '@/adminComponents/run/sgood'
 
 Vue.use(Router)
 
@@ -248,6 +249,11 @@ export default new Router({
           path:'stransation',   //交易管理
           name:'stransation',
           component:stransation
+        },
+        {
+          path:'sgood',   //产品管理
+          name:'sgood',
+          component:sgood
         },
         {
           path:'sstastics',   //赛事数据
