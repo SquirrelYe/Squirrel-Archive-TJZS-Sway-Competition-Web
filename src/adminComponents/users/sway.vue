@@ -24,6 +24,7 @@
                         <th>用户名</th>
                         <th>中文名</th>
                         <th>密码</th>
+                        <th>邮箱</th>
                         <th>所在公司</th>
                         <th>创建时间</th>
                         <th>执行操作</th>
@@ -36,6 +37,7 @@
                         <td>{{item.name}}</td>
                         <td>{{item.cname}}</td>
                         <td>{{item.pass}}</td>
+                        <td>{{item.email}}</td>
                         <td v-if="item.company">{{item.company.name}}</td>
                         <td v-else>未加入公司</td>
                         <td>{{item.created_at|formatTime}}</td>

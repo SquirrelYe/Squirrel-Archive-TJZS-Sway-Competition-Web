@@ -14,8 +14,8 @@
                             <li><a href="#">测试</a></li>
                         </ul> -->
                     </div>
-                    <h4 class="page-title" style="color:red" v-if="showStasticsItem">欢迎 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{showStasticsItem.Yearid}}</h4>
-                    <h4 class="page-title" style="color:red" v-if="info">欢迎 {{info.cname}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="showStasticsItem">欢迎 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{gameinfo.Yearid}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="userinfo">欢迎 {{userinfo.cname}}</h4>
                 </div>
             </div>
 
@@ -133,6 +133,59 @@
                     </div>
                 </div>
             </div>
+
+            <!-- <div class="row text-center">
+                <div class="col-lg-8 line1">
+                </div>
+                <div class="col-lg-4 line2">
+                </div>
+            </div> -->
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="portlet">
+                        <div class="portlet-heading">
+                            <h3 class="portlet-title text-dark text-uppercase">
+                                赛事数据
+                            </h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="portlet1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div id="pie-chart-container" class="flot-chart line1" style="height: 320px; padding: 0px; position: relative;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="portlet">
+                        <div class="portlet-heading">
+                            <h3 class="portlet-title text-dark text-uppercase">
+                                赛事统计
+                            </h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="portlet2" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div id="pie-chart">
+                                            <div id="pie-chart-container" class="flot-chart line2" style="height: 320px; padding: 0px; position: relative;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -155,7 +208,8 @@ export default {
   data() {
     return {
         showStasticsItem:'',
-        info:''
+        userinfo:'',
+        gameinfo:''
     };
   },
   filters:{
@@ -169,30 +223,41 @@ export default {
   },
   mounted() {
       this.init()
+    //   setInterval(() => {
+    //       this.init()
+    //   }, 5000);
   },
   methods: {
     init(){
       this.showStastics();
-      this.getinfo()
+      this.getinfo();
     },
     // 获取资产信息
     showStastics(){
         let company_id=JSON.parse(ses.getSes('userinfo')).company_id
         apis.getOneStatisticByCompanyId(company_id)
         .then(res => {   
-          print.log(res.data)
+        //   print.log('公司资产信息',res.data)
           this.showStasticsItem=res.data
         })
     },
     // 获取个人信息
     getinfo(){
-        this.info=JSON.parse(ses.getSes('userinfo'))
-        print.log(this.info)
+        this.userinfo=JSON.parse(ses.getSes('userinfo'))
+        this.gameinfo=JSON.parse(ses.getSes('gameinfo'))
     }
     }
 };
 </script>
 
 <style scoped>
+.line1{
+    background-image: url('../../assets/images/line1.png');
+    background-size:100% 100%;
+}
+.line2{
+    background-image: url('../../assets/images/line2.png');
+    background-size:100% 100%;
+}
 
 </style>

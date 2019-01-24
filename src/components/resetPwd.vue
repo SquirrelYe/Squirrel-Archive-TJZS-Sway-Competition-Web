@@ -45,6 +45,11 @@
 
 <script>
 const s_alert = require("../utils/alert");
+const ses = require("../utils/ses");
+const req = require("../utils/axios");
+const print = require("../utils/print");
+const apis = require("../utils/api/apis");
+
 import app from "../App.vue";
 
 export default {
@@ -71,20 +76,16 @@ export default {
     reset() {
     //重置密码
     var that=this;
-    that.axios({
-        method: "post",
-        url: `${app.data().globleUrl}/sway?judge=5&email=${that.email}&pass=${that.repassWord}` 
-    })
-        .then(res => {
-            console.log(res.data)
+    req.post(`api/sway?judge=5&email=${that.email}&pass=${that.repassWord}`)
+    .then(res => {
+        console.log(res.data)
         if (res.data[0] == 1) {
             s_alert.Success("密码重置成功", "正在返回登录界面……", "success");
             setTimeout(function(){
                 that.$router.push("/");
             },3000)
         }
-        })
-        .catch(error => console.log(error));
+    })
     },
     
     //邮箱输入框 失去焦点 进行邮箱验证

@@ -42,7 +42,7 @@
                   </a>
                 </li>
                 <li class @click="doLoan()">
-                  <a href="#messages" data-toggle="tab" aria-expanded="false">
+                  <a href="#doloan" data-toggle="tab" aria-expanded="false">
                     <span class="visible-xs">
                       <i class="fa fa-envelope-o"></i>
                     </span>
@@ -63,19 +63,17 @@
                             <th>公司名称</th>
                             <th>单价</th>
                             <th>数量</th>
-                            <th>生成时间</th>
                             <th>更新时间</th>
                             <th>操作</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index" v-if="item.source">
+                          <tr v-for="(item,index) in showSourceItems" :key="index" v-if="item.source">
                             <td>{{index}}</td>
                             <td>{{item.source.name}}</td>
                             <td>{{item.company.name}}</td>
-                            <td>{{item.price}}</td>
+                            <td>{{item.price}}万</td>
                             <td>{{item.number}}</td>
-                            <td>{{item.created_at|formatTime}}</td>
                             <td>{{item.updated_at|formatTime}}</td>
                             <td class="actions">
                               <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品">
@@ -85,25 +83,6 @@
                           </tr>
                         </tbody>
                       </table>
-                    </div>
-                    <!-- 分页 -->
-                    <div class="col-sm-6">
-                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                        <ul class="pagination" style="float:right">
-                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                          </li>
-                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                          </li>
-                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                          </li>
-                        </ul>
-                      </div>
                     </div>
                   </div>
                   <hr>
@@ -121,19 +100,17 @@
                             <th>公司名称</th>
                             <th>总量</th>
                             <th>单价</th>
-                            <th>生成时间</th>
                             <th>更新时间</th>
                             <th>操作</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index" v-if='item.commerresearch'>
+                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch'>
                             <td>{{index}}</td>
                             <td>{{item.commerresearch.name}}</td>
                             <td>{{item.company.name}}</td>
                             <td>{{item.number}}</td>
-                            <td>{{item.price}}</td>
-                            <td>{{item.created_at|formatTime}}</td>
+                            <td>{{item.price}}万</td>
                             <td>{{item.updated_at|formatTime}}</td>
                             <td class="actions">
                               <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品">
@@ -144,25 +121,7 @@
                         </tbody>
                       </table>
                     </div>
-                    <!-- 分页 -->
-                    <div class="col-sm-6">
-                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                        <ul class="pagination" style="float:right">
-                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                          </li>
-                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                          </li>
-                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
+                    
                   </div>
                   <hr>
                   <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
@@ -187,13 +146,13 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showLoanItem" :key="index">
                             <td>{{index}}</td>
-                            <td>{{item.money}}</td>
+                            <td>{{item.money}}万</td>
                             <td>{{item.from}}</td>
                             <td>{{item.end}}</td>
                             <td>{{item.rate}}</td>
-                            <td>{{item.send}}</td>
+                            <td>{{item.send}}万</td>
                             <td>{{item.condition|formatLoanCondition}}</td>
                             <td>{{item.created_at|formatTime}}</td>
                             <td>{{item.detail}}</td>
@@ -206,31 +165,12 @@
                         </tbody>
                       </table>
                     </div>
-                    <!-- 分页 -->
-                    <div class="col-sm-6">
-                      <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                        <ul class="pagination" style="float:right">
-                          <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                          </li>
-                          <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                          </li>
-                          <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
                   </div>
                   <hr>
                   <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
                 </div>
                 <!-- 政府贷款展示处 -->
-                <div class="tab-pane" id="messages">
+                <div class="tab-pane" id="doloan">
                   <div class="panel-body">
                     <form class="form-horizontal" role="form">
                         <div class="form-group" v-if="currentCompanyName">
@@ -242,7 +182,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="example-email">贷款金额</label>
                             <div class="col-md-10">
-                                <input class="form-control" placeholder="xxx万元" v-model="money">
+                                <input type="number" class="form-control" placeholder="xxx万元" v-model="money" @input="checkLoanNumber()">
                             </div>
                         </div>
                         <div class="form-group">
@@ -271,6 +211,8 @@
                         </div>
                     </form>
                 </div> 
+                  <hr>
+                  <strong align='center' style="color:red">注意：表格中贷款金额单位为万元，当前贷款额度为{{maxLoan}}万元</strong><br>
                   <hr>
                   <p>
                     <strong>注意：</strong><br>
@@ -410,6 +352,8 @@ export default {
       number:'',
       //贷款信息
       currentCompanyName:'xx',
+      currentCompanyStatistic:'',
+      maxLoan:0,
       from:0,
       stay:0,
       end:0,
@@ -668,9 +612,6 @@ export default {
         print.log(res.data);
         this.showSourceItems = res.data;
         this.judgeChoose=0
-        // 分页
-        this.currentPage='0'
-        this.show(res.data)
       })
     },
     //市场交易 - 产品
@@ -680,14 +621,19 @@ export default {
         print.log(res.data);
         this.showGoodsItems = res.data;
         this.judgeChoose=1
-        // 分页
-        this.currentPage='0'
-        this.show(res.data)
       })
     },
     //市场交易 - 贷款      
     doLoan() {
+      // 公司名称
       this.currentCompanyName=JSON.parse(ses.getSes('userinfo')).company.name
+      // 公司资产信息
+      apis.getOneStatisticByCompanyId(this.company_id)
+      .then(res=>{
+        print.log('当前公司资产信息',res.data)
+        this.currentCompanyStatistic=res.data;
+        this.maxLoan=this.currentCompanyStatistic.fixed*0.8*this.currentCompanyStatistic.brand/100;
+      })
     },
     // 显示贷款信息
     showloan(){
@@ -699,10 +645,15 @@ export default {
         print.log(res.data);
         this.showLoanItem = res.data;
         this.judgeChoose=2
-        // 分页
-        this.currentPage='0'
-        this.show(res.data)
       })
+    },
+    // 校验贷款金额
+    checkLoanNumber(){
+      print.log(this.money,this.maxLoan)
+      if(this.money>this.maxLoan) {
+        s_alert.Warning('超过贷款额度','请改正后重试……');
+        this.money=0;
+      }
     },
     // 提交贷款
     submitForm(){
@@ -730,7 +681,7 @@ export default {
           s_alert.Success("贷款信息提交成功", "正在加载……", "success");
           this.tempPriceLoan(this.money)  //更新资产
         }else{
-          s_alert.Warning('贷款信息提交失败','请改正后重试……')
+          s_alert.Warning('已有贷款为还清','请还清后重试……')
         }
       })
     },
@@ -743,13 +694,26 @@ export default {
       })
       .then(res => {
           let float=Number(res.data.float)+Number(money);
-          let total=Number(res.data.total)+Number(money);
           // 更新个人资产
+          print.log('更新资产为',float,total);
           req.post_Param('api/statistic',{
             'judge':4,
             'total':total,
             'float':float,
             'company_id':this.company_id
+          })
+          // 写入交易信息
+          req.post_Param('api/transaction',{
+              'judge':1,
+              'id':0,
+              'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
+              'inout':2,
+              'type':3,
+              'kind':3,
+              'price':money,
+              'number':1,
+              'me':this.company_id,
+              'detail':`贷款：${this.other}`
           })
           .then(res => {
             print.log(res.data);
@@ -775,6 +739,19 @@ export default {
             'float':float,
             'company_id':this.company_id
           })
+          // 写入交易信息
+          req.post_Param('api/transaction',{
+              'judge':1,
+              'id':0,
+              'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
+              'inout':1,
+              'type':3,
+              'kind':3,
+              'price':model.send,
+              'number':1,
+              'me':this.company_id,
+              'detail':`还清贷款：${model.send}`
+          })
       })
     },
     // 利率格式化
@@ -788,58 +765,7 @@ export default {
         this.stay=0;
         this.rate=0;
       }
-    },
-    // -----------------------------------------------------------分页模板-------------------------------------------------------------
-    show(items) {
-      this.items=items;
-      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
-      //页面加载完成，默认加载第一页
-      let page = Number(this.currentPage) + 1;
-      this.showEachPage(page);
-      print.log("当前数据总页为：--->", this.sumPage);
-    },
-    switchPage(page) {
-      let p = page - 1;
-      this.currentPage = `${p}`;
-      print.log("当前-->", page);
-      this.showEachPage(page);
-    },
-    showEachPage(page) {
-      let all = this.items;
-      this.showItems = [];
-      for (
-        let i = (page - 1) * this.PageShowSum;
-        i < page * this.PageShowSum;
-        i++
-      ) {
-        if (all[i] == null) {
-          break;
-        } else {
-          this.showItems.push(all[i]);
-        }
-      }
-    },
-    nextPage() {
-      if (this.currentPage == this.sumPage - 1) {
-        s_alert.basic("已经到达最后一页了……");
-      } else {
-        let p = Number(this.currentPage) + 1;
-        this.currentPage = `${p}`;
-        print.log("当前-->", p + 1);
-        this.showEachPage(p + 1);
-      }
-    },
-    previousPage() {
-      if (this.currentPage == "0") {
-        s_alert.basic("已经到达最前面了……");
-      } else {
-        let p = Number(this.currentPage) - 1;
-        this.currentPage = `${p}`;
-        print.log("当前-->", p + 1);
-        this.showEachPage(p + 1);
-      }
     }
-    //结束分页
 
   }
 }

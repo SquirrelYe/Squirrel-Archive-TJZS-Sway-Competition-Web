@@ -71,25 +71,24 @@
                           <td>{{item.price}}</td>
                           <td>{{item.maxprice}}</td>
                           <td>{{item.created_at | formatTime}}</td>
-                          <td v-if="item.condition==1">  <!--产品通过-->
-                            <a class="on-default" @click="deleteGood(item)">
-                              <i class="fa  fa-times" data-toggle="tooltip" data-placement="top" title="删除此产品"></i>
-                            </a>
-                            <a class="on-default" data-toggle="modal" data-target="#oem" @click="sendToCompany(item)">
-                              <i class="fa fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
-                            </a>
-                            <a class="on-default" data-toggle="modal" data-target="#company" @click="getOemCompany(item)">
-                              <i class="fa fa-reorder" data-toggle="tooltip" data-placement="top" title="查看授权公司信息"></i>
-                            </a>
-                            
-                          </td>
-                          <td v-else>     <!--产品未处理-->
-                            <a class="on-default" @click="accessGood(item)">
-                              <i class="fa fa-play" data-toggle="tooltip" data-placement="top" title="允许产品通过"></i>
-                            </a>
-                            <a class="on-default" @click="stopGood(item)">
-                              <i class="fa fa-stop" data-toggle="tooltip" data-placement="top" title="不允许产品通过"></i>
-                            </a>                            
+                          <td>
+                            <!--产品通过-->
+                              <a class="on-default" @click="deleteGood(item)" v-if="item.condition==1">
+                                <i class="fa  fa-times" data-toggle="tooltip" data-placement="top" title="删除此产品"></i>
+                              </a>
+                              <a class="on-default" data-toggle="modal" data-target="#oem" @click="sendToCompany(item)" v-if="item.condition==1">
+                                <i class="fa fa-link" data-toggle="tooltip" data-placement="top" title="授权此产品"></i>
+                              </a>
+                              <a class="on-default" data-toggle="modal" data-target="#company" @click="getOemCompany(item)" v-if="item.condition==1">
+                                <i class="fa fa-reorder" data-toggle="tooltip" data-placement="top" title="查看授权公司信息"></i>
+                              </a>
+                            <!--产品未处理-->
+                              <a class="on-default" @click="accessGood(item)">
+                                <i class="fa fa-play" data-toggle="tooltip" data-placement="top" title="允许产品通过"></i>
+                              </a>
+                              <a class="on-default" @click="stopGood(item)">
+                                <i class="fa fa-stop" data-toggle="tooltip" data-placement="top" title="不允许产品通过"></i>
+                              </a> 
                           </td>
                           <td>{{item.s1}}</td>
                           <td>{{item.s2}}</td>

@@ -1,6 +1,6 @@
 const req=require('../axios')
 module.exports={
-    //参赛者信息
+    // 参赛者信息
     getAllSway(){
         return req.post_Param('/api/ass/company_sway',{'judge':3})
     },
@@ -24,7 +24,11 @@ module.exports={
     getOneCompanyById(id){
         return req.post_Param('/api/company',{'judge':4,'id':id})
     },
-    //资产数据
+    // 竞拍信息
+    updateOneCompeteConditionById(id,condition){
+        return req.post_Param('api/compete',{'judge':2,'id':id,'condition':condition})
+    },
+    // 资产数据
     getAllStatistic(){
         return req.post_Param('/api/statistic',{'judge':0})
     },
@@ -34,11 +38,14 @@ module.exports={
     getAllStatisticWithCompanyInfo(){
         return req.post_Param('/api/ass/company_statistic',{'judge':4})
     },
-    //财年更新
+    // 财年更新
     getGameYear(id){
         return req.post_Param('/api/game',{'judge':4,'id':id})
     },
-    //库存（产品&原料）
+    getLastGameYear(){
+        return req.post_Param('/api/game',{'judge':6})
+    },
+    // 库存（产品&原料）
     getAllGoodsStock(){
         return req.post_Param('/api/ass/industryyield_commerresearch',{'judge':4})
     },
@@ -51,14 +58,14 @@ module.exports={
     getOneSourceStockByCompanyId(company_id){
         return req.post_Param('/api/miniyield',{'judge':4,'company_id':company_id})
     },
-    //公司产品库
+    // 公司产品库
     getAllGoods(){
         return req.post_Param('/api/commerresearch',{'judge':0})
     },
     getOneGoodByCompanyId(company_id){
         return req.post_Param('/api/commerresearch',{'judge':5,'company_id':company_id})
     },
-    //交易信息
+    // 交易信息
     getAllTransation(){
         return req.post_Param('/api/transaction',{'judge':0})
     },

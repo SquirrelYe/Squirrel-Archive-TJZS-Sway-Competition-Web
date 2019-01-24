@@ -569,12 +569,14 @@ export default {
     return {
       icon_src:"http://ww3.sinaimg.cn/thumb300/005NL6H7gw1ew1tp2et08j30cj0dl0tq.jpg",
       userinfo:'',
+      gameinfo:'',
       judgeUserType: '', //0.参赛者、1.管理员
       startTime:'', //格式 2018-12-11 11:17:16
     };
   },
   beforeMount() {
-    this.userinfo =JSON.parse(ses.getSes("userinfo"));    
+    this.userinfo = JSON.parse(ses.getSes("userinfo")); 
+    this.gameinfo = JSON.parse(ses.getSes("gameinfo")); 
   },
   mounted() {
     if (ses.getSes("userinfo")== null) {
@@ -589,10 +591,11 @@ export default {
       }
     }
     
-    setInterval(() => { //实时更新个人信息
-        // this.refreshUserinfo()
-        // this.refreshYearid()
-    }, 5000);
+    // setInterval(() => { 
+    //   //实时更新个人信息
+    //   this.refreshUserinfo()
+    //   this.refreshYearid()
+    // }, 5000);
     this.refreshUserinfo()
     this.refreshYearid()
   },
@@ -606,14 +609,14 @@ export default {
           .then(res => {
             let uinfo = JSON.stringify(res.data);
             ses.setSes('userinfo',uinfo);
-            print.log('个人信息',res.data)
+            // print.log('个人信息',res.data)
           })
         }else{
           apis.getOneAdminById(JSON.parse(ses.getSes('userinfo')).id)
           .then(res => {
             let uinfo = JSON.stringify(res.data);
             ses.setSes('userinfo',uinfo);
-            print.log('个人信息',res.data)
+            // print.log('个人信息',res.data)
           })
         }
       }    
@@ -621,11 +624,12 @@ export default {
     
     // 获取赛事财年信息
     refreshYearid(){
-      apis.getGameYear(1)
+      apis.getLastGameYear()
       .then(res => {
         let ginfo=JSON.stringify(res.data)
         ses.setSes('gameinfo',ginfo)
-        print.log('财年信息',res.data)
+
+        // print.log('财年信息',res.data)
       })    
     },
 

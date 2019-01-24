@@ -51,7 +51,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>id</th>
+                            <th>唯一标识符</th>
                             <th>矿区星级</th>
                             <th>属性</th>
                             <th>元素储量</th>
@@ -60,6 +60,7 @@
                             <th>起拍价</th>
                             <th>状态</th>
                             <th>成交价</th>
+                            <th>成交公司</th>
                             <th>出现财年</th>
                             <th>操作</th>
                           </tr>
@@ -68,14 +69,15 @@
                           <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
                             <td>{{item.id}}</td>
-                            <td>{{item.star}}</td>
-                            <td>{{item.source_id}}</td>
+                            <td>{{item.star | formatStar}}</td>
+                            <td>{{item.source_id|formatSource}}</td>
                             <td>{{item.reserve}}</td>
                             <td>{{item.deprelief}}</td>
                             <td>{{item.repurchase}}</td>
                             <td>{{item.startprice}}</td>
                             <td>{{item.condition|formatCondition}}</td>
                             <td>{{item.price}}</td>
+                            <td v-if="item.company">{{item.company.name}}</td><td v-else></td>
                             <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
                               <a class="waves-effect waves-light" @click="openSetting(item,1)" data-toggle="tooltip" data-placement="top" title="竞拍出价">
@@ -119,7 +121,7 @@
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>ID</th>
+                            <th>唯一标识符</th>
                             <th>型号</th>
                             <th>土地面积</th>
                             <th>生产效率提升</th>
@@ -128,6 +130,7 @@
                             <th>起拍价</th>
                             <th>状态</th>
                             <th>成交价</th>
+                            <th>成交公司</th>
                             <th>出现财年</th>
                             <th>操作</th>
                           </tr>
@@ -136,7 +139,7 @@
                           <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
                             <td>{{item.id}}</td>
-                            <td>{{item.model}}</td>
+                            <td>{{item.model|formatmodel}}</td>
                             <td>{{item.measure}}</td>
                             <td>{{item.efficient}}</td>
                             <td>{{item.repurchase}}</td>
@@ -144,6 +147,7 @@
                             <td>{{item.startprice}}</td>
                             <td>{{item.condition|formatCondition}}</td>
                             <td>{{item.price}}</td>
+                            <td v-if="item.company">{{item.company.name}}</td><td v-else></td>
                             <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
                               <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="竞拍出价">
@@ -187,13 +191,14 @@
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>ID</th>
+                            <th>唯一标识符</th>
                             <th>等级</th>
                             <th>品牌提升</th>
                             <th>增值空间</th>
                             <th>起拍价</th>
                             <th>状态</th>
                             <th>成交价</th>
+                            <th>成交公司</th>
                             <th>出现财年</th>
                             <th>操作</th>
                           </tr>
@@ -202,12 +207,13 @@
                           <tr v-for="(item,index) in showItems" :key="index">
                             <td>{{index}}</td>
                             <td>{{item.id}}</td>
-                            <td>{{item.level}}</td>
+                            <td>{{item.level|formatlevel}}</td>
                             <td>{{item.brand}}</td>
                             <td>{{item.increment}}</td>
                             <td>{{item.startprice}}</td>
                             <td>{{item.condition|formatCondition}}</td>
                             <td>{{item.price}}</td>
+                            <td v-if="item.company">{{item.company.name}}</td><td v-else></td>
                             <td>{{item.Yearid}}</td>
                             <td class="actions" align="center">
                               <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="竞拍出价">
@@ -434,6 +440,33 @@ export default {
       if(val==0) return '竞拍中'
       if(val==1) return '竞拍已结束'
       if(val==2) return '定向公司发送'
+      if(val==3) return '资产已发送'
+    },
+    formatStar(x){
+      if(x==1) return '一星矿区'
+      if(x==2) return '二星矿区'
+      if(x==3) return '三星矿区'
+      if(x==4) return '四星矿区'
+      if(x==5) return '五星矿区'
+    },
+    formatSource(x){
+      if(x==1) return '金'
+      if(x==2) return '木'
+      if(x==3) return '水'
+      if(x==4) return '火'
+      if(x==5) return '土'
+    },
+    formatmodel(x){
+      if(x==1) return 'A'
+      if(x==2) return 'Z'
+      if(x==3) return 'C'
+      if(x==4) return 'S'
+    },
+    formatlevel(x){
+      if(x==1) return '投契级'
+      if(x==2) return '机构级'
+      if(x==3) return '投资级'
+      if(x==4) return '地标级'
     }
   },
   methods: {

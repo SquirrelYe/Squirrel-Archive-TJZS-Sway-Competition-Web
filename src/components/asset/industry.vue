@@ -135,6 +135,7 @@
                             <strong>、工厂数量：{{item.number}}</strong><br>
                           </div>
                           <strong>当前工业用地面积已使用:{{currentIndustryHaveUsedTotalMeasure}}</strong><br>
+                          <strong style="color:red" v-if="number*item.measure+currentIndustryHaveUsedTotalMeasure>temp.measure">工厂占用面积超过工业用地面积</strong>
                         </div>
 
                         <div class="modal-footer">
@@ -353,7 +354,7 @@ export default {
           let float=res.data.float-money;
           let fixed=res.data.fixed+money;
           // 更新资产信息
-          req.post(`${app.data().globleUrl}/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
+          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
           // 绑定工业用地
           req.post(`api/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${factory_id}`)  // this.temp选择的工业用地
           .then(res => {
@@ -361,7 +362,7 @@ export default {
               // 更新数量
               that.sendNumber(item)           
               // 写入交易
-              req.post(`${app.data().globleUrl}/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money/number}&number=${number}&me=${that.company_id}&factory_id=${factory_id}`)
+              req.post(`api/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money/number}&number=${number}&me=${that.company_id}&factory_id=${factory_id}`)
             }else{
               s_alert.Success("下单失败", "正在加载……", "success");
             }
@@ -451,41 +452,41 @@ export default {
     sendPriceToLine(item,index,money,number,line_id) {
       let that=this
       // 获取资产信息
-            apis.getOneStatisticByCompanyId(that.company_id)
-            .then(res => {
-              if(res.data.float>=money){
-                let float=res.data.float-money;
-                let fixed=res.data.fixed+money;
-                // 更新个人资产
-                req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
-                // 绑定生产线
-                req.post(`api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`)
-                .then(res => {
-                  if(res){
-                    // 更新页面
-                    that.init()
-                    that.sendLineNumber(item)
-                    // 写入交易信息
-                    req.post_Param('api/transaction',{
-                      'judge':1,
-                      'id':0,
-                      'Yearid':that.Yearid,
-                      'inout':1,
-                      'type':4,
-                      'kind':3,
-                      'price':money/number,
-                      'number':number,
-                      'me':that.company_id,
-                      'line_id':line_id
-                    })
-                  }else{
-                    s_alert.Success("下单失败", "正在加载……", "success");
-                  }
-                })
-              }else{
-                s_alert.Success("下单失败", "可用流动资金不足……", "warning");
-              }
-            })
+      apis.getOneStatisticByCompanyId(that.company_id)
+      .then(res => {
+        if(res.data.float>=money){
+          let float=res.data.float-money;
+          let fixed=res.data.fixed+money;
+          // 更新个人资产
+          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
+          // 绑定生产线
+          req.post(`api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`)
+          .then(res => {
+            if(res){
+              // 更新页面
+              that.init()
+              that.sendLineNumber(item)
+              // 写入交易信息
+              req.post_Param('api/transaction',{
+                'judge':1,
+                'id':0,
+                'Yearid':that.Yearid,
+                'inout':1,
+                'type':4,
+                'kind':3,
+                'price':money/number,
+                'number':number,
+                'me':that.company_id,
+                'line_id':line_id
+              })
+            }else{
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          })
+        }else{
+          s_alert.Success("下单失败", "可用流动资金不足……", "warning");
+        }
+      })
         
     },
     sendLineNumber(item) {

@@ -451,7 +451,7 @@ export default {
       if(this.s3!=0) sum++;
       if(this.s4!=0) sum++;
       if(this.s5!=0) sum++;
-      this.max=this.sumSource*Math.sqrt(sum)*(1+this.brand)*0.1
+      this.max=(this.sumSource*Math.sqrt(sum)*(1+this.brand)*0.1).toFixed(2)
       //获取此产品是否存在
       req.post_Param('api/commerresearch',{
         'judge':4,

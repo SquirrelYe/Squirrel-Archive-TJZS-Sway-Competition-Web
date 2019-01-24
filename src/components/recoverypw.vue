@@ -29,6 +29,11 @@
 
 <script>
 const s_alert = require("../utils/alert");
+const ses = require("../utils/ses");
+const req = require("../utils/axios");
+const print = require("../utils/print");
+const apis = require("../utils/api/apis");
+
 import app from "../App.vue";
 
 export default {
@@ -56,23 +61,17 @@ export default {
         this.code = num;
         var that = this;
         s_alert.basic("发送中……");
-        this.axios({
-          method: "post",
-          url: `${app.data().globleUrl}/mail?judge=0&mail_address=${
-            this.eMail
-          }&code=${num}`
+        req.post(`api/mail?judge=0&mail_address=${this.eMail}&code=${num}`)
+        .then(res => {
+          that.condition = JSON.stringify(res.data.success);
+          if (that.condition.indexOf("true") != -1) {
+            s_alert.Success("发送成功", "正在加载……", "success");
+            that.sendCodeComplete = true;
+            //that.$router.push('/')
+          } else {
+            s_alert.basic("发送失败");
+          }
         })
-          .then(res => {
-            that.condition = JSON.stringify(res.data.success);
-            if (that.condition.indexOf("true") != -1) {
-              s_alert.Success("发送成功", "正在加载……", "success");
-              that.sendCodeComplete = true;
-              //that.$router.push('/')
-            } else {
-              s_alert.basic("发送失败");
-            }
-          })
-          .catch(error => console.log(error));
       } else {
         s_alert.basic("不能输入空哦");
       }

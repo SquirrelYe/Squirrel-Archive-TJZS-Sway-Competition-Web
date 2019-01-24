@@ -130,11 +130,21 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title" id="myModalLabel">指向公司转账</h4>
                 </div>
-                <div class="modal-body" align='center'>
-                <!-- <h4>商业用地情况介绍</h4>   -->
-                <address class="ng-scope">                    
-                    <strong>请输入转入该公司的金额:</strong><input type="number" v-model="givePrice" placeholder="正值转入，负值扣款"><strong>万元</strong>                   
-                </address>               
+                <div class="modal-body" align='center'> 
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">金额:</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control"  v-model="givePrice" placeholder="正值转入，负值扣款">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">备注:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" v-model="giveDetail" placeholder="请输入转账原因">
+                            </div>
+                        </div>
+                    </form>            
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
@@ -167,7 +177,9 @@ export default {
       
       showGameItems: "",
       showStasticsItems: "",
+
       givePrice:0,
+      giveDetail:'',
 
       // 计算折旧
       diggerDeprelief:[],
@@ -262,6 +274,19 @@ export default {
             'id':this.currentStastics.id,
             'float':float,
             'total':total
+        })
+        // 写入交易信息
+        req.post_Param('api/transaction',{
+            'judge':1,
+            'id':0,
+            'Yearid':this.Yearid,
+            'inout':2,
+            'type':1,
+            'kind':3,
+            'price':this.givePrice,
+            'number':1,
+            'me':this.currentStastics.company_id,
+            'detail':`组委会转账：${this.giveDetail}`
         })
         .then(res => {
             print.log(res.data);
@@ -415,6 +440,19 @@ export default {
                     {message: `${re.company.name}->公司资产更新成功！`},
                     {type: "success"}
                 );
+                // 写入交易信息
+                req.post_Param('api/transaction',{
+                    'judge':1,
+                    'id':0,
+                    'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
+                    'inout':1,
+                    'type':4,
+                    'kind':3,
+                    'price':Number(result[0])+Number(result[1]),
+                    'number':1,
+                    'me':cid,
+                    'detail':`固定资产折旧：${Number(result[0])+Number(result[1])}`
+                })
                 this.init()
             }else{
                 $.notify(
@@ -424,6 +462,7 @@ export default {
                 this.init()
             }
         })
+        
     },
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
