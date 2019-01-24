@@ -87,12 +87,29 @@
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
-                    <div class="tab-pane active" id="profile-2" v-if="currentChooseditem">
-                      <address class="ng-scope" align='center'>
-                        <strong>原料名称:</strong>{{currentChooseditem.source.name}}<br> 
-                        <strong>产品库存:</strong>{{currentChooseditem.sum}}<br> 
-                      </address>
-                    </div> 
+                  <div class="tab-pane active" id="profile-2" v-if="currentChooseditem">
+                    <address class="ng-scope" align='center'>
+                      <strong>原料名称:</strong>{{currentChooseditem.source.name}}<br> 
+                      <strong>产品库存:</strong>{{currentChooseditem.sum}}<br> 
+                    </address>
+                  </div> 
+                  <div class="panel-body">
+                    <form class="form-horizontal" role="form">                                    
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">上架数量</label>
+                            <div class="col-md-10">
+                              <input type="number" class="form-control"  v-model="giveSourceNumber">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">原料单价</label>
+                          <div class="col-sm-10">
+                              <input type="number" class="form-control"  v-model="giveSourcePrice">
+                          </div>
+                      </div>                         
+                    </form>
+                  </div><hr>
+                  备注：产品单价单位为万元。
                 </div> 
               </div>             
             </div>
@@ -126,6 +143,11 @@ export default {
     return {
       showMiniYield: '',
       currentChooseditem:'',
+
+      // 原料上架信息
+      giveSourceNumber:0,
+      giveSourcePrice:0,
+      
       // 分页数据
       items: [],
       showItems: [],
@@ -170,32 +192,36 @@ export default {
     },
     // 上架
     toPublic(model){
-      print.log(model)
-      let company_id=JSON.parse(ses.getSes('userinfo')).company_id
-      let Yearid=JSON.parse(ses.getSes('gameinfo')).Yearid
+      if(this.giveSourceNumber>0 && this.giveSourcePrice>0){
+        print.log('原料上架信息',model)
+        let company_id=JSON.parse(ses.getSes('userinfo')).company_id
+        let Yearid=JSON.parse(ses.getSes('gameinfo')).Yearid
         req.post_Param('api/transaction',{
           'judge':1,
           'Yearid':Yearid,
           'inout':1,
           'type':2,
           'kind':1,
-          'price':model.source.price,
-          'number':model.sum,
+          'price':this.giveSourcePrice,
+          'number':this.giveSourceNumber,
           'me':company_id,
           'source_id':model.source_id
         })
         .then(res => {
           print.log(res.data);
-          s_alert.Success("产品上架成功", "正在加载……", "success");
-          this.updateSumToZero(model)
+          s_alert.Success("原料上架成功", "正在加载……", "success");
+          this.updateSum(model)
         })
+      }else{
+        s_alert.Success("原料上架失败", "数量或单价填写有误", "warning");
+      }
     },
     // 更新库存
-    updateSumToZero(model){
+    updateSum(model){
       req.post_Param('api/miniyield',{
         'judge':2,
         'id':model.id,
-        'sum':0
+        'sum':model.sum-this.giveSourceNumber
       })
       .then(res => {        
         this.init()

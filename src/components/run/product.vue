@@ -147,7 +147,7 @@
                                 </div>
                                 <div id="bg-inverse" class="panel-collapse collapse in">
                                     <div class="portlet-body">
-                                      <strong>工地ID:</strong>{{tIndusland.id}}<br> 
+                                      <strong>工地编号:</strong>{{tIndusland.id}}<br> 
                                       <strong>工地面积:</strong>{{tIndusland.measure}}<br>
                                       <strong>效率提升:</strong>{{tIndusland.efficient}}<br> 
                                       <strong>折旧降低:</strong>{{tIndusland.repurchase}}<br> 
@@ -173,7 +173,7 @@
                               </div>
                               <div id="bg-primary" class="panel-collapse collapse in">
                                     <div class="portlet-body">
-                                      <strong>工厂ID:</strong>{{currentFactoryItem.id}}<br>
+                                      <strong>工厂编号:</strong>{{currentFactoryItem.id}}<br>
                                       <strong>工地型号:</strong>{{currentFactoryItem.model}}<br> 
                                       <strong>占用面积:</strong>{{currentFactoryItem.measure}}<br> 
                                       <strong>可容纳生产线:</strong>{{currentFactoryItem.includeline}}<br> 
@@ -186,7 +186,7 @@
                             <div class="portlet">
                                 <div class="portlet-heading bg-primary">
                                     <h3 class="portlet-title">
-                                        生产线
+                                        生产线  x{{currentLineNumber}}
                                     </h3>
                                     <div class="portlet-widgets">
                                         <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
@@ -200,13 +200,10 @@
                                 </div>
                                 <div id="bg-primary" class="panel-collapse collapse in">
                                     <div class="portlet-body">
-                                      <strong>生产线ID:</strong>{{tLine.id}}<br>
+                                      <strong>生产线编号:</strong>{{tLine.id}}<br>
                                       <strong>生产产能:</strong>{{tLine.capacity}}<br> 
                                       <strong>产线价值折旧:</strong>{{tLine.relief}}<br> 
                                       <strong>良品率:</strong>{{tLine.yield}}<br> 
-                                      <div v-if="currentLineNumber">
-                                        <strong>生产线数量：{{currentLineNumber}}</strong>
-                                      </div>
                                       <hr>
                                     </div>
                                 </div>
@@ -323,7 +320,7 @@
                       <div v-if="tLine.indusland_factory_line.condition==0">
                         <strong>产品名称:</strong><strong>{{chooseResearch.name}}</strong><br>
                         <strong>预计产量（单位/量）:</strong><strong>{{number|sumCreat(tLine.yield)}}</strong><br>
-                        <strong>预计结束时间:</strong><strong>{{number|predict(tLine.capacity)}}</strong><br>
+                        <strong>预计结束时间:</strong><strong>{{number|predict(tLine.capacity,currentLineNumber)}}</strong><br>
                         <div v-if="chooseResearch!=''">
                           <strong>需要耗费元素:
                             金：{{chooseResearch.s1|sumSource(this.number)}}
@@ -444,8 +441,8 @@ export default {
     sumSource(x,y) {
       return x * y
     },
-    predict(x,y){
-      return moment().locale('zh-cn').add(x/y, 'minutes').utc().zone(-8).format('YYYY-MM-DD HH:mm:ss'); 
+    predict(x,y,z){
+      return moment().locale('zh-cn').add(x/(y*z), 'minutes').utc().zone(-8).format('YYYY-MM-DD HH:mm:ss'); 
     },
     predictEnd(x,y){
       return moment(x).add(y, 'minutes').format('YYYY-MM-DD HH:mm:ss');
@@ -546,7 +543,7 @@ export default {
     sendPrice(stay,capacity,number){     //研发产品信息，持续时间，产能，生产线数量
       let researchitem=this.research   //获取生产的产品信息
       //配置生产线 开始工作
-      let time=this.number/this.tLine.capacity;
+      let time=this.number/(this.tLine.capacity*this.currentLineNumber);
       print.log('选中的产品为->',researchitem,'生产持续时间为->',time)
       req.post_Param('api/ass/indusland_factory_line',{
         'judge':2,

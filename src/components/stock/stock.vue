@@ -101,8 +101,26 @@
                             土：{{currentShowGoodItem.commerresearch.s5|sumSource(1)}}
                         </strong><br>
                         <strong>产品库存:</strong>{{currentShowGoodItem.sum}}<br> 
+                        <strong style="color:red">最高单价:{{maxPrice}}万元</strong><br> 
                       </address>
                     </div> 
+                    <div class="panel-body">
+                    <form class="form-horizontal" role="form">                                    
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">上架数量</label>
+                            <div class="col-md-10">
+                              <input type="number" class="form-control"  v-model="giveGoodNumber">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label">产品单价</label>
+                          <div class="col-sm-10">
+                              <input type="number" class="form-control"  v-model="giveGoodPrice" @input="checkMaxPrice()">
+                          </div>
+                      </div>                         
+                    </form>
+                  </div><hr>
+                  备注：产品单价单位为万元。
                 </div> 
               </div>             
             </div>
@@ -188,6 +206,12 @@ export default {
       showOemCompany:'',
       oemCompany:'',
       number:0,
+
+      // 产品上架信息
+      maxPrice:0,
+      giveGoodNumber:0,
+      giveGoodPrice:0,
+
       // 分页数据
       items: [],
       showItems: [],
@@ -242,7 +266,24 @@ export default {
     },
     // 选择产品
     chooseGoodItem(item){
+      print.log('选择的产品',item)
       this.currentShowGoodItem=item
+      // 计算最高单价
+      let sum=0,total=0;
+      if(item.commerresearch.s1!=0) {sum++; total+=item.commerresearch.s1};
+      if(item.commerresearch.s2!=0) {sum++; total+=item.commerresearch.s2};
+      if(item.commerresearch.s3!=0) {sum++; total+=item.commerresearch.s3};
+      if(item.commerresearch.s4!=0) {sum++; total+=item.commerresearch.s4};
+      if(item.commerresearch.s5!=0) {sum++; total+=item.commerresearch.s5};
+      // 获取商业用地品牌提升
+      req.post_Param('api/commerland',{
+        'judge':6,
+        'id':item.commerresearch.commerland_id
+      })
+      .then(res=>{
+        print.log(res.data)
+        this.maxPrice=(total*Math.sqrt(sum)*(1+res.data.brand)*0.1).toFixed(2)
+      })
     },
     // 选中代工产品
     chooseOEMItem(item){
@@ -250,26 +291,50 @@ export default {
       print.log('选中的代工产品',item)
       this.getAllCompany()
     },
+    // 检查定价
+    checkMaxPrice(){
+      print.log(this.maxPrice)
+      if(this.giveGoodPrice>this.maxPrice){
+        s_alert.Success("产品单价不能超过最高单价", "请调整单价", "warning");
+        this.giveGoodPrice=0;
+      }
+    },
     // 上架
     toPublic(model){
-      print.log(model)
-      let company_id=JSON.parse(ses.getSes('userinfo')).company_id
-      let Yearid=JSON.parse(ses.getSes('gameinfo')).Yearid
-      req.post_Param('api/transaction',{
-        'judge':1,
-        'Yearid':Yearid,
-        'inout':1,
-        'type':2,
-        'kind':2,
-        'price':model.commerresearch.price,
-        'number':model.sum,
-        'me':company_id,
-        'commerresearch_id':model.commerresearch_id
+      if(this.giveGoodNumber>0 && this.giveGoodPrice>0){
+        print.log(model)
+        let company_id=JSON.parse(ses.getSes('userinfo')).company_id
+        let Yearid=JSON.parse(ses.getSes('gameinfo')).Yearid
+        req.post_Param('api/transaction',{
+          'judge':1,
+          'Yearid':Yearid,
+          'inout':1,
+          'type':2,
+          'kind':2,
+          'price':this.giveGoodPrice,
+          'number':this.giveGoodNumber,
+          'me':company_id,
+          'commerresearch_id':model.commerresearch_id
+        })
+        .then(res => {
+          console.log(res.data);
+          s_alert.Success("产品上架成功", "正在加载……", "success");
+          this.updateSum(model)
+        })
+      }else{
+        s_alert.Success("原料上架失败", "数量或单价填写有误", "warning");
+      }
+    },
+    // 更新库存
+    updateSum(model){
+      req.post_Param('api/industryyield',{
+        'judge':2,
+        'id':model.id,
+        'sum':model.sum-this.giveGoodNumber
       })
-      .then(res => {
-        console.log(res.data);
-        s_alert.Success("产品上架成功", "正在加载……", "success");
-        this.updateSumToZero(model)
+      .then(res => {        
+        this.init()
+        s_alert.Success("库存更新成功", "正在加载……", "success");
       })
     },
     // 发送到代工公司
@@ -333,18 +398,6 @@ export default {
       req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=1&type=1&kind=2&number=${number}&me=${this.company_id}&other=${results[0][0].company_id}&commerresearch_id=${results[0][0].commerresearch_id}`)
       this.init()
       s_alert.Success("代工产品交付成功！", "正在加载……", "success");
-    },
-    // 更新库存
-    updateSumToZero(model){
-      req.post_Param('api/industryyield',{
-        'judge':2,
-        'id':model.id,
-        'sum':0
-      })
-      .then(res => {        
-        this.init()
-        s_alert.Success("库存更新成功", "正在加载……", "success");
-      })
     },
     //获取公司列表-发送代工产品
     getAllCompany(){

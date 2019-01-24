@@ -39,7 +39,7 @@
                           <th>产品原理</th>
                           <th>产品介绍</th>
                           <th>申请状态</th>
-                          <th>单价</th>
+                          <!-- <th>单价</th> -->
                           <th>默认最高单价</th>
                           <th>创建日期</th>
                           <th>产品代工授权</th>
@@ -57,7 +57,7 @@
                           <td>{{item.function}}</td>
                           <td>{{item.introduction}}</td>
                           <td>{{item.condition | formatCondition}}</td>
-                          <td>{{item.price}}</td>
+                          <!-- <td>{{item.price}}</td> -->
                           <td>{{item.maxprice}}</td>
                           <td>{{item.created_at | formatTime}}</td>
                           <td v-if="item.condition==1">
@@ -91,7 +91,7 @@
                           <th>产品原理</th>
                           <th>产品介绍</th>
                           <th>申请状态</th>
-                          <th>单价</th>
+                          <!-- <th>单价</th> -->
                           <th>默认最高单价</th>
                           <th>创建日期</th>
                           <th>产品授权方</th>
@@ -109,7 +109,7 @@
                           <td>{{item.commerresearch.function}}</td>
                           <td>{{item.commerresearch.introduction}}</td>
                           <td>{{item.commerresearch.condition | formatCondition}}</td>
-                          <td>{{item.commerresearch.price}}</td>
+                          <!-- <td>{{item.commerresearch.price}}</td> -->
                           <td>{{item.commerresearch.maxprice}}</td>
                           <td>{{item.created_at | formatTime}}</td>
                           <td>{{item.me_2.name}}</td>

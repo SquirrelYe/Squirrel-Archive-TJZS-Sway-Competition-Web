@@ -133,12 +133,12 @@
                                               <input type="text" class="form-control" placeholder="xxx" v-model="intro">
                                           </div>
                                       </div>
-                                      <div class="form-group">
+                                      <!-- <div class="form-group">
                                           <label class="col-md-2 control-label">单价</label>
                                           <div class="col-md-10">
                                               <input type="number" class="form-control" v-model="price">
                                           </div>
-                                      </div>         
+                                      </div>          -->
                                   </form>
                                   <div align='center'>
                                     注意：价格单位 万元，不得超过最高单价<br>最高单价=配方元素量*根号（元素种类）*（1+品牌提升）*0.1
@@ -219,12 +219,12 @@
           <div align='center'>
             <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && canICreatGood">
               当前最高单价为：{{max}}万元<br>
-              <div v-if="price<max">
+              <!-- <div v-if="price<max">
                 你的出价为：{{price}}
               </div>
               <div v-else style="color:red">
                 你的定价大于最高单价
-              </div>
+              </div> -->
               <div class="checkbox checkbox-success checkbox-circle">
                   <input id="checkbox-10" type="checkbox" v-model="law">
                   <label for="checkbox-10">
@@ -346,7 +346,7 @@ export default {
       print.log(item)
     },
     sendPrice(){
-      if(this.name==''||this.func==''||this.intro==''||this.price==''){
+      if(this.name==''||this.func==''||this.intro==''){
         s_alert.Success("下单失败", "产品研发信息不能为空", "warning");
       }else{
         //执行 发送产品研发信息清单
@@ -360,7 +360,7 @@ export default {
           'name':this.name,
           'function':this.func,
           'introduction':this.intro,
-          'price':this.price,
+          'price':0,
           'condition':0,
           'maxprice':this.max,
           'law':tempLaw,

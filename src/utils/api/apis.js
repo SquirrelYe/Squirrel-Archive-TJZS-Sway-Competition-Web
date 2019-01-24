@@ -74,7 +74,9 @@ module.exports={
     },
     getOneTransationByCompanyIdAndType(company_id,type){
         return req.post_Param('/api/transaction',{'judge':9,'company_id':company_id,'type':type})
+    },
+    deleteOneTransationById(id){
+        return req.post_Param('api/transaction',{'judge':3,'id':id})
     }
-  
     
 }

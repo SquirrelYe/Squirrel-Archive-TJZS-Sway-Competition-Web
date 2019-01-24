@@ -58,7 +58,7 @@
                       <table class="table table-striped" style id="datatable-editable">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>唯一标识符</th>
                             <th>原料名称</th>
                             <th>公司名称</th>
                             <th>单价</th>
@@ -69,15 +69,18 @@
                         </thead>
                         <tbody>
                           <tr v-for="(item,index) in showSourceItems" :key="index" v-if="item.source">
-                            <td>{{index}}</td>
+                            <td>S{{item.id}}</td>
                             <td>{{item.source.name}}</td>
                             <td>{{item.company.name}}</td>
                             <td>{{item.price}}万</td>
                             <td>{{item.number}}</td>
                             <td>{{item.updated_at|formatTime}}</td>
                             <td class="actions">
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品">
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品" v-if="item.me!=company_id">
                                 <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
+                              </a>
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="撤回订单">
+                                <i class="fa fa-times" @click="cancer(0,item)"></i>
                               </a>
                             </td>
                           </tr>
@@ -95,7 +98,7 @@
                       <table class="table table-striped" style id="datatable-editable">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>唯一标识符</th>
                             <th>产品名称</th>
                             <th>公司名称</th>
                             <th>总量</th>
@@ -106,7 +109,7 @@
                         </thead>
                         <tbody>
                           <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch'>
-                            <td>{{index}}</td>
+                            <td>G{{item.id}}</td>
                             <td>{{item.commerresearch.name}}</td>
                             <td>{{item.company.name}}</td>
                             <td>{{item.number}}</td>
@@ -404,26 +407,73 @@ export default {
       this.number=0;
       print.log(this.model);
     },
+    // 撤销订单
+    cancer(index,item){
+      print.log('撤销订单',item)
+      if(confirm('你确定要撤销此订单？')){
+        if(index==0){   // 撤销原料订单
+          // 删除订单信息
+          apis.deleteOneTransationById(item.id)
+          // 追加到库存
+          req.post_Param('api/miniyield',{
+            'judge':1,
+            'source_id':item.source_id,
+            'company_id':this.company_id,
+            'sum':item.number
+          })
+          .then(res => {  
+            print.log(res.data)
+            if(!res.data[1]){     // 追加数量
+              print.log('追加数量',res.data[0].sum+item.number)
+              req.post_Param('api/miniyield',{
+                'judge':2,
+                'id':res.data[0].id,
+                'sum':res.data[0].sum+item.number
+              })
+              .then(res => {        
+                this.init()
+                s_alert.Success("撤销此订单成功,物品追加成功", "正在加载……", "success");
+              })
+            }else{
+              this.init()
+              s_alert.Success("撤销此订单成功", "正在加载……", "success");
+            }
+          })
+        }else{      // 撤销产品订单
+
+        }
+      }else{
+
+      }
+    },
     // 购买
     sendPrice(index,model){
       print.log(index,model)
+      let price=model.price*model.number;
 
        if(index==0){ //购买 原料
         if(model.me!=this.company_id){
-          req.post_Param('api/transaction',{
-            'judge':2,
-            'detail':this.detail,
-            'other':this.company_id,
-            'id':model.id
-          })
-          .then(res => {
-            print.log(res.data);
-            s_alert.Success("下单成功", "正在加载……", "success");
-            //追加到 库存
-            this.appendToStock(index,model);
-            //刷新 页面
-            this.showSource()
-          })
+          apis.getOneStatisticByCompanyId(this.company_id)
+          .then(res=>{
+            if(res.data.float>=price){
+              req.post_Param('api/transaction',{
+                'judge':2,
+                'detail':this.detail,
+                'other':this.company_id,
+                'id':model.id
+              })
+              .then(res => {
+                print.log(res.data);
+                s_alert.Success("下单成功", "正在加载……", "success");
+                //追加到 库存
+                this.appendToStock(index,model);
+                //刷新 页面
+                this.showSource()
+              })
+            }else{
+              s_alert.Success('可用流动资金不足','可以通过贷款或售卖增加流动资金','warning')
+            }
+          })          
         }else{
           s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
         }        
@@ -431,40 +481,47 @@ export default {
 
       if(index==1){ //购买 产品
         if(model.me!=this.company_id){
-          req.post_Param('api/transaction',{
-            'judge':2,
-            'detail':this.detail,
-            'other':this.company_id,
-            'id':model.id
-          })
-          .then(res => {
-            print.log(res.data);
-            s_alert.Success("下单成功", "正在加载……", "success");
-            //追加到 库存
-            this.appendToStock(index,model);
-            //刷新 页面
-            this.showGoods()
-          })
+          apis.getOneStatisticByCompanyId(this.company_id)
+          .then(res=>{
+            if(res.data.float>=price){
+              req.post_Param('api/transaction',{
+                'judge':2,
+                'detail':this.detail,
+                'other':this.company_id,
+                'id':model.id
+              })
+              .then(res => {
+                print.log(res.data);
+                s_alert.Success("下单成功", "正在加载……", "success");
+                //追加到 库存
+                this.appendToStock(index,model);
+                //刷新 页面
+                this.showGoods()
+              })
+            }else{
+              s_alert.Success('可用流动资金不足','可以通过贷款或售卖增加流动资金','warning')
+            }
+          })          
         }else{
           s_alert.Success("不能与自己进行交易", "正在加载……", "warning");
         }        
       }
 
-        if(index==2){ //还清 贷款
-          req.post_Param('api/loan',{
-            'judge':2,
-            'id':model.id,
-            'condition':1
-          })
-          .then(res => {
-            print.log(res.data);
-            s_alert.Success("还清贷款成功", "正在加载……", "success");
-            // 刷新页面
-            this.showloan()
-            // 还清贷款，更新资产信息
-            this.tempPriceEndLoan(model)
-          })
-        }      
+      if(index==2){ //还清 贷款
+        req.post_Param('api/loan',{
+          'judge':2,
+          'id':model.id,
+          'condition':1
+        })
+        .then(res => {
+          print.log(res.data);
+          s_alert.Success("还清贷款成功", "正在加载……", "success");
+          // 刷新页面
+          this.showloan()
+          // 还清贷款，更新资产信息
+          this.tempPriceEndLoan(model)
+        })
+      }      
     },
     // 追加订单
     appendToStock(index,model){

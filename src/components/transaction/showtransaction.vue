@@ -18,6 +18,7 @@
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th>唯一标识符</th>
                     <th>财年</th>
                     <th>资金出入</th>
                     <th>交易类型</th>
@@ -29,19 +30,20 @@
                     <th>买方</th>
                     <th>交易原料名称</th>
                     <th>交易产品名称</th>
-                    <th>矿区</th>
+                    <!-- <th>矿区</th>
                     <th>工业用地</th>
                     <th>商业用地</th>
                     <th>挖掘机</th>
                     <th>工厂</th>
                     <th>生产线</th>
-                    <th>研究所</th>
+                    <th>研究所</th> -->
                     <th>最近日期</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
-                    <td>{{item.id}}</td>
+                    <td>{{index}}</td>
+                    <td>T{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
                     <td>{{item.inout|formatInOut}}</td>
                     <td>{{item.type|formatType}}</td>
@@ -57,7 +59,7 @@
                     <td v-else></td>
                     <td v-if="item.commerresearch">{{item.commerresearch.name}}</td>
                     <td v-else></td>
-                    <td v-if="item.mining">{{item.mining.star|formatStar}}</td>
+                    <!-- <td v-if="item.mining">{{item.mining.star|formatStar}}</td>
                     <td v-else></td>
                     <td v-if="item.indusland">{{item.indusland.model|formatModel}}</td>
                     <td v-else></td>
@@ -70,7 +72,7 @@
                     <td v-if="item.line">{{item.line.model}}</td>
                     <td v-else></td>
                     <td v-if="item.research">{{item.research.model}}</td>
-                    <td v-else></td>
+                    <td v-else></td> -->
                     <td>{{item.updated_at|formatTime}}</td>
                   </tr>
                 </tbody>
