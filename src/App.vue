@@ -53,12 +53,5 @@ export default {
 </script>
 
 <style>
-th {
-  text-align: center; /** 设置水平方向居中 */
-  vertical-align: middle; /** 设置垂直方向居中 */
-}
-td {
-  text-align: center; /** 设置水平方向居中 */
-  vertical-align: middle; /** 设置垂直方向居中 */
-}
+
 </style>

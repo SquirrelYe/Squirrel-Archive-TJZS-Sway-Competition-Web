@@ -98,7 +98,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">上架数量</label>
                             <div class="col-md-10">
-                              <input type="number" class="form-control"  v-model="giveSourceNumber">
+                              <input type="number" class="form-control"  v-model="giveSourceNumber" @input="checkNumber()">
                             </div>
                         </div>
                         <div class="form-group">
@@ -189,6 +189,13 @@ export default {
     openSetting(item){
       this.currentChooseditem=item
       print.log(item)
+    },
+    // 检测上架数量
+    checkNumber(){
+      if(this.giveSourceNumber>this.currentChooseditem.sum){
+        s_alert.Success("上架数量超过当前元素储量", "请重新输入……", "warning");
+        this.giveSourceNumber=0
+      }
     },
     // 上架
     toPublic(model){

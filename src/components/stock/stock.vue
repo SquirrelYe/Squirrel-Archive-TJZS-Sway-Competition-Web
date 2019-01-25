@@ -109,7 +109,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label">上架数量</label>
                             <div class="col-md-10">
-                              <input type="number" class="form-control"  v-model="giveGoodNumber">
+                              <input type="number" class="form-control"  v-model="giveGoodNumber" @input="checkNumber()">
                             </div>
                         </div>
                         <div class="form-group">
@@ -297,6 +297,13 @@ export default {
       if(this.giveGoodPrice>this.maxPrice){
         s_alert.Success("产品单价不能超过最高单价", "请调整单价", "warning");
         this.giveGoodPrice=0;
+      }
+    },
+    // 检测上架数量
+    checkNumber(){
+      if(this.giveGoodNumber>this.currentShowGoodItem.sum){
+        s_alert.Success("上架数量超过当前元素储量", "请重新输入……", "warning");
+        this.giveGoodNumber=0
       }
     },
     // 上架

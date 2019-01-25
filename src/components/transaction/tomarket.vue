@@ -79,7 +79,7 @@
                               <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品" v-if="item.me!=company_id">
                                 <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="撤回订单">
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="撤回订单" v-if="item.me==company_id">
                                 <i class="fa fa-times" @click="cancer(0,item)"></i>
                               </a>
                             </td>
@@ -116,8 +116,11 @@
                             <td>{{item.price}}万</td>
                             <td>{{item.updated_at|formatTime}}</td>
                             <td class="actions">
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品">
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品" v-if="item.me!=company_id">
                                 <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
+                              </a>
+                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="撤回订单" v-if="item.me==company_id">
+                                <i class="fa fa-times" @click="cancer(1,item)"></i>
                               </a>
                             </td>
                           </tr>
@@ -161,7 +164,7 @@
                             <td>{{item.detail}}</td>
                             <td class="actions">
                               <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="还清贷款">
-                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
+                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)" v-if="item.condition==0"></i>
                               </a>
                             </td>
                           </tr>
@@ -439,8 +442,34 @@ export default {
               s_alert.Success("撤销此订单成功", "正在加载……", "success");
             }
           })
-        }else{      // 撤销产品订单
-
+        }else if(index==1){      // 撤销产品订单
+          // 删除订单信息
+          apis.deleteOneTransationById(item.id)
+          // 追加到库存
+          req.post_Param('api/industryyield',{
+            'judge':1,
+            'commerresearch_id':item.commerresearch_id,
+            'company_id':this.company_id,
+            'sum':item.number
+          })
+          .then(res => {  
+            print.log(res.data)
+            if(!res.data[1]){     // 追加数量
+              print.log('追加数量',res.data[0].sum+item.number)
+              req.post_Param('api/industryyield',{
+                'judge':2,
+                'id':res.data[0].id,
+                'sum':res.data[0].sum+item.number
+              })
+              .then(res => {        
+                this.init()
+                s_alert.Success("撤销此订单成功,物品追加成功", "正在加载……", "success");
+              })
+            }else{
+              this.init()
+              s_alert.Success("撤销此订单成功", "正在加载……", "success");
+            }
+          })
         }
       }else{
 

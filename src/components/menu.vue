@@ -687,12 +687,5 @@ export default {
 </script>
 
 <style scoped>
-.leftfixed {
-  position: fixed;
-  z-index: 100
-}
-.time{
-  color: aliceblue;
-  margin-left: 30px
-}
+
 </style>
