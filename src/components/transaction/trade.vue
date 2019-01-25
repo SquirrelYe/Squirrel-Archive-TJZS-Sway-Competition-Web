@@ -19,6 +19,7 @@
                   <tr>
                     <th>#</th>
                     <th>交易唯一标识符</th>
+                    <th>财年</th>
                     <th>金额(w)</th>
                     <th>收支情况</th>
                     <th>备注</th>
@@ -29,6 +30,7 @@
                   <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                     <td>{{index}}</td>
                     <td>T{{item.id}}</td>
+                    <td>{{item.Yearid}}</td>
                     <td>{{item.price}}*{{item.number}}={{item.price*item.number}}</td>
                     <td>{{item.inout|formatInOut}}</td>
                     <td v-if="item.source">{{item.source.name}}{{item.detail}}</td>

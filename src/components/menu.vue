@@ -260,6 +260,9 @@
                     <a href="javascript:void(0)" @click="stransation()">交易管理</a>
                   </li>
                   <li>
+                    <a href="javascript:void(0)" @click="sloan()">贷款管理</a>
+                  </li>
+                  <li>
                     <a href="javascript:void(0)" @click="sstastics()">赛事数据</a>
                   </li>
                 </ul>
@@ -591,11 +594,11 @@ export default {
       }
     }
     
-    // setInterval(() => { 
-    //   //实时更新个人信息
-    //   this.refreshUserinfo()
-    //   this.refreshYearid()
-    // }, 5000);
+    setInterval(() => { 
+      //实时更新个人信息
+      this.refreshUserinfo()
+      this.refreshYearid()
+    }, 5000);
     this.refreshUserinfo()
     this.refreshYearid()
   },
@@ -659,6 +662,7 @@ export default {
     listgame(){this.$router.push({name:'listgame'})},
     scompete(){this.$router.push({name:'scompete'})},//赛事运营
     stransation(){this.$router.push({name:'stransation'})},
+    sloan(){this.$router.push({name:'sloan'})},
     sgood(){this.$router.push({name:'sgood'})},
     sstastics(){this.$router.push({name:'sstastics'})},
     syear(){this.$router.push({name:'syear'})}

@@ -53,6 +53,7 @@ import listgame from '@/adminComponents/game/listgame'
 // run
 import scompete from '@/adminComponents/run/scompete' 
 import stransation from '@/adminComponents/run/stransation'
+import sloan from '@/adminComponents/run/sloan'
 import sstastics from '@/adminComponents/run/sstastics'
 import syear from '@/adminComponents/run/syear'
 import sgood from '@/adminComponents/run/sgood'
@@ -249,6 +250,11 @@ export default new Router({
           path:'stransation',   //交易管理
           name:'stransation',
           component:stransation
+        },
+        {
+          path:'sloan',   //贷款管理
+          name:'sloan',
+          component:sloan
         },
         {
           path:'sgood',   //产品管理
