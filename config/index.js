@@ -12,8 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://127.0.0.1:11111',
-        //'https://www.yexuan.site/api', // 请换成你的地址
+        // target: 'http://127.0.0.1:11111',
+        target: 'https://www.yexuan.site/api', // 请换成你的地址
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

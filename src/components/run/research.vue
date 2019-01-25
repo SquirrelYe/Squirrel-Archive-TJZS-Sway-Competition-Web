@@ -16,7 +16,7 @@
             <div class="tabs-vertical-env"> 
                 <ul class="nav tabs-vertical"> 
                     <li class="" v-for="(item,index) in showCompeteCommer" :key="index" :class="{'active' : index==1}">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false">商业用地ID{{item.id}}</a>
+                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false">商业用地 C{{item.id}}</a>
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
@@ -37,8 +37,8 @@
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td>{{item.id}}</td>
-                                    <td>{{item.level}}</td>
+                                    <td>C{{item.id}}</td>
+                                    <td>{{item.level|formatlevel}}</td>
                                     <td>{{item.brand}}</td>
                                     <td>{{item.increment}}</td>
                                   </tr>
@@ -56,7 +56,7 @@
                                 <table class="table table-striped" style id="datatable-editable">
                                 <thead>
                                   <tr>
-                                    <th>研究所ID:</th>
+                                    <th>研究所编号:</th>
                                     <th>研究所类型:</th>
                                     <th>品牌提升:</th>
                                     <th>配方工艺:</th>
@@ -66,7 +66,7 @@
                                 </thead>
                                 <tbody v-if="item.research">
                                   <tr>
-                                    <td>{{item.research.id}}</td>
+                                    <td>R{{item.research.id}}</td>
                                     <td>{{item.research.model}}</td>
                                     <td>{{item.research.brand}}</td>
                                     <td>{{item.research.formula}}</td>
@@ -322,6 +322,12 @@ export default {
     },
     predict(x){
       return moment().locale('zh-cn').add(x, 'minutes').utc().zone(-8).format('YYYY-MM-DD HH:mm:ss');
+    },
+    formatlevel(x){
+      if(x==1) return '投契级'
+      if(x==2) return '机构级'
+      if(x==3) return '投资级'
+      if(x==4) return '地标级'
     }
   },
   methods: {
@@ -374,7 +380,7 @@ export default {
         .then(res => {
           print.log('申请产品信息->',res.data)
           let commerresearch_id=res.data.id;
-          s_alert.Success("产品研发申请发送成功", "请到 公司—>公司产品 中查看", "success");
+          s_alert.Success("产品研发申请发送成功", "请到 公司—>公司产品 中查看，联系组委会审核产品。", "success");
             // 查询个人资产
             apis.getOneStatisticByCompanyId(this.company_id)
             .then(res => {

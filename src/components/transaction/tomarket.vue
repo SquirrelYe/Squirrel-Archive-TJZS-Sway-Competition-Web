@@ -247,9 +247,9 @@
           <div class="modal-body" align='center'>
             <h4>原料情况介绍</h4>  
             <!-- <h5> {{model}}</h5> -->
-            <address class="ng-scope">
-              <strong>原料id:</strong>{{model.source_id}}<br> 
-              <strong>公司id:</strong>{{model.me}}<br> 
+            <address class="ng-scope" v-if="model">
+              <strong>原料类型:</strong>{{model.source.name}}<br> 
+              <strong>出售公司名称:</strong>{{model.company.name}}<br> 
               <strong>单价:</strong>{{model.price}}<br> 
               <strong>数量:</strong>{{model.number}}<br> 
               <strong>分布时间:</strong>{{model.updated_at|formatTime}}<br> <hr>
@@ -278,8 +278,9 @@
           <div class="modal-body" align='center' v-if="model.commerresearch">
             <h4>产品情况介绍</h4>  
             <!-- <h5> {{model}}</h5> -->
-            <address class="ng-scope" v-if="model.commerresearch">
-              <strong>产品id:</strong>{{model.commerresearch.id}}<br>
+            <address class="ng-scope" v-if="model">
+              <strong>产品唯一标识符:</strong>{{model.commerresearch.id}}<br>
+              <strong>出售公司名称:</strong>{{model.company.name}}<br> 
               <strong>产品名称:</strong>{{model.commerresearch.name}}<br> 
               <strong>产品介绍:</strong>{{model.commerresearch.introduction}}<br> 
               <strong>产品单价:</strong>{{model.commerresearch.price}}<br> 

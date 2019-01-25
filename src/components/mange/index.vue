@@ -14,8 +14,8 @@
                             <li><a href="#">测试</a></li>
                         </ul> -->
                     </div>
-                    <h4 class="page-title" style="color:red" v-if="showStasticsItem">欢迎 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{gameinfo.Yearid}}</h4>
-                    <h4 class="page-title" style="color:red" v-if="userinfo">欢迎 {{userinfo.cname}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="showStasticsItem">当前所在公司 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{gameinfo.Yearid}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="userinfo">参赛者 {{userinfo.cname}}</h4>
                 </div>
             </div>
 
@@ -133,13 +133,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="row text-center">
-                <div class="col-lg-8 line1">
-                </div>
-                <div class="col-lg-4 line2">
-                </div>
-            </div> -->
 
             <div class="row">
                 <div class="col-lg-8">
@@ -259,5 +252,4 @@ export default {
     background-image: url('../../assets/images/line2.png');
     background-size:100% 100%;
 }
-
 </style>

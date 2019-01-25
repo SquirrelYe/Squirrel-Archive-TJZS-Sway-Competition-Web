@@ -16,14 +16,14 @@
             <div class="tabs-vertical-env"> 
                 <ul class="nav tabs-vertical"> 
                     <li class="" v-for="(item,index) in showCompeteIndusland" :key="index">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseInduslandIndex(index)">工业用地ID{{item.id}}</a>
+                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseInduslandIndex(index)">工业用地  I{{item.id}}</a>
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
                 <div class="tabs-vertical-env"> 
                 <ul class="nav tabs-vertical"> 
                     <li class="" v-for="(item,index) in tFactory" :key="index">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseFactoryIndex(index)">工厂ID{{item.id}}</a>
+                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false" @click="chooseFactoryIndex(index)">工厂信息  F{{item.id}}</a>
                     </li> 
                 </ul> 
                 <div class="tab-content"> 
@@ -46,7 +46,7 @@
                                 </thead>
                                 <tbody>
                                   <tr>
-                                    <td>{{item.model}}</td>
+                                    <td>{{item.model|formatmodel}}</td>
                                     <td>{{item.measure}}</td>
                                     <td>{{item.efficient}}</td>
                                     <td>{{item.repurchase}}</td>
@@ -449,6 +449,12 @@ export default {
     },
     iScreatedSource(x,y,z,a){
       return x*y*z*a
+    },
+    formatmodel(x){
+      if(x==1) return 'A'
+      if(x==2) return 'Z'
+      if(x==3) return 'C'
+      if(x==4) return 'S'
     }
   },
   methods: {
