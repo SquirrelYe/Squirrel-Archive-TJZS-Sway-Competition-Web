@@ -570,7 +570,7 @@ export default {
   name: "menus",
   data() {
     return {
-      icon_src:"http://ww3.sinaimg.cn/thumb300/005NL6H7gw1ew1tp2et08j30cj0dl0tq.jpg",
+      icon_src:"static/images/users/avatar-6.jpg",
       userinfo:'',
       gameinfo:'',
       judgeUserType: '', //0.参赛者、1.管理员
@@ -627,12 +627,14 @@ export default {
     
     // 获取赛事财年信息
     refreshYearid(){
-      apis.getLastGameYear()
-      .then(res => {
-        let ginfo=JSON.stringify(res.data)
-        ses.setSes('gameinfo',ginfo)
-        // print.log('财年信息',res.data)
-      })    
+      if(ses.getSes('type')==0){
+        apis.getOneGameById(JSON.parse(ses.getSes('gameinfo')).id)
+        .then(res => {
+          let ginfo=JSON.stringify(res.data)
+          ses.setSes('gameinfo',ginfo)
+          // print.log('财年信息',res.data)
+        })    
+      }
     },
 
     // 页面跳转 用户端

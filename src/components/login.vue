@@ -126,7 +126,7 @@ export default {
                     ses.setSes("Sid", this.Sid);      
                     //cookie.setCookie(this.userName, this.passWord,'0', 7);            
                     s_alert.Success("登录成功，你的身份是参赛者","正在加载……","success");
-                    this.$router.push("/menu");
+                    this.$router.push({name:'game'});
                 } else {
                     s_alert.Timer("登录失败","用户名或密码有误");
                 }

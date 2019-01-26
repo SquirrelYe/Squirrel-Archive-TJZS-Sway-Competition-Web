@@ -744,33 +744,37 @@ export default {
     },
     // 提交贷款
     submitForm(){
-      //市场交易 - 提交贷款
-      //贷款信息
-      let send=this.money*(1+(this.rate*this.stay));//应还总额
-      let from=Number(JSON.parse(ses.getSes('gameinfo')).Yearid) //当前财年
-      let end=Number(JSON.parse(ses.getSes('gameinfo')).Yearid)+Number(this.stay);//应还财年
-      // 提交贷款信息
-      req.post_Param('api/loan',{
-        'judge':1,
-        'from':from,
-        'stay':this.stay,
-        'end':end,
-        'rate':this.rate,
-        'detail':this.other,
-        'money':this.money,
-        'send':send,
-        'condition':0,
-        'company_id':this.company_id
-      })
-      .then(res => {
-        print.log(res.data)
-        if(res.data[1]){
-          s_alert.Success("贷款信息提交成功", "正在加载……", "success");
-          this.tempPriceLoan(this.money)  //更新资产
-        }else{
-          s_alert.Warning('已有贷款为还清','请还清后重试……')
-        }
-      })
+      if(this.money==0 || this.stay==0 || this.other==''){
+        s_alert.Warning('贷款信息填写有误','请改正后重试……');
+      }else{
+        //市场交易 - 提交贷款
+        //贷款信息
+        let send=this.money*(1+(this.rate*this.stay));//应还总额
+        let from=Number(JSON.parse(ses.getSes('gameinfo')).Yearid) //当前财年
+        let end=Number(JSON.parse(ses.getSes('gameinfo')).Yearid)+Number(this.stay);//应还财年
+        // 提交贷款信息
+        req.post_Param('api/loan',{
+          'judge':1,
+          'from':from,
+          'stay':this.stay,
+          'end':end,
+          'rate':this.rate,
+          'detail':this.other,
+          'money':this.money,
+          'send':send,
+          'condition':0,
+          'company_id':this.company_id
+        })
+        .then(res => {
+          print.log(res.data)
+          if(res.data[1]){
+            s_alert.Success("贷款信息提交成功", "正在加载……", "success");
+            this.tempPriceLoan(this.money)  //更新资产
+          }else{
+            s_alert.Warning('尚有贷款未还清','请还清后重试……')
+          }
+        })
+      }
     },
     // 贷款成功，增加个人资产
     tempPriceLoan(money){

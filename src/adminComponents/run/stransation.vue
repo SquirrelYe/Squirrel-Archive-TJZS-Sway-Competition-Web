@@ -14,7 +14,7 @@
           </div>
           <div class="form-group row">
               <form class="form-horizontal" role="form">  
-                <div class="col-md-2">
+                <div class="col-md-3">
                   <div class="col-md-4 control-label" style="color:red"><strong>公司名称</strong></div>
                   <div class="col-md-8">
                       <select class="form-control" v-model="company_id" @change="getTranByCompany_id()">

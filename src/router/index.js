@@ -5,6 +5,7 @@ import register from '@/components/register'
 import recoverypw from '@/components/recoverypw'
 import menu from '@/components/menu'
 import resetpwd from '@/components/resetPwd'
+import game from '@/components/game'
 // test
 import init from '@/components/test/init'
 import welcome from '@/components/test/welcome'
@@ -94,6 +95,11 @@ export default new Router({
       path:'/resetpwd/:id',
       name:'resetpwd',
       component:resetpwd
+    },
+    {
+      path:'/game',
+      name:'game',
+      component:game
     },
     {
       path: '/welcome',

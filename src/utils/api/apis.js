@@ -1,5 +1,15 @@
 const req=require('../axios')
 module.exports={
+    // 赛事信息
+    getAllGame(){
+        return req.post_Param('api/game',{'judge':0})
+    },
+    getOneGameById(id){
+        return req.post_Param('api/game',{'judge':4,'id':id})
+    },
+    getGameByCondition(condition){
+        return req.post_Param('api/game',{'judge':5,'condition':condition})
+    },
     // 参赛者信息
     getAllSway(){
         return req.post_Param('/api/ass/company_sway',{'judge':3})
@@ -13,9 +23,6 @@ module.exports={
     },
     getOneAdminById(id){
         return req.post_Param('/api/admin',{'judge':3,'id':id})
-    },
-    getAllGame(){
-        return req.post_Param('/api/game',{'judge':0})
     },
     //公司信息
     getAllCompany(){

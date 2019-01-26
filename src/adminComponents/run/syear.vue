@@ -215,13 +215,10 @@ export default {
     },
     // 显示比赛信息
     getshowGameItems() {
-        req.post_Param('api/game',{
-            'judge':5,
-            'condition':1
-        })
+        apis.getGameByCondition('1')
         .then(res => {
             print.log('显示比赛信息',res.data);
-            this.showGameItems = res.data;
+            this.showGameItems = res.data[0];
         })
     },
     // 点击进入下一财年
@@ -242,7 +239,6 @@ export default {
         .then(res => {
           print.log(res.data);
           if(res.data.success){
-            swal("更新财年信息成功!", "参赛者资产信息更新成功", "success");
             this.init()
             this.updateRelief()
           }
@@ -322,9 +318,13 @@ export default {
                 function(err, results) {
                     //等上面两个执行完返回结果
                     print.log('更新固定资产统计信息',results)
-                    that.updateFixedMoney(cid,re,results)
-                })
-        }
+                    if(i==that.showStasticsItems.length-1){
+                        that.updateFixedMoney(cid,re,results,1)
+                    }else{
+                        that.updateFixedMoney(cid,re,results,0)
+                    }
+                })            
+        };
     },
     // 获取 矿区 - 挖掘机
     getMiningDigger(index,cid,callback){
@@ -423,7 +423,7 @@ export default {
         })
     },
     // 更新公司资产
-    updateFixedMoney(cid,re,result){
+    updateFixedMoney(cid,re,result,judge){
         print.log(re,result)
         let fixed=Number(re.fixed)-(Number(result[0])+Number(result[1]));
         let total=Number(re.total)-(Number(result[0])+Number(result[1]));
@@ -454,6 +454,9 @@ export default {
                     'detail':`固定资产折旧：${Number(result[0])+Number(result[1])}`
                 })
                 this.init()
+                if(judge==1){
+                    swal("更新财年信息成功!", "参赛者资产信息更新成功", "success");
+                }
             }else{
                 $.notify(
                     {message: `${re.company.name}->资产更新失败！请检查！！`},
