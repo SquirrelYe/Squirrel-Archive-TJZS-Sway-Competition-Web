@@ -634,6 +634,13 @@ export default {
           ses.setSes('gameinfo',ginfo)
           // print.log('财年信息',res.data)
         })    
+      }else{
+        apis.getGameByCondition('1')
+        .then(res => {
+          let ginfo=JSON.stringify(res.data)
+          ses.setSes('gameinfo',ginfo)
+          // print.log('财年信息',res.data)
+        })
       }
     },
 
