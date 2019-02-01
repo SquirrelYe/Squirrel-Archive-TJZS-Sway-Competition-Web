@@ -144,7 +144,7 @@
                 <div class="col-sm-12">
                     <div class="panel panel-default">
                         <div class="panel-heading"><h4>转移挖掘机到其他矿区</h4></div>
-                        <div class="panel-body">
+                        <!-- <div class="panel-body">
                             <form class="form-horizontal" role="form">                             
                                 <div class="form-group">
                                     <label class="col-md-3 control-label" >目的矿区编号</label>
@@ -158,6 +158,24 @@
                                 </div>          
                                 <div style="color:red">注意：每个矿区只能容纳四台挖掘机，转移前请检查矿区挖掘机数量。</div>              
                             </form>
+                        </div> -->
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">                                    
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">目的矿区</label>
+                                    <div class="col-md-10">
+                                        <select class="form-control" v-model="kqbh">
+                                            <option v-for="(item,index) in showCompeteMining" :key="index" :value="item.id">编号{{item.id}}、{{item.star|formatStar}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="col-sm-2 control-label">挖机数量</label>
+                                  <div class="col-sm-10">
+                                      <input type="number" class="form-control"  v-model="wjjsl">
+                                  </div>
+                              </div>                         
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -165,7 +183,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="moveDigger()">转移到矿区</button>
+              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="moveDigger()" v-if="this.wjjsl<=this.m3 && this.wjjsl!=''">转移到矿区</button>
             </div>
         </div>
       </div>
@@ -229,7 +247,14 @@ export default {
     formatDiggerNumber(x){
       if(x==null) return '暂未配置挖掘机';
       else return x;
-    }
+    },
+    formatStar(x){
+      if(x==1) return '一星矿区'
+      if(x==2) return '二星矿区'
+      if(x==3) return '三星矿区'
+      if(x==4) return '四星矿区'
+      if(x==5) return '五星矿区'
+    },
   },
   methods: {
     getInfo(){
@@ -270,6 +295,8 @@ export default {
       this.m1=item1;  //所属矿区信息
       this.m2=item;   //挖掘机信息
       this.m3=number;   //数量
+      this.kqbh=''
+      this.wjjsl=''
     },
     // 移动挖掘机
     moveDigger(){
@@ -387,14 +414,14 @@ export default {
       })
         .then(res => {
           this.showCompeteMining=res.data;
-          print.log(this.showCompeteMining)
+          print.log('显示已购 矿区',this.showCompeteMining)
         })
     },
     //显示 挖掘机 信息
     showDigger() {
       req.post_Param('api/digger',{'judge':0})
         .then(res => {
-          print.log(res.data);
+          print.log('显示 挖掘机 信息',res.data);
           this.showDiggerItems = res.data;
         })
     }

@@ -60,7 +60,7 @@
                                     <th>研究所类型:</th>
                                     <th>品牌提升:</th>
                                     <th>配方工艺:</th>
-                                    <th>建设要求:</th>
+                                    <!-- <th>建设要求:</th> -->
                                     <th>操作:</th>
                                   </tr>
                                 </thead>
@@ -69,8 +69,8 @@
                                     <td>R{{item.research.id}}</td>
                                     <td>{{item.research.model}}</td>
                                     <td>{{item.research.brand}}</td>
-                                    <td>{{item.research.formula}}</td>
-                                    <td>{{item.research.conrequire}}</td>
+                                    <td>{{item.research.formula}}量</td>
+                                    <!-- <td>{{item.research.conrequire}}</td> -->
                                     <td data-toggle="tooltip" data-placement="top" title="研发产品">
                                       <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="openSetting(item)"></i>  
                                     </td>
@@ -195,10 +195,10 @@
                                 </form>
                                 <div align='center'>
                                   注意：元素单位 量，元素总量不得超过 研究所 规定的总量。<br>
-                                  <strong style="color:green" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && canICreatGood">
+                                  <strong style="color:green" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<=sumSource && canICreatGood">
                                     该产品未被其他公司申请专利，可以研发
                                   </strong>
-                                  <strong style="color:red" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && !canICreatGood">
+                                  <strong style="color:red" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<=sumSource && !canICreatGood">
                                     该产品已被其他公司申请专利，不允许研发
                                   </strong>
                                 </div>
@@ -217,7 +217,7 @@
             当前研究所支持的配方数：{{sumSource}}
           </div>
           <div align='center'>
-            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==sumSource && canICreatGood">
+            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<=sumSource && canICreatGood">
               当前最高单价为：{{max}}万元<br>
               <!-- <div v-if="price<max">
                 你的出价为：{{price}}
@@ -231,10 +231,10 @@
                       是否申请专利保护
                   </label>
               </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="price<max">提交申请</button>
-            </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="price<max">提交申请</button>
+              </div>
             </div>
             <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)>sumSource" style="color:red">
               超过研究所能够容纳的最大量
@@ -242,7 +242,7 @@
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
               </div>
             </div>
-            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<sumSource" style="color:green">
+            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==0" style="color:green">
               请填写产品原料组成以获取最高单价
               <div class="modal-footer">
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>

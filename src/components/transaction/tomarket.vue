@@ -719,7 +719,11 @@ export default {
       .then(res=>{
         print.log('当前公司资产信息',res.data)
         this.currentCompanyStatistic=res.data;
-        this.maxLoan=this.currentCompanyStatistic.fixed*0.8*this.currentCompanyStatistic.brand/100;
+        if(this.currentCompanyStatistic.fixed>=0){
+          this.maxLoan=(this.currentCompanyStatistic.fixed*0.8*this.currentCompanyStatistic.brand/100).toFixed(2);
+        }else{
+          this.maxLoan=0;
+        }
       })
     },
     // 显示贷款信息

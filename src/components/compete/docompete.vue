@@ -294,7 +294,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(1)" v-if="model.condition==0">提交出价</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(1)" v-if="model.condition==0 && this.givePrice>model.startprice">提交出价</button>
             </div>
         </div>
       </div>
@@ -339,7 +339,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(2)" v-if="model.condition==0">提交出价</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(2)" v-if="model.condition==0 && this.givePrice>model.startprice">提交出价</button>
             </div>
         </div>
       </div>
@@ -382,7 +382,7 @@
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(3)" v-if="model.condition==0">提交出价</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(3)" v-if="model.condition==0 && this.givePrice>model.startprice">提交出价</button>
             </div>
         </div>
       </div>
@@ -405,6 +405,9 @@ export default {
   name: "docompete",
   data() {
     return {
+      company_id:'',
+      Yearid:'',
+
       showMiningItems: "",
       showInduslandItems: "",
       showCommerlandItems: "",
@@ -422,7 +425,8 @@ export default {
     };
   },
   beforeMount() {
-    
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
     this.showMining();
@@ -471,6 +475,7 @@ export default {
   },
   methods: {
     openSetting(item,judge){
+      print.log('当前选择的竞拍物品',item)
       this.givePrice=0
       //矿区
       if(judge==1){
@@ -503,30 +508,37 @@ export default {
     },
     //出价
     sendPrice(type){
-      req.post_Param('api/compete',{
-        'judge':1,
-        'type':type,
-        'thingid':this.model.id,
-        'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
-        'auction':this.givePrice
-      })
-        .then(res => {
-          print.log(res.data);
-          // 更新竞拍价
+      apis.getOneStatisticByCompanyId(this.company_id)
+      .then(res=>{
+        if(res.data.float>=this.givePrice){
           req.post_Param('api/compete',{
-            'judge':4,
-            'type':type,
-            'thingid':this.model.id,
-            'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
-            'auction':this.givePrice,
-            'condition':0,
-            'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid
-          })
-          .then(res=>{
-            print.log(res.data)
-            s_alert.Success(`你的此次出价为：${this.givePrice}`, "正在加载……", "success");
-          })
+          'judge':1,
+          'type':type,
+          'thingid':this.model.id,
+          'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
+          'auction':this.givePrice
         })
+          .then(res => {
+            print.log(res.data);
+            // 更新竞拍价
+            req.post_Param('api/compete',{
+              'judge':4,
+              'type':type,
+              'thingid':this.model.id,
+              'company_id':JSON.parse(ses.getSes('userinfo')).company_id,
+              'auction':this.givePrice,
+              'condition':0,
+              'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid
+            })
+            .then(res=>{
+              print.log(res.data)
+              s_alert.Success(`你的此次出价为：${this.givePrice}`, "正在加载……", "success");
+            })
+          })
+        }else{
+          s_alert.Success('你的可用流动资金不足', "请检查……", "warning");
+        }
+      })      
     },
     //获取政府矿区竞拍汇总表
     showMining() {

@@ -144,7 +144,7 @@ export default {
         })
         .then(res => {
             if(res.data.success){
-                callback(null,userinfo.id)
+                callback(null,this.userinfo.id)
             }
             else{
                 s_alert.Timer("加入失败，请检查……");

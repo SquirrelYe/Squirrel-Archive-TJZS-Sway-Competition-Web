@@ -708,13 +708,13 @@ export default {
     formatTime(x) {
       return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatCondition(val){
-      if(val==-2) return '竞拍未开始'
-      if(val==-1) return '产品流拍'
-      if(val==0) return '竞拍中'
-      if(val==1) return '竞拍已结束'
-      if(val==2) return '定向公司发送'
-      if(val==3) return '资产已发送'
+    formatCondition(x){
+      if(x==-2) return '竞拍未开始'
+      if(x==-1) return '产品流拍'
+      if(x==0) return '竞拍中'
+      if(x==1) return '竞拍已结束'
+      if(x==2) return '定向公司发送'
+      if(x==3) return '资产已发送'
     },
     formatStar(x){
       if(x==1) return '一星矿区'
@@ -760,18 +760,40 @@ export default {
         let s=`api/mining?judge=1&star=${this.mstar}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
         print.log(s)
         this.tempSendCompete(s,index)
+        
+        this.mstar=0
+        this.msource_id=0
+        this.mreserve=0
+        this.mdeprelief=0
+        this.mrepurchase=0
+        this.mstartprice=0
+        this.myear=0
       }
       //工业用地
       if(index==2){
         let s=`api/indusland?judge=1&model=${this.imodel}&measure=${this.imeasure}&efficient=${this.iefficient}&repurchase=${this.irepurchase}&isimprove=0&improve=${this.iimprove}&startprice=${this.istartprice}&condition=-2&Yearid=${this.iyear}`
         print.log(s)
         this.tempSendCompete(s,index)
+        
+        this.imodel=0
+        this.imeasure=0
+        this.iefficient=0
+        this.irepurchase=0
+        this.iimprove=0
+        this.istartprice=0
+        this.iyear=0
       }
       //商业用地
       if(index==3){
         let s=`api/commerland?judge=1&level=${this.clevel}&brand=${this.cbrand}&increment=${this.cincrement}&startprice=${this.istartprice}&condition=-2&Yearid=${this.cyear}`
         print.log(s)
-        this.tempSendCompete(s,index)          
+        this.tempSendCompete(s,index) 
+        
+        this.clevel=0
+        this.cbrand=0
+        this.cincrement=0
+        this.cstartprice=0
+        this.cyear=0
       }
     },
     //发布订单模板

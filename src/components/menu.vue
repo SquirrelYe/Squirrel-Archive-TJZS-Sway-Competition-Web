@@ -150,7 +150,8 @@
       </div>
       <!-- Top Bar End -->
       <!-- ========== Left Sidebar Start ========== -->
-      <div class="left side-menu leftfixed" v-if="judgeUserType==1">
+      <!-- 管理员端 -->
+      <div class="left side-menu leftfixed fixed-left" style="position:fixed" v-if="judgeUserType==1">
         <div class="sidebar-inner slimscrollleft">
           <div class="user-details">
             <div class="pull-left">
@@ -319,7 +320,7 @@
       </div>
 
       <!-- 参赛者端 -->
-      <div class="left side-menu leftfixed" v-if="judgeUserType==0">
+      <div class="left side-menu leftfixed" style="position:fixed" v-if="judgeUserType==0">
         <div class="sidebar-inner slimscrollleft">
           <div class="user-details">
             <div class="pull-left">

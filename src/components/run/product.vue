@@ -41,7 +41,7 @@
                                     <th>生产效率提升</th>
                                     <th>折旧减免</th>
                                     <th>改良花费</th>
-                                    <th>是否改良</th>
+                                    <!-- <th>是否改良</th> -->
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -50,8 +50,8 @@
                                     <td>{{item.measure}}</td>
                                     <td>{{item.efficient}}</td>
                                     <td>{{item.repurchase}}</td>
-                                    <td>{{item.improve}}</td>
-                                    <td>{{item.isimprove}}</td>
+                                    <td>{{item.improve}}万</td>
+                                    <!-- <td>{{item.isimprove}}</td> -->
                                   </tr>
                                 </tbody>
                             </table>
@@ -77,8 +77,8 @@
                                   <tr>
                                     <td>{{currentFactoryItem.model}}</td>
                                     <td>{{currentFactoryItem.measure}}</td>
-                                    <td>{{currentFactoryItem.includeline}}</td>
-                                    <td>{{currentFactoryItem.price}}</td>
+                                    <td>{{currentFactoryItem.includeline}}条</td>
+                                    <td>{{currentFactoryItem.price}}万</td>
                                     <td>{{currentFactoryItem.indusland_factory.number}}</td>
                                   </tr>
                                 </tbody>
@@ -98,7 +98,7 @@
                                 <strong>价值折旧率:</strong>{{item.relief}}<br> 
                                 <strong>良品率:</strong>{{item.yield}}<br>    
                                 <strong>价值:</strong>{{item.price}}<br>     
-                                <strong>建设要求:</strong>{{item.conrequire}}<br>   
+                                <strong>建设要求:</strong>{{item.conrequire|formatConquire}}<br>   
                                 <strong>已有数量:</strong>{{item.indusland_factory_line.number}}<br>                            
                                 <hr>
                                 <button class="btn btn-icon waves-effect waves-light btn-success m-b-5" data-toggle="modal" data-target=".bs-example-modal-lg"  @click="openSetting(item)" v-if="item.indusland_factory_line.condition==1"> <i class="fa fa-spin fa-circle-o-notch"></i> </button> 
@@ -455,6 +455,12 @@ export default {
       if(x==2) return 'Z'
       if(x==3) return 'C'
       if(x==4) return 'S'
+    },
+    formatConquire(x){
+      if(x==1) return '小型工厂';
+      if(x==2) return '大型工厂';
+      if(x==3) return '巨无霸型工厂';
+      if(x==4) return '富士康型工厂';
     }
   },
   methods: {

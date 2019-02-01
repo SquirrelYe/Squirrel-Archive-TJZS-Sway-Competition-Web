@@ -42,7 +42,7 @@
                       <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="确认验收" @click="accept(item)">
                         <i class="fa  fa-check"></i>
                       </a>
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="拒绝验收" @click="reject(item)">
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="支付违约金" @click="reject(item)">
                         <i class="fa  fa-times"></i>
                       </a>
                     </td>
@@ -244,7 +244,7 @@ export default {
     // 拒绝竞拍资产
     reject(item){
       print.log('拒绝竞拍资产',item)
-      if(confirm(`拒绝接收将会扣取出价的20%作为违约金。违约金为：${item.auction*0.2}`)){
+      if(confirm(`拒绝接收将会扣取出价的20%作为违约金。违约金为：${(item.auction*0.2).toFixed(2)}万`)){
         // 获取个人资产
         apis.getOneStatisticByCompanyId(this.company_id)
         .then(res=>{

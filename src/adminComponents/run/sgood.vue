@@ -68,8 +68,8 @@
                           <td>{{item.function}}</td>
                           <td>{{item.introduction}}</td>
                           <td>{{item.condition | formatCondition}}</td>
-                          <td>{{item.price}}</td>
-                          <td>{{item.maxprice}}</td>
+                          <td>{{item.price}}万</td>
+                          <td>{{item.maxprice}}万</td>
                           <td>{{item.created_at | formatTime}}</td>
                           <td>
                             <!--产品通过-->
