@@ -45,7 +45,9 @@
                     <td>{{index}}</td>
                     <td>T{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
-                    <td>{{item.inout|formatInOut}}</td>
+                    <!-- <td>{{item.inout|formatInOut}}</td> -->
+                    <td v-if="company_id==item.me">卖出</td>
+                    <td v-if="company_id==item.other">买入</td>
                     <td>{{item.type|formatType}}</td>
                     <td>{{item.kind|formatKind}}</td>
                     <td>{{item.price}}</td> 
@@ -185,6 +187,7 @@ export default {
   },
   methods: {
     showMyCompete() {
+      print.log(this.company_id)
       apis.getOneTransationByCompanyIdAndType(this.company_id,2)
       .then(res => {
           console.log(res.data);

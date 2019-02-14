@@ -50,7 +50,7 @@
                           <th>产品原理</th>
                           <th>产品介绍</th>
                           <th>申请状态</th>
-                          <th>单价</th>
+                          <!-- <th>单价</th> -->
                           <th>默认最高单价</th>
                           <th>创建日期</th>
                           <th>产品代工授权</th>
@@ -68,7 +68,7 @@
                           <td>{{item.function}}</td>
                           <td>{{item.introduction}}</td>
                           <td>{{item.condition | formatCondition}}</td>
-                          <td>{{item.price}}万</td>
+                          <!-- <td>{{item.price}}万</td> -->
                           <td>{{item.maxprice}}万</td>
                           <td>{{item.created_at | formatTime}}</td>
                           <td>

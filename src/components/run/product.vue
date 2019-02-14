@@ -338,7 +338,7 @@
                         </div>
                         <strong style="color:green">当前库存元素储量为：金_{{showHaveTotalSource[0]}}、木_{{showHaveTotalSource[1]}}、水_{{showHaveTotalSource[2]}}、火_{{showHaveTotalSource[3]}}、土_{{showHaveTotalSource[4]}}、</strong>
                         <br>
-                        <strong>请输入需要生产的产品数量:</strong><input type="number" v-model="number" @input="judgeTotalSurce()"><strong>（单位/件）</strong><br>
+                        <strong>请输入需要生产的产品数量:</strong><input type="number" :disabled='this.judgeInput' v-model="number" @input="judgeTotalSurce()"><strong>（单位/件）</strong><br>
                       </div>
                       <!-- 生产中 -->
                       <div v-if="tLine.indusland_factory_line.condition==1">
@@ -364,7 +364,7 @@
                   <div class="modal-footer">
                     <div v-if="tLine.indusland_factory_line">
                       <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge">开始生产</button>
+                      <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(tLine.indusland_factory_line.stay,tLine.capacity,tLine.indusland_factory_line.number)" v-if="tLine.indusland_factory_line.condition==0 && number!=''&& number>0 && judge && chooseResearch!=''">开始生产</button>
                       <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="reBuild(FinishedResearchItem)" v-if="tLine.indusland_factory_line.condition==2">存入库存</button>
                     </div>
                   </div>
@@ -409,6 +409,8 @@ export default {
       tIndusland:'',
       tLine:'',
       tFactory:'',
+      // 判断能否输入
+      judgeInput:true,
       //index
       induslandIndex:0,
       factoryIndex:0,
@@ -433,7 +435,7 @@ export default {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
     sumCreat(x, y) {
-      return Number(x) * Number(y);
+      return (Number(x) * Number(y)).toFixed(0);
     },
     iScreated(x,y,z){
       return x*y*z
@@ -502,6 +504,7 @@ export default {
     },
     //获取公司 通过的 所有商品
     getShowGoodItems(){
+      this.judgeInput=true;
       apis.getOneGoodByCompanyId(this.company_id)
       .then(res => {
         this.showGoodItems=res.data;
@@ -509,10 +512,14 @@ export default {
         // 初始化选择产品
         this.research=''
         this.chooseResearch='';
+        this.number=0
+        // 清空radio状态
+        $("input[type='radio']").attr("checked",false);//取消选中
       })
     },
     // 获取代工产品
     getMyOEMItems(){
+      this.judgeInput=true;
       req.post_Param('api/oem',{
         judge:8,
         other:this.company_id
@@ -523,6 +530,9 @@ export default {
           // 初始化选择产品
           this.research=''
           this.chooseResearch='';
+          this.number=0
+          // 清空radio状态
+          $("input[type='radio']").attr("checked",false);//取消选中
       })
     },
     //显示开采的原料  用于生产产品
@@ -635,6 +645,7 @@ export default {
     },
     //获得选择的 生产产品
     getResearch(index,item){ 
+      this.judgeInput=false;
       if(index==1){
         print.log('选择的 自研产品',item)
         this.research=item

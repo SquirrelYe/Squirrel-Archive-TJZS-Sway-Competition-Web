@@ -78,7 +78,7 @@
                             <td>M{{item.id}}</td>
                             <td>{{item.star|formatStar}}</td>
                             <td>{{item.source_id|formatSource}}</td>
-                            <td>{{item.reserve}}</td>
+                            <td>{{item.totalreserve}}</td>
                             <td>{{item.deprelief}}</td>
                             <td>{{item.repurchase}}</td>
                             <td>{{item.startprice}}</td>
@@ -757,7 +757,7 @@ export default {
     sendCompete(index){
       //矿区
       if(index==1){
-        let s=`api/mining?judge=1&star=${this.mstar}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
+        let s=`api/mining?judge=1&star=${this.mstar}&totalreserve=${this.mreserve}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
         print.log(s)
         this.tempSendCompete(s,index)
         

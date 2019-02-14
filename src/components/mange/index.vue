@@ -15,7 +15,10 @@
                         </ul> -->
                     </div>
                     <h4 class="page-title" style="color:red" v-if="showStasticsItem">当前所在公司 {{showStasticsItem.company.name}}!&nbsp;&nbsp;&nbsp;&nbsp;当前财年：{{gameinfo.Yearid}}</h4>
-                    <h4 class="page-title" style="color:red" v-if="userinfo">参赛者 {{userinfo.cname}}</h4>
+                    <h4 class="page-title" style="color:red" v-if="userinfo">
+                        <div v-if="type==0">参赛者 {{userinfo.cname}}</div>
+                        <div v-if="type==1">管理员 {{userinfo.cname}}</div>
+                    </h4>
                 </div>
             </div>
 
@@ -202,7 +205,8 @@ export default {
     return {
         showStasticsItem:'',
         userinfo:'',
-        gameinfo:''
+        gameinfo:'',
+        type:''
     };
   },
   filters:{
@@ -218,7 +222,7 @@ export default {
       this.init()
       setInterval(() => {
           this.init()
-      }, 5000);
+      }, 10000);
   },
   methods: {
     init(){
@@ -238,6 +242,7 @@ export default {
     getinfo(){
         this.userinfo=JSON.parse(ses.getSes('userinfo'))
         this.gameinfo=JSON.parse(ses.getSes('gameinfo'))
+        this.type=ses.getSes('type')
     }
     }
 };

@@ -291,7 +291,8 @@ export default {
         })
     },
     // ---------------------------------------------------计算折旧---------------------------------------------------
-    updateRelief(){        
+    updateRelief(){   
+        s_alert.Warning('正在获取固定资产信息，请稍等……','固定资产更新成功会在右上角提示')
         this.getStasticsItems() //初始化资产列表
         print.log('最新统计资产信息',this.showStasticsItems)
 
@@ -437,7 +438,7 @@ export default {
         .then(res => {
             if(res.data){
                 $.notify(
-                    {message: `${re.company.name}->公司资产更新成功！`},
+                    {message: `${re.company.name}->公司资产更新成功！减少${(Number(result[0])+Number(result[1])).toFixed(2)}w`},
                     {type: "success"}
                 );
                 // 写入交易信息

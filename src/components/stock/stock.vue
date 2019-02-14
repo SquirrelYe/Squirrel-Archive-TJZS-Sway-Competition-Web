@@ -36,7 +36,7 @@
                       <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架"  @click="chooseGoodItem(item)">
                         <i class="fa fa-tags" data-toggle="modal" data-target="#toPublic"></i>
                       </a>
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="代工发送" @click="chooseOEMItem(item)">
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="定向发送" @click="chooseOEMItem(item)">
                         <i class="fa  fa-external-link-square" data-toggle="modal" data-target="#toOEM"></i>
                       </a>
                     </td>
@@ -138,14 +138,13 @@
         <div class="modal-content">
             <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h4 class="modal-title" id="myModalLabel">代工产品发送</h4>
+            <h4 class="modal-title" id="myModalLabel">定向产品发送</h4>
             </div>
             <!-- 内容 -->
             <div class="modal-body" align='center'>
               <div class="row">
                 <div class="col-sm-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><h4>代工产品信息</h4></div>
                         <div class="panel-body">
                             <form class="form-horizontal" role="form">                                    
                                 <div class="form-group">
@@ -169,7 +168,7 @@
             </div>  
             <div class="modal-footer">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>            
-            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="toOem()" v-if="number>0 && number<=currentOemItem.sum && oemCompany!=company_id">发送代工产品</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="toOem()" v-if="number>0 && number<=currentOemItem.sum && oemCompany!=company_id">定向发送产品</button>
             </div>       
           </div>
         </div>

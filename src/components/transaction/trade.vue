@@ -32,7 +32,13 @@
                     <td>T{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
                     <td>{{item.price}}*{{item.number}}={{item.price*item.number}}</td>
-                    <td>{{item.inout|formatInOut}}</td>
+                    <!-- 格式化收支 -->
+                    <td v-if="item.kind==1 || item.kind==2">
+                      <div v-if="item.me==company_id">收入</div>
+                      <div v-if="item.other==company_id">支出</div>                      
+                    </td>
+                    <td v-else>{{item.inout|formatInOut}}</td>
+
                     <td v-if="item.source">{{item.source.name}}{{item.detail}}</td>
                     <td v-if="item.commerresearch">{{item.commerresearch.name}}{{item.detail}}</td>
                     <td v-if="item.mining">{{item.mining.star|formatStar}}</td>

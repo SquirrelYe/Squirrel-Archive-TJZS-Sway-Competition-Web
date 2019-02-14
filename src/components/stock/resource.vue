@@ -34,9 +34,12 @@
                     <td>{{item.sum}}</td>
                     <td>{{item.created_at|formatTime}}</td>
                     <td>{{item.updated_at|formatTime}}</td>
-                    <td class="actions" align="center" @click="openSetting(item)">
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架">
+                    <td class="actions" align="center">
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="产品上架" @click="openSetting(item)">
                         <i class="fa fa-tags" data-toggle="modal" data-target="#myModal1"></i>
+                      </a>
+                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="定向发送" @click="chooseResource(item)">
+                        <i class="fa fa-external-link-square" data-toggle="modal" data-target="#toCompany"></i>
                       </a>
                     </td>
                   </tr>
@@ -122,6 +125,48 @@
       </div>
     </div>
 
+     <div id="toCompany" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 class="modal-title" id="myModalLabel">定向原料发送</h4>
+            </div>
+            <!-- 内容 -->
+            <div class="modal-body" align='center'>
+              <div class="row">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form">                                    
+                                <div class="form-group">
+                                  <label class="col-md-2 control-label">公司名称</label>
+                                  <div class="col-md-10">
+                                      <select class="form-control" v-model="toCompany">
+                                          <option v-for="(item,index) in allCompany" :key="index" :value="item.id">{{item.name}}</option>
+                                      </select>
+                                  </div>
+                                </div>                                      
+                                <div class="form-group">
+                                  <label class="col-md-2 control-label">原料数量</label>
+                                  <div class="col-md-10">
+                                    <input type="number" class="form-control" v-model="number">
+                                  </div>   
+                                </div>                          
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>            
+            <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendResourceToCompany()" v-if="number>0 && number<=sendResourceItem.sum && toCompany!=company_id">定向发送原料</button>
+            </div>       
+          </div>
+        </div>
+      </div>
+    </div>
+
 
   </div>
 </template>
@@ -141,12 +186,22 @@ export default {
   name: "resource",
   data() {
     return {
+      // 比赛信息
+      company_id:'',
+      Yearid:'',
+
       showMiniYield: '',
       currentChooseditem:'',
 
       // 原料上架信息
       giveSourceNumber:0,
       giveSourcePrice:0,
+
+      // 定向发送原料信息
+      sendResourceItem:'',
+      allCompany:'',
+      toCompany:'',
+      number:0,
       
       // 分页数据
       items: [],
@@ -155,6 +210,10 @@ export default {
       currentPage: "0",
       sumPage: null,
     };
+  },
+  beforeMount() {
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;    
   },
   mounted() {
     this.init()
@@ -234,6 +293,25 @@ export default {
         this.init()
         s_alert.Success("库存更新成功", "正在加载……", "success");
       })
+    },
+    // 选择原料发送
+    chooseResource(item){
+      this.sendResourceItem=item;
+      this.toCompany=''
+      this.number=0
+      this.getAllCompany()
+      print.log('选择的原料信息->',item)
+    },
+    // 获取公司信息
+    getAllCompany(){
+      apis.getAllCompany()
+      .then(res=>{
+        this.allCompany=res.data;
+      })
+    },
+    // 发送原料
+    sendResourceToCompany(){
+      
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
