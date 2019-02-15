@@ -258,9 +258,9 @@
                                           </thead>
                                           <tbody>
                                             <tr v-for="(item,index) in showGoodItems" :key="index" :class="{'active' : index==1}" v-if='item.condition==1'>
-                                              <td>
+                                              <td @click="getResearch(1,item)">
                                                 <div class="radio radio-success radio-single">
-                                                    <input type="radio" @input="getResearch(1,item)" name="sigle" aria-label="Single radio One">
+                                                    <input type="radio" name="sigle" aria-label="Single radio One">
                                                     <label></label>
                                                 </div>
                                               </td>
@@ -291,9 +291,9 @@
                                           </thead>
                                           <tbody>
                                             <tr v-for="(item,index) in showOEMItems" :key="index" :class="{'active' : index==1}">
-                                              <td>
+                                              <td @click="getResearch(2,item)">
                                                 <div class="radio radio-success radio-single">
-                                                    <input type="radio" @input="getResearch(2,item)" name="sigle" aria-label="Single radio One">
+                                                    <input type="radio" name="sigle" aria-label="Single radio One">
                                                     <label></label>
                                                 </div>
                                               </td>
