@@ -119,7 +119,7 @@
 
             <div class="modal-footer">
               <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>      
-              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="toPublic(currentChooseditem)" v-if="currentChooseditem.sum>0">产品上架</button>
+              <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="toPublic(currentChooseditem)" v-if="currentChooseditem.sum>0">原料上架</button>
             </div>
         </div>
       </div>
@@ -180,6 +180,7 @@ const apis = require("../../utils/api/apis");
 
 import app from "../../App.vue";
 const moment = require("moment");
+const async=require('async')
 var App = app;
 
 export default {
@@ -311,7 +312,64 @@ export default {
     },
     // 发送原料
     sendResourceToCompany(){
-      
+      print.log(this.sendResourceItem,this.number,this.toCompany)
+      let that=this
+      async.series([
+        //串行同时执行
+        callback=>{          
+            //findOrCreate 创造并查询宿主库存信息      
+            that.getCompanyResourceStock(that.sendResourceItem,that.toCompany,callback);
+        },
+        callback=>{
+            //findOrCreate 查询自己库存信息
+            that.getCompanyResourceStock(that.sendResourceItem,that.company_id,callback);            
+        }],
+        function(err, results) {
+            //等上面两个执行完返回结果，执行更新库存数量
+            print.log('更新库存统计信息',results)
+            that.updateResourceStock(results,that.number);
+        })
+    },
+    //findOrCreate 创造宿主库存信息
+    getCompanyResourceStock(item,to,callback){
+      req.post_Param('api/miniyield',{
+        'judge':1,
+        'id':0,
+        'sum':0,
+        'company_id':to,
+        'source_id':item.source_id
+      })
+      .then(res => {
+        print.log('创造宿主库存信息',res.data)
+        callback(null,res.data)
+      })
+    },
+    // 执行更新库存数量
+    updateResourceStock(results,number){
+      // 增加宿主方的库存数量
+      req.post_Param('api/miniyield',{
+        'judge':6,
+        'sum':results[0][0].sum+number,
+        'company_id':results[0][0].company_id,
+        'source_id':results[0][0].source_id
+      })
+      .then(res => {
+        print.log('更新宿主库存信息',res.data)
+      })
+      // 减少自己（代工方）的库存数量
+      req.post_Param('api/miniyield',{
+        'judge':6,
+        'sum':results[1][0].sum-number,
+        'company_id':results[1][0].company_id,
+        'source_id':results[1][0].source_id
+      })
+      .then(res => {
+        print.log('更新自己库存信息',res.data)
+      })
+      // 写入交易
+      req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=1&type=1&kind=1&number=${number}&me=${this.company_id}&other=${results[0][0].company_id}&source_id=${results[0][0].source_id}`)
+      this.init()
+      s_alert.Success("定向原料发送成功！", "正在加载……", "success");
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------

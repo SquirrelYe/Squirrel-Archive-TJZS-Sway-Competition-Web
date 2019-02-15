@@ -403,7 +403,7 @@ export default {
       // 写入交易
       req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=1&type=1&kind=2&number=${number}&me=${this.company_id}&other=${results[0][0].company_id}&commerresearch_id=${results[0][0].commerresearch_id}`)
       this.init()
-      s_alert.Success("代工产品交付成功！", "正在加载……", "success");
+      s_alert.Success("定向产品发送成功！", "正在加载……", "success");
     },
     //获取公司列表-发送代工产品
     getAllCompany(){

@@ -49,7 +49,16 @@
                     <span class="hidden-xs">政府贷款</span>
                   </a>
                 </li>
+                <li class @click="transaction()">
+                  <a href="#transaction" data-toggle="tab" aria-expanded="false">
+                    <span class="visible-xs">
+                      <i class="fa fa-envelope-o"></i>
+                    </span>
+                    <span class="hidden-xs">公司转账</span>
+                  </a>
+                </li>
               </ul>
+
               <div class="tab-content">
                 <!-- 原料交易展示处 -->
                 <div class="tab-pane active" id="home">
@@ -216,7 +225,7 @@
                             </div>
                         </div>
                     </form>
-                </div> 
+                  </div> 
                   <hr>
                   <strong align='center' style="color:red">注意：表格中贷款金额单位为万元，当前贷款额度为{{maxLoan}}万元</strong><br>
                   <hr>
@@ -225,6 +234,51 @@
                     贷款额度为公司固定资产的80%，公司品牌价值超过100的部分对可贷上限有百分比提升。<br>
                     <strong>可贷额度</strong>=<strong>(固定资产 - 已贷资金)*0.8*（品牌价值）/100</strong><br>
                     利率：一年8%、两年12%、三年16%，利息计算方法为单利计算<br>                  
+                  </p>
+                </div>
+                <!-- 公司间转账 -->
+                <div class="tab-pane" id="transaction">
+                  <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">公司名称</label>
+                            <!-- <div class="col-md-10">
+                                <input type="text" disabled class="form-control" :placeholder="this.currentCompanyName">
+                            </div> -->
+                            <div class="col-md-10">
+                                <select class="form-control" v-model="toCompany">
+                                    <option v-for="(item,index) in allCompany" :key="index" :value="item.id">{{item.name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="example-email">转账金额</label>
+                            <div class="col-md-10">
+                                <input type="number" class="form-control" placeholder="xxx万元" v-model="tmoney">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">备注</label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" v-model="tother" rows="5" placeholder="请注明原因、事件。"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                            <button type="button" class="btn btn-block btn-lg btn-success waves-effect waves-light" :disabled='tmoney<=0 || toCompany==company_id' @click="transactionToCompany()">转账到公司</button>
+                            </div>
+                        </div>
+                    </form>
+                </div> 
+                  <hr>
+                  <strong align='center' style="color:red">注意：上述转账金额单位为万元（w）</strong><br>
+                  <hr>
+                  <p>
+                    <strong>注意：</strong><br>
+                    公司间转账涉及到的场景为：<br>
+                    一、产品代工，根据两方公司合约， 转账给代工方首付以及尾款；<br>
+                    二、双方产品交易、原料交易(不通过市场交易，直接交易)，"遵循一手交钱、一手交货"的原则，东西到则钱到。                
                   </p>
                 </div>
               </div>
@@ -349,6 +403,7 @@ export default {
     return {
       //公司信息
       company_id:'',
+      Yearid:'',
       //界面信息
       showSourceItems: "",
       showGoodsItems: "",
@@ -371,6 +426,11 @@ export default {
       //选择
       judgeChoose:0,
       detail:'',
+      // 转账到公司
+      toCompany:null,
+      allCompany:'',
+      tmoney:0,
+      tother:'',
       // 分页数据
       items: [],
       showItems: [],
@@ -380,7 +440,8 @@ export default {
     };
   },
   beforeMount() {
-    this.company_id=JSON.parse(ses.getSes('userinfo')).company_id
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;    
   },
   mounted() {
     this.init()
@@ -860,8 +921,58 @@ export default {
         this.stay=0;
         this.rate=0;
       }
-    }
+    },
+    // 点击公司转账
+    transaction(){
+      apis.getAllCompany()  // 获取公司列表
+      .then(res=>{
+        this.allCompany=res.data;
+      })
+      // 初始化数据
+      this.toCompany=null,
+      this.tmoney=0
+      this.tother=''
+    },
+    // 提交公司转账
+    transactionToCompany(){
+      print.log('公司间转账信息',this.toCompany,this.tmoney,this.tother)
 
+      apis.getOneStatisticByCompanyId(this.company_id) //获取己方资产信息
+      .then(res => {
+          let float=Number(res.data.float)-this.tmoney;
+          let total=Number(res.data.total)-this.tmoney;
+          // 更新资产
+          req.post_Param('api/statistic',{
+            'judge':4,
+            'total':total,
+            'float':float,
+            'company_id':this.company_id
+          })
+      })
+
+      apis.getOneStatisticByCompanyId(this.toCompany)    //获取卖方资产信息
+      .then(res => {
+          let float=Number(res.data.float)+Number(this.tmoney);
+          let total=Number(res.data.total)+Number(this.tmoney);
+          // 更新资产
+          req.post_Param('api/statistic',{
+            'judge':4,
+            'total':total,
+            'float':float,
+            'company_id':this.toCompany
+          })
+          .then(res=>{
+            // 写入交易
+            req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=2&type=1&kind=3&number=1&price=${this.tmoney}&me=${this.toCompany}&other=${this.company_id}&detail=${this.tother}`)
+            .then(res=>{
+              print.log(res.data)
+              s_alert.Success("公司间转账成功！", "正在加载……", "success");
+            })
+          })
+      })
+
+
+    }
   }
 }
 </script>

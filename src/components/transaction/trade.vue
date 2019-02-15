@@ -37,6 +37,10 @@
                       <div v-if="item.me==company_id">收入</div>
                       <div v-if="item.other==company_id">支出</div>                      
                     </td>
+                    <td v-else-if="item.kind==3 && item.type==1">
+                      <div v-if="item.me==company_id">收入</div>
+                      <div v-if="item.other==company_id">支出</div>                      
+                    </td>
                     <td v-else>{{item.inout|formatInOut}}</td>
 
                     <td v-if="item.source">{{item.source.name}}{{item.detail}}</td>
