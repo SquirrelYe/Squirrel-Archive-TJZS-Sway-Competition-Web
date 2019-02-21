@@ -810,7 +810,7 @@ export default {
     // 提交贷款
     submitForm(){
       if(this.money==0 || this.stay==0 || this.other==''){
-        s_alert.Warning('贷款信息填写有误','请改正后重试……');
+        s_alert.Warning('贷款信息填写不能有空','请改正后重试……');
       }else{
         //市场交易 - 提交贷款
         //贷款信息
@@ -835,8 +835,16 @@ export default {
           if(res.data[1]){
             s_alert.Success("贷款信息提交成功", "正在加载……", "success");
             this.tempPriceLoan(this.money)  //更新资产
+            // 初始化贷款信息
+            this.money=0;
+            this.stay=0;
+            this.other=''
           }else{
             s_alert.Warning('尚有贷款未还清','请还清后重试……')
+            // 初始化贷款信息
+            this.money=0;
+            this.stay=0;
+            this.other=''
           }
         })
       }
@@ -850,6 +858,7 @@ export default {
       })
       .then(res => {
           let float=Number(res.data.float)+Number(money);
+          let total=Number(res.data.total)+Number(money);
           // 更新个人资产
           print.log('更新资产为',float,total);
           req.post_Param('api/statistic',{
