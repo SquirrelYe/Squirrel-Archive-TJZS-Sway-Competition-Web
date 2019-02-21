@@ -28,7 +28,7 @@
                         <th>公司法人</th>
                         <th>统一社会信用代码</th>
                         <th>经营范围</th>
-                        <th>人数</th>
+                        <!-- <th>人数</th> -->
                         <th>状态</th>
                         <th>创建日期</th>
                         <th>选择加入</th>
@@ -42,8 +42,8 @@
                         <td>{{item.legal}}</td>
                         <td>{{item.code}}</td>
                         <td>{{item.area}}</td>
-                        <td>3</td>
-                        <td>{{item.condition}}</td>
+                        <!-- <td>3</td> -->
+                        <td>{{item.condition | formatCondition}}</td>
                         <td>{{item.created_at | formatTime}}</td>
                         <td class="actions" align="center">
                           <a class="on-default edit-row" @click="joinCompany(item)" data-toggle="tooltip" data-placement="top" title="加入此公司">
@@ -123,6 +123,10 @@ export default {
   filters:{
     formatTime(val){
       return moment(val).format('YYYY-MM-DD HH:mm:ss')
+    },
+    formatCondition(x){
+      if(x==1) return "存续";
+      if(x==2) return "注销"
     }
   },
   methods: {
