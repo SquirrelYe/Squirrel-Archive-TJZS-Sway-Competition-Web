@@ -599,7 +599,7 @@ export default {
       //实时更新个人信息
       this.refreshUserinfo()
       this.refreshYearid()
-    }, 10000);
+    }, 15000);
     this.refreshUserinfo()
     this.refreshYearid()
   },

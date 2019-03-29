@@ -38,7 +38,7 @@
                         <td>{{item.legal}}</td>
                         <td>{{item.code}}</td>
                         <td>{{item.area}}</td>
-                        <td>{{item.condition}}</td>
+                        <td>{{item.condition | formatCondition}}</td>
                         <td>{{item.created_at|formatTime}}</td>
                         <td class="actions" align='center'>
                           <a class="on-default remove-row" @click="isDeleteItem(item)">
@@ -107,6 +107,9 @@ export default {
   filters:{
     formatTime(val){
       return moment(val).format('YYYY-MM-DD HH:mm:ss')
+    },
+    formatCondition(x){
+      if(x==0) return "正常营业";
     }
   },
   beforeMount(){
