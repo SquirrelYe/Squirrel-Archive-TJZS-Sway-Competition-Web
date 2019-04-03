@@ -44,15 +44,17 @@
                     <td v-else>{{item.inout|formatInOut}}</td>
 
                     <td v-if="item.source">{{item.source.name}}{{item.detail}}</td>
-                    <td v-if="item.commerresearch">{{item.commerresearch.name}}{{item.detail}}</td>
-                    <td v-if="item.mining">{{item.mining.star|formatStar}}</td>
-                    <td v-if="item.indusland">{{item.indusland.model|formatModel}}</td>
-                    <td v-if="item.commerland">{{item.commerland.level|formatLevel}}</td>
-                    <td v-if="item.digger">{{item.digger.model}}</td>
-                    <td v-if="item.factory">{{item.factory.model}}</td>
-                    <td v-if="item.line">{{item.line.model}}</td>
-                    <td v-if="item.research">{{item.research.model}}</td>
-                    <td v-if="item.detail && !item.source && !item.commerresearch">{{item.detail}}</td>
+                    <td v-else-if="item.commerresearch">{{item.commerresearch.name}}{{item.detail}}</td>
+                    <td v-else-if="item.mining">{{item.mining.star|formatStar}}</td>
+                    <td v-else-if="item.indusland">{{item.indusland.model|formatModel}}</td>
+                    <td v-else-if="item.commerland">{{item.commerland.level|formatLevel}}</td>
+                    <td v-else-if="item.digger">{{item.digger.model}}</td>
+                    <td v-else-if="item.factory">{{item.factory.model}}</td>
+                    <td v-else-if="item.line">{{item.line.model}}</td>
+                    <td v-else-if="item.research">{{item.research.model}}</td>
+                    <td v-else-if="item.detail && !item.source && !item.commerresearch">{{item.detail}}</td>
+                    <td v-else></td>
+
                     <td>{{item.updated_at|formatTime}}</td>
                   </tr>
                 </tbody>

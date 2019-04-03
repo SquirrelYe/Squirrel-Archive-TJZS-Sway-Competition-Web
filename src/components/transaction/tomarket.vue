@@ -117,7 +117,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch'>
+                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch && item.type == 2'>
                             <td>G{{item.id}}</td>
                             <td>{{item.commerresearch.name}}</td>
                             <td>{{item.company.name}}</td>
@@ -948,6 +948,8 @@ export default {
 
       apis.getOneStatisticByCompanyId(this.company_id) //获取己方资产信息
       .then(res => {
+        if(this.tmoney <= res.data.float){
+          // 更新己方资产信息
           let float=Number(res.data.float)-this.tmoney;
           let total=Number(res.data.total)-this.tmoney;
           // 更新资产
@@ -957,29 +959,34 @@ export default {
             'float':float,
             'company_id':this.company_id
           })
-      })
 
-      apis.getOneStatisticByCompanyId(this.toCompany)    //获取卖方资产信息
-      .then(res => {
-          let float=Number(res.data.float)+Number(this.tmoney);
-          let total=Number(res.data.total)+Number(this.tmoney);
-          // 更新资产
-          req.post_Param('api/statistic',{
-            'judge':4,
-            'total':total,
-            'float':float,
-            'company_id':this.toCompany
-          })
-          .then(res=>{
-            // 写入交易
-            req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=2&type=1&kind=3&number=1&price=${this.tmoney}&me=${this.toCompany}&other=${this.company_id}&detail=${this.tother}`)
+          // 更新对方资产信息
+          apis.getOneStatisticByCompanyId(this.toCompany)    //获取卖方资产信息
+          .then(res => {
+            let float=Number(res.data.float)+Number(this.tmoney);
+            let total=Number(res.data.total)+Number(this.tmoney);
+            // 更新资产
+            req.post_Param('api/statistic',{
+              'judge':4,
+              'total':total,
+              'float':float,
+              'company_id':this.toCompany
+            })
             .then(res=>{
-              print.log(res.data)
-              s_alert.Success("公司间转账成功！", "正在加载……", "success");
+              // 写入交易
+              req.post(`api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=2&type=1&kind=3&number=1&price=${this.tmoney}&me=${this.toCompany}&other=${this.company_id}&detail=${this.tother}`)
+              .then(res=>{
+                print.log(res.data)
+                s_alert.Success("公司间转账成功！", "正在加载……", "success");
+              })
             })
           })
-      })
 
+        }else{
+          s_alert.Success("转账金额不能大于已有流动资金", "请重新输入", "warning");
+        }
+          
+      })      
 
     }
   }

@@ -296,7 +296,7 @@ export default {
       law:false,
       //判断是否存在当前研发产品
       judgeGoodHave:'',
-      canICreatGood:false
+      canICreatGood:true
     };
   },
   beforeMount() {

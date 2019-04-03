@@ -67,13 +67,14 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="portfolioFilter">
-                            <a href="javascript:void(0)" :class="{'current' : condition==-1}" @click="getGame(-1)">所有赛事</a>
-                            <a href="javascript:void(0)" :class="{'current' : condition==0}" @click="getGame(0)">未开始</a>
+                            <a href="javascript:void(0)" :class="{'current' : condition==-2}" @click="getGame(-2)">所有赛事</a>
+                            <a href="javascript:void(0)" :class="{'current' : condition==-1}" @click="getGame(-1)">未开始</a>
+                            <a href="javascript:void(0)" :class="{'current' : condition==0}" @click="getGame(0)">准备中</a>
                             <a href="javascript:void(0)" :class="{'current' : condition==1}" @click="getGame(1)">正在进行</a>
                             <a href="javascript:void(0)" :class="{'current' : condition==2}" @click="getGame(2)">已结束</a>
                         </div>
                     <br>
-                    备注：选择你此次参加的比赛，若未发现此次参加的赛事信息，请联系组委会。
+                    备注：选择你此次参加的比赛，若未发现此次参加的赛事信息，请联系组委会。无法加入未开始或已结束比赛，比赛开始前请加入准备中赛事，正式开始后请加入正在进行赛事。
                     </div>
                 </div>
 
@@ -139,16 +140,11 @@ export default {
         formatTime(val) {
             return moment(val).format("YYYY-MM-DD HH:mm:ss");
         },
-        formatCondition(x){
-            if(x==0) return '比赛未开始';
-            if(x==1) return '比赛正在进行';
-            if(x==2) return '比赛已结束';
-        }
     },
     methods: {
         init() {
             this.getAllGame();
-            this.condition=-1;
+            this.condition=-2;
         },
         //获取所有公司列表
         getAllGame() {
@@ -160,8 +156,8 @@ export default {
         // 选择赛事
         chooseGame(item){
             print.log('选择赛事',item)
-            if(item.condition==0 || item.condition==2){
-                s_alert.Success("赛事未开始或已结束。","请重新选择……","warning");
+            if(item.condition != 0 && item.condition != 1){
+                s_alert.Success("赛事未开始、已结束或进行中。","请重新选择……","warning");
             }else{
                 apis.getOneGameById(item.id)
                 .then(res=>{
@@ -176,7 +172,7 @@ export default {
         // 选择不同状态赛事
         getGame(index){
             this.condition=index;
-            if(index==-1){
+            if(index==-2){
                 this.getAllGame();
             }else{
                 apis.getGameByCondition(index)

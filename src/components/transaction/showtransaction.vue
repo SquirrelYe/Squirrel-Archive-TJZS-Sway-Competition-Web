@@ -41,7 +41,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
+                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index" :class="{'green' : item.type ==2}">
                     <td>{{index}}</td>
                     <td>T{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
@@ -99,7 +99,7 @@
                 </ul>
               </div>
             </div>
-            <p><strong>注意:上图所示价格单位均为万元。</strong></p>
+            <p><strong>注意:上图所示价格单位均为万元。黑色表示公司间交易，绿色表示市场交易。</strong></p>
           </div>
         </div>
       </div>
@@ -253,4 +253,7 @@ export default {
 </script>
 
 <style>
+.green{
+  color: green
+}
 </style>

@@ -116,7 +116,8 @@ export default {
       return moment(x).format('YYYY-MM-DD HH:mm:ss')
     },
     formatCondition(x){
-      if(x==0) return '比赛未开始';
+      if(x==-1) return '比赛未开始';
+      if(x==0) return '比赛准备中';
       if(x==1) return '比赛正在进行';
       if(x==2) return '比赛已结束';
     },
@@ -177,7 +178,7 @@ export default {
       req.post_Param('api/game',{
         'judge':2,
         'id':item.id,
-        'condition':1
+        'condition':0
       })
       .then(res => {
         if(res.data.success){

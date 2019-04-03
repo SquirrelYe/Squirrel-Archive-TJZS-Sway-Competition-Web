@@ -331,7 +331,8 @@ export default {
           let fixed=res.data.fixed+fix;
           let total=res.data.total+fix-item.auction;
           let float=res.data.float-item.auction;
-          let brand=(res.data.brand)*(1+currentBrand);
+          // 品牌价值采用累加算法
+          let brand=Number(res.data.brand)+(100*currentBrand);
           print.log('更新品牌价值',brand)
           // 更新资产信息
           req.post_Param('api/statistic',{

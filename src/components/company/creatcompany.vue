@@ -54,7 +54,8 @@
                     <label class="col-md-1 control-label"></label>
                     <div class="col-md-11">
                         注意：<br>
-                        <strong>公司由选出的公司CEO创建，公司创建完成之后，公司其他成员通过 公司->加入公司 找到并加入公司。</strong>
+                        <strong>公司由选出的公司CEO创建，公司创建完成之后，公司其他成员通过 公司->加入公司 找到并加入公司。</strong><br>
+                        <strong>比赛准备中可以创建公司，比赛正式开始后无法创建公司。</strong>
                     </div>
                 </div> 
             </div> 
@@ -79,6 +80,7 @@ export default {
   data() {
     return {
         userinfo:'',
+        Yearid:null,
 
         name:'',
         legal:'',
@@ -88,14 +90,16 @@ export default {
     };
   },
   beforeMount() {
-    this.userinfo =JSON.parse(ses.getSes("userinfo"));    
+    this.userinfo =JSON.parse(ses.getSes("userinfo")); 
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;   
   },
   methods: {
     submitForm() {
       if (this.name == "" || this.legal == ""|| this.code == ""|| this.area == ""|| this.others == "") {
         s_alert.basic("某一项输入为空！");
       } else {
-        this.submitcom();        
+        if(JSON.parse(ses.getSes("gameinfo")).Yearid != 0) s_alert.Success("比赛过程中不能创建公司","公司创建在比赛准备中进行",'warning');
+        else this.submitcom();        
       }
     },
     submitcom(){

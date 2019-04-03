@@ -76,6 +76,11 @@
                 </div>
               </div>
             </div>
+            <div class="col-md-11">
+              注意：<br>
+              <strong>公司由选出的公司CEO创建，公司创建完成之后，公司其他成员找到并加入公司。</strong><br>
+              <strong>比赛准备中可以加入公司，比赛正式开始后无法加入公司。</strong>
+            </div>
           </div>
           
         </div>
@@ -147,7 +152,10 @@ export default {
     },
     //加入公司流程
     joinCompany(item) {
-      this.judgeBlong(item);
+      if(confirm("你确定加入此公司？？？")) {
+        if(JSON.parse(ses.getSes("gameinfo")).Yearid != 0) s_alert.Success("比赛过程中不能加入公司","公司加入在比赛准备中进行",'warning');
+        else this.judgeBlong(item);
+      } 
     },
     // 判断是否已有公司
     judgeBlong(item){

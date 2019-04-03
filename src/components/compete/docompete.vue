@@ -111,7 +111,8 @@
                     </div>
                   </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p><br>
+                  竞拍情况请去 竞拍->竞拍情况 查看
                 </div>
                 <!-- 工业用地展示处 -->
                 <div class="tab-pane" id="profile">
@@ -181,7 +182,8 @@
                     </div>
                   </div>
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p><br>
+                  竞拍情况请去 竞拍->竞拍情况 查看
                 </div>
                 <!-- 商业用地展示处 -->
                 <div class="tab-pane" id="messages">
@@ -247,7 +249,8 @@
                     </div>
                   </div>              
                   <hr>
-                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p>
+                  <p><strong>注意</strong>：拍卖过程分为明拍与暗拍两种，明拍线下举行，暗拍线上举行。以上单位均为<strong>万元</strong>。</p><br>
+                  竞拍情况请去 竞拍->竞拍情况 查看
                 </div>
               </div>
             </div>            

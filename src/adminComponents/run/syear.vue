@@ -90,6 +90,9 @@
                                                     <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="转账到此公司"  @click="tran(item)">
                                                         <i class="fa  fa-tags" data-toggle="modal" data-target="#myModal2" ></i>
                                                     </a>
+                                                    <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="矿区回收"  @click="mining(item)">
+                                                        <i class="fa  fa-reply-all" data-toggle="modal" data-target="#myModal3" ></i>
+                                                    </a>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -123,37 +126,72 @@
             </div>
         </div>
         <!-- 指向公司转账 -->
-        <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="currentStastics">
             <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="myModalLabel">指向公司转账</h4>
-                </div>
-                <div class="modal-body" align='center'> 
-                    <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">金额:</label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control"  v-model="givePrice" placeholder="正值转入，负值扣款">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel" v-if="currentStastics.company">指向公司转账 -- {{currentStastics.company.name}}</h4>
+                    </div>
+                    <div class="modal-body" align='center'> 
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">金额:</label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control"  v-model="givePrice" placeholder="正值转入，负值扣款">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">备注:</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" v-model="giveDetail" placeholder="请输入转账原因">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">备注:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" v-model="giveDetail" placeholder="请输入转账原因">
+                                </div>
                             </div>
-                        </div>
-                    </form>            
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="updateMoney()">提交出价</button>
+                        </form>            
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="updateMoney()">提交出价</button>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- 矿区回收 -->
+        <div id="myModal3" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="currentStastics">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel" v-if="currentStastics.company">公司矿区回收 -- {{currentStastics.company.name}}</h4>
+                    </div>
+                    <div class="modal-body" align='center'> 
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <div class="col-md-3 control-label" style="font-weight:900"><strong>矿区编号</strong></div>
+                                <div class="col-md-9">
+                                    <select class="form-control" v-model="mining_id">
+                                        <option v-for="(item,index) in minings" :key="index" :value="item.id">编号：M{{item.id}} 、 {{item.star|formatStar}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">回收金额:</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" v-model="mining_money" placeholder="请输入回收金额">
+                                </div>
+                            </div>
+                            <div class="panel-heading">
+                                <h3 class="panel-title">注意：请提醒参赛者将矿区下的挖掘机移动至其他矿区，否则将清空矿区下的挖掘机！</h3>
+                            </div>
+                        </form>            
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="getmining()">回购矿区</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- <button @click="updateRelief">测试</button> -->
     </div>
 </template>
 
@@ -181,6 +219,12 @@ export default {
       givePrice:0,
       giveDetail:'',
 
+      currentStastics:null,
+      // 矿区回收
+      mining_id:null,
+      mining_money:null,
+      minings:null,
+
       // 计算折旧
       diggerDeprelief:[],
       lineDeprelief:[],
@@ -206,6 +250,13 @@ export default {
   filters: {
     formatTime(val) {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
+    },
+    formatStar(x){
+      if(x==1) return '一星矿区'
+      if(x==2) return '二星矿区'
+      if(x==3) return '三星矿区'
+      if(x==4) return '四星矿区'
+      if(x==5) return '五星矿区'
     }
   },
   methods: {
@@ -259,6 +310,58 @@ export default {
     tran(model){
         print.log('当前选中转移资产公司资产信息',model)
         this.currentStastics=model
+    },
+    // 获取公司矿区信息
+    mining(item){
+        print.log('当前选中矿区回收公司资产信息',item)
+        this.currentStastics=item
+        req.post_Param('api/mining',{
+            'judge':6,
+            'company_id':item.company_id
+        })
+        .then(res=>{
+            print.log(res.data)
+            this.minings = res.data.rows
+        })
+    },
+    // 回购矿区
+    getmining(){
+        print.log(this.mining_id,this.mining_money)
+        // 删除矿区
+        req.post_Param('api/mining',{
+            'judge':3,
+            'id':this.mining_id
+        })
+        .then(res =>{
+            // 矿区回收
+            let float=Number(this.mining_money)+Number(this.currentStastics.float);
+            let total=Number(this.mining_money)+Number(this.currentStastics.total);
+            // 更新资产信息
+            req.post_Param('api/statistic',{
+                'judge':2,
+                'id':this.currentStastics.id,
+                'float':float,
+                'total':total
+            })
+            // 写入交易信息
+            req.post_Param('api/transaction',{
+                'judge':1,
+                'id':0,
+                'Yearid':this.Yearid,
+                'inout':2,
+                'type':1,
+                'kind':3,
+                'price':this.givePrice,
+                'number':1,
+                'me':this.currentStastics.company_id,
+                'detail':`矿区回收：${this.giveDetail}`
+            })
+            .then(res => {
+                print.log(res.data);
+                swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
+                this.init()
+            })
+        })        
     },
     // 转账
     updateMoney(){
