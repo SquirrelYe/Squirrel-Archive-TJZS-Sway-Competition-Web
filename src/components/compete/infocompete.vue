@@ -29,7 +29,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="item.name">
+                  <tr class="gradeX" v-for="(item,index) in showItems" :key="item.name" :class="{'important' : item.condition ==1}">
                     <td>{{index}}</td>
                     <td>C{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
@@ -411,4 +411,8 @@ export default {
 </script>
 
 <style>
+.important{
+  color: green;
+  font-weight: bolder
+}
 </style>

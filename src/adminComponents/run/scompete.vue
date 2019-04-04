@@ -73,7 +73,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
                             <td>{{index}}</td>
                             <td>M{{item.id}}</td>
                             <td>{{item.star|formatStar}}</td>
@@ -99,6 +99,9 @@
                               </a>
                               <a class="waves-effect waves-light" @click="opensetting(item,1,2)" data-toggle="tooltip" data-placement="top" title="竞价排名">
                                 <i class="fa  fa-sort-amount-desc" data-toggle="modal" data-target="#desc"></i>
+                              </a>
+                              <a class="waves-effect waves-light" @click="deleMining(item)" data-toggle="tooltip" data-placement="top" title="删除">
+                                <i class="fa  fa-times"></i>
                               </a>
                             </td>
                           </tr>
@@ -159,7 +162,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
                             <td>{{index}}</td>
                             <td>I{{item.id}}</td>
                             <td>{{item.model|formatmodel}}</td>
@@ -185,6 +188,9 @@
                               </a>
                               <a class="waves-effect waves-light" @click="opensetting(item,2,2)" data-toggle="tooltip" data-placement="top" title="竞价排名">
                                 <i class="fa  fa-sort-amount-desc" data-toggle="modal" data-target="#desc"></i>
+                              </a>
+                              <a class="waves-effect waves-light" @click="deleIndus(item)" data-toggle="tooltip" data-placement="top" title="删除">
+                                <i class="fa  fa-times"></i>
                               </a>
                             </td>
                           </tr>
@@ -243,7 +249,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
                             <td>{{index}}</td>
                             <td>C{{item.id}}</td>
                             <td>{{item.level|formatlevel}}</td>
@@ -267,6 +273,9 @@
                               </a>
                               <a class="waves-effect waves-light" @click="opensetting(item,3,2)" data-toggle="tooltip" data-placement="top" title="竞价排名">
                                 <i class="fa  fa-sort-amount-desc" data-toggle="modal" data-target="#desc"></i>
+                              </a>
+                              <a class="waves-effect waves-light" @click="deleCommer(item)" data-toggle="tooltip" data-placement="top" title="删除">
+                                <i class="fa  fa-times"></i>
                               </a>
                             </td>
                           </tr>
@@ -1081,6 +1090,54 @@ export default {
             })
         })
     },
+    // 删除矿区
+    deleMining(item){
+      print.log('删除矿区',item)
+      if(confirm('你确定要删除码？')){
+        req.post_Param('api/mining',{
+          'judge':3,
+          'id':item.id
+        })
+        .then(res=>{
+          if(this.chooseType==1) this.showMining();
+          if(this.chooseType==2) this.showIndus();
+          if(this.chooseType==3) this.showCommer();
+          s_alert.Success('删除成功！','','success')
+        })
+      }
+    },
+    // 删除工业用地
+    deleIndus(item){
+      print.log('删除工业用地',item)
+      if(confirm('你确定要删除？')){
+        req.post_Param('api/indusland',{
+          'judge':3,
+          'id':item.id
+        })
+        .then(res=>{
+          if(this.chooseType==1) this.showMining();
+          if(this.chooseType==2) this.showIndus();
+          if(this.chooseType==3) this.showCommer();
+          s_alert.Success('删除成功！','','success')
+        })
+      }
+    },
+    // 删除商业用地
+    deleCommer(item){
+      print.log('删除商业用地',item)
+      if(confirm('你确定要删除？')){
+        req.post_Param('api/commerland',{
+          'judge':3,
+          'id':item.id
+        })
+        .then(res=>{
+          if(this.chooseType==1) this.showMining();
+          if(this.chooseType==2) this.showIndus();
+          if(this.chooseType==3) this.showCommer();
+          s_alert.Success('删除成功！','','success')
+        })
+      }
+    },
     //获取公司列表
     getAllCompany(){        
         apis.getAllCompany()
@@ -1201,5 +1258,8 @@ export default {
 </script>
 
 <style>
-
+.important{
+  color: green;
+  font-weight: bolder
+}
 </style>

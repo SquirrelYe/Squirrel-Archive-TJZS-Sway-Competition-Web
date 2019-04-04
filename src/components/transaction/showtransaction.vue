@@ -254,6 +254,7 @@ export default {
 
 <style>
 .green{
-  color: green
+  color: green;
+  font-weight: bolder
 }
 </style>

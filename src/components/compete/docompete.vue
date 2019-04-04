@@ -66,7 +66,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
                             <td>{{index}}</td>
                             <td>{{item.id}}</td>
                             <td>{{item.star | formatStar}}</td>
@@ -137,7 +137,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
                             <td>{{index}}</td>
                             <td>{{item.id}}</td>
                             <td>{{item.model|formatmodel}}</td>
@@ -206,7 +206,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index">
+                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
                             <td>{{index}}</td>
                             <td>{{item.id}}</td>
                             <td>{{item.level|formatlevel}}</td>
@@ -633,4 +633,8 @@ export default {
 
 <style>
 
+.important{
+  color: green;
+  font-weight: bolder
+}
 </style>

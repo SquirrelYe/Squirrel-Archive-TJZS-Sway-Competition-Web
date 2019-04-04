@@ -22,17 +22,17 @@
                             <div class="col-lg-6" v-for="(item,index) in showCompeteIndusland" :key="index">
                               <div class="panel panel-fill panel-inverse">
                                   <div class="panel-heading" style="height:40px"> 
-                                      <h3 class="panel-title" style="float:left">工业用地编号  {{item.id}}、面积{{item.measure}}</h3> 
+                                      <h3 class="panel-title" style="float:left">工业用地编号  {{item.id}}、面积{{item.measure}}、类型{{item.model|formatmodel}}</h3> 
                                       <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(null,item,0)">配置工厂</i>
                                   </div> 
                                   <div class="panel-body"> 
                                     <!-- <p>
                                       暂未配置工厂
                                     </p> -->
-                                    <div class="col-lg-6" v-for="(item1,index1) in showCompeteIndusland[index].factories" :key="index1">
+                                    <div class="col-lg-12" v-for="(item1,index1) in showCompeteIndusland[index].factories" :key="index1">
                                       <div class="panel panel-fill panel-default">
                                           <div class="panel-heading" style="height:40px"> 
-                                              <h3 class="panel-title" style="float:left">工厂编号  {{item1.id}}</h3> 
+                                              <h3 class="panel-title" style="float:left">工厂编号  {{item1.id}}、{{item1.model}}、数量*{{item1.indusland_factory.number}}</h3> 
                                               <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(item,item1,1)">配置生产线</i>
                                           </div> 
                                           <div class="panel-body"> 
@@ -41,12 +41,12 @@
                                                 <div v-for="(item2,index2) in showInduslandFactoryLineItem" :key="index2">
                                                   <div v-if="item2.indusland_id==item.id && item2.factory_id==item1.id">
                                                     <!-- 根据 生产线与工业用地&工厂对应关系的indusland_id和factory_id 来匹配 显示 -->
-                                                    <div style="color:green">已有当前工厂数量{{item2.number}}</div>
+                                                    <!-- <div style="color:green">已有当前工厂数量{{item2.number}}</div> -->
                                                     <div v-if="item2.lines!=''">生产线信息如下：<br>  </div>
                                                     <div v-if="item2.lines==''">暂未配置生产线信息：<br>  </div>
                                                     <div class="btn-group"  v-for="(item3,index3) in item2.lines" :key="index3">
                                                       <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index3%4==0,'btn-success' : index3%4==1,'btn-warning' : index3%4==2,'btn-primary' : index3%4==3}">
-                                                      {{item3.model}} 
+                                                      {{item3.model}} * {{item3.indusland_factory_line.number}}
                                                       <span class="caret"></span>
                                                       </button>
                                                       <ul class="dropdown-menu" role="menu">
@@ -84,7 +84,12 @@
                   </div>
                   <hr>
                   <p>
-                    <strong>注意：工业用地->工厂，工厂->生产线有相应限制，请根据赛制规定操作。</strong>
+                    <strong>注意：工业用地->工厂，工厂->生产线有相应限制，请根据赛制规定操作。</strong><br>
+
+                    <strong style="color:red">
+                      重要：在进行 添加 工厂 或者 生产线 时，确认此工业用地未在使用中，工业用地使用中无法购买工厂 以及 生产线。<br>
+                      同一个工业用地，相同的工厂下的相同生产线同时只能生产一种产品。<br>
+                    </strong>
                   </p>
                 </div>
           </div>
@@ -182,7 +187,7 @@
                               <td>{{item.relief}}</td>
                               <td>{{item.yield}}</td>
                               <td>{{item.price}}</td>
-                              <td>{{item.conrequire}}</td>
+                              <td>{{item.conrequire|formatConrequire}}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -274,7 +279,13 @@ export default {
       if(x==2) return '大型工厂';
       if(x==3) return '巨无霸工厂';
       if(x==4) return '富士康工厂';
-    }
+    },
+    formatmodel(x){
+      if(x==1) return 'A'
+      if(x==2) return 'Z'
+      if(x==3) return 'C'
+      if(x==4) return 'S'
+    },
   },
   methods: {
     getInfo(){

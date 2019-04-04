@@ -22,7 +22,7 @@
                             <div class="col-lg-4" v-for="(item1,index) in showCompeteMining" :key="index">
                                 <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-purple' : index%3==1,'panel-success' : index%3==2}">
                                     <div class="panel-heading" style="height:40px"> 
-                                        <h3 class="panel-title" style="float:left">矿区编号  {{item1.id}}</h3> 
+                                        <h3 class="panel-title" style="float:left">矿区编号  {{item1.id}}、{{item1.star|formatStar}}</h3> 
                                         <i class="fa fa-pencil" style="float:right"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(item1)">配置挖掘机</i>
                                     </div> 
                                     <div class="panel-body"> 
@@ -32,7 +32,7 @@
                                           <div v-if="item1.diggers==''">暂未配置挖掘机<br>  </div>
                                           <div class="btn-group" v-for="(item,index) in showCompeteMining[index].diggers" :key="index" v-if='item.mining_digger.number>0'>
                                               <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
-                                                {{item.model}} 
+                                                {{item.model}} * {{item.mining_digger.number}}
                                                 <span class="caret"></span>
                                               </button>
                                               <ul class="dropdown-menu" role="menu">
@@ -67,7 +67,11 @@
                   <p>
                     <strong>
                       每块矿区允许容纳的最大挖掘机数量为4台，转移挖掘机时需确认转移后矿区挖掘机数量不超过限制。<br>
-                      重要：在进行 矿区回收 时，需要将矿区已经配置的挖掘机 转移到 其他矿区，否则挖掘机将随矿区回收而消失。
+                    </strong>
+                    <strong style="color:red">
+                      重要：在进行 矿区回收 时，需要将矿区已经配置的挖掘机 转移到 其他矿区，否则挖掘机将随矿区回收而消失。<br>
+                      同一个矿区配置多个相同的挖掘机只能起到加速开采的功能，开采完成后挖掘机可以移到其他矿区进行开采。<br>
+                      若某个矿区正在被某个类型的挖掘机开采时，不能在此矿区购买此类挖掘机。等此挖掘机开采结束后再购买挖掘机到某矿区。
                     </strong>
                   </p>
                 </div>

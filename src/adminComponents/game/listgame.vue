@@ -178,7 +178,7 @@ export default {
       req.post_Param('api/game',{
         'judge':2,
         'id':item.id,
-        'condition':0
+        'condition':1
       })
       .then(res => {
         if(res.data.success){
@@ -190,7 +190,7 @@ export default {
           }
       })
     },
-    // 开始比赛
+    // 停止比赛
     stopGame(item){
       req.post_Param('api/game',{
         'judge':2,
