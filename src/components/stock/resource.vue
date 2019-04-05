@@ -349,7 +349,7 @@ export default {
       // 增加宿主方的库存数量
       req.post_Param('api/miniyield',{
         'judge':6,
-        'sum':results[0][0].sum+number,
+        'sum':Number(results[0][0].sum)+Number(number),
         'company_id':results[0][0].company_id,
         'source_id':results[0][0].source_id
       })

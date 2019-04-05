@@ -944,13 +944,18 @@ export default {
               print.log('获取个人资产',res.data)
               if(this.givePrice<=res.data.float){
                 // 更新自己资产信息
+                let fixed = res.data.fixed+this.givePrice;                
                 let float=res.data.float-this.givePrice;
                 let total=res.data.total-this.givePrice;
+                // 品牌价值采用累加算法
+                let brand=Number(res.data.brand)+(100*this.chooseItem.brand);
                 // 更新拍得公司资产信息
                 req.post_Param('api/statistic',{
                     'judge':4,
+                    'fixed':fixed,
                     'total':total,
                     'float':float,
+                    'brand':brand,
                     'company_id':this.company_id
                 })
                 // 更新竞拍状态
