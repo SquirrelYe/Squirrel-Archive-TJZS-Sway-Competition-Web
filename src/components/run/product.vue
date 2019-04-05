@@ -703,7 +703,7 @@ export default {
         if(res.data[1]){
           this.changeConditionToZero()
         }else{
-          let total=res.data[0].sum+sum
+          let total=Number(res.data[0].sum)+sum
           let id=res.data[0].id
           this.updateTotal(total,id)
         }

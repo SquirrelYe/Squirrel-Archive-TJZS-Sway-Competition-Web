@@ -383,7 +383,7 @@ export default {
       // 增加宿主方的库存数量
       req.post_Param('api/industryyield',{
         'judge':6,
-        'sum':results[0][0].sum+number,
+        'sum':Number(results[0][0].sum)+number,
         'company_id':results[0][0].company_id,
         'commerresearch_id':results[0][0].commerresearch_id
       })
