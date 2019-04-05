@@ -232,7 +232,7 @@ export default {
           let float=res.data.float-money;
           let fixed=res.data.fixed+money;
           // 品牌价值累加算法
-          let brand=Nunber(res.data.brand)+(100*item.brand); //Number(res.data.brand)+(100*currentBrand);
+          let brand=Number(res.data.brand)+(100*item.brand); //Number(res.data.brand)+(100*currentBrand);
           // 更新个人资产
           req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&brand=${brand}&company_id=${that.company_id}`).then(res=>{})
           // 绑定研究所
