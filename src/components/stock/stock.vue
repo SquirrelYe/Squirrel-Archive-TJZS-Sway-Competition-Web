@@ -26,7 +26,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index" v-if="item.sum>0">
+                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
                     <td>{{index}}</td>
                     <td v-if="item.commerresearch">{{item.commerresearch.name}}</td><td v-else></td>                    
                     <td>{{item.sum}}</td>

@@ -515,7 +515,7 @@
         <footer class="footer text-right footer">
           <div class="container">
             <div class="row">
-              <div class="col-xs-6">2018 © 天津智识教育科技有限公司.</div>
+              <div class="col-xs-6">2019 © 天津智识教育科技有限公司.</div>
               <div class="col-xs-6">
                 <ul class="pull-right list-inline m-b-0">
                   <li>

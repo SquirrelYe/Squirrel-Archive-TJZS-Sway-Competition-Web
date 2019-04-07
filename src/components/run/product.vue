@@ -581,7 +581,7 @@ export default {
         this.chooseFactoryIndex(this.factoryIndex)
       })      
       // 更新每一个原料数量
-      let usedSource=[researchitem.s1*stay*capacity*number,researchitem.s2*stay*capacity*number,researchitem.s3*stay*capacity*number,researchitem.s4*stay*capacity*number,researchitem.s5*stay*capacity*number];
+      let usedSource=[researchitem.s1*this.number,researchitem.s2*this.number,researchitem.s3*this.number,researchitem.s4*this.number,researchitem.s5*this.number];
       // 循环更改数量
       for (let i = 0; i < this.showHaveTotalSource.length; i++) {
         const have = this.showHaveTotalSource[i];

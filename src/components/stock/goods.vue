@@ -313,13 +313,13 @@ export default {
         .then(res=>{
           print.log(res.data)
           if(res.data[1]){
-            swal("产品授权成功!", `授权公司可以代工生产`, "success");
+            s_alert.Success("产品授权成功!", `授权公司可以代工生产`, "success");
           }else if(!res.data[1]){
-            swal("已经授权过此公司！", `请不要多次授权给同一公司`, "warning");
+            s_alert.Success("已经授权过此公司！", `请不要多次授权给同一公司`, "warning");
           }
         })
       }else{
-        swal("不能授权给自己！", '', "warning");
+        s_alert.Success("不能授权给自己！", '', "warning");
       }      
     },
     // 获取产品代工信息
@@ -345,7 +345,7 @@ export default {
       })
       .then(res=>{
         print.log('撤销产品授权公司信息',res.data)
-        swal("撤销产品授权公司信息成功!", `${item.other_2.name}不再开始代工生产${item.commerresearch.name}产品`, "success");
+        s_alert.Success("撤销产品授权公司信息成功!", `${item.other_2.name}不再开始代工生产${item.commerresearch.name}产品`, "success");
       })
     }
   }

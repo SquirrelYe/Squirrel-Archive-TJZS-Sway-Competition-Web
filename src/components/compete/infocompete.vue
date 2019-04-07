@@ -155,6 +155,7 @@ export default {
     // 接收竞拍资产
     accept(item){
       print.log('接收竞拍资产',item)
+      s_alert.Success('正在接收中，请不要重复点击^_^','重复点击可能重复扣款，接收失败请联系组委会','warning')
       if(item.type==1){     // 矿区
         apis.getOneStatisticByCompanyId(this.company_id)
         .then(res=>{

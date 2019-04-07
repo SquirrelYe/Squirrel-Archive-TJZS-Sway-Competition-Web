@@ -32,7 +32,7 @@
                                     <div class="col-lg-12" v-for="(item1,index1) in showCompeteIndusland[index].factories" :key="index1">
                                       <div class="panel panel-fill panel-default">
                                           <div class="panel-heading" style="height:40px"> 
-                                              <h3 class="panel-title" style="float:left">工厂编号  {{item1.id}}、{{item1.model}}、数量*{{item1.indusland_factory.number}}</h3> 
+                                              <h3 class="panel-title" style="float:left">工厂编号  {{item1.id}}、{{item1.model}}、面积{{item1.measure}}、数量*{{item1.indusland_factory.number}}</h3> 
                                               <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(item,item1,1)">配置生产线</i>
                                           </div> 
                                           <div class="panel-body"> 
@@ -44,12 +44,12 @@
                                                     <!-- <div style="color:green">已有当前工厂数量{{item2.number}}</div> -->
                                                     <div v-if="item2.lines!=''">生产线信息如下：<br>  </div>
                                                     <div v-if="item2.lines==''">暂未配置生产线信息：<br>  </div>
-                                                    <div class="btn-group"  v-for="(item3,index3) in item2.lines" :key="index3">
-                                                      <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index3%4==0,'btn-success' : index3%4==1,'btn-warning' : index3%4==2,'btn-primary' : index3%4==3}">
+                                                    <div class="btn-group col-lg-4"  v-for="(item3,index3) in item2.lines" :key="index3">
+                                                      <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-success' : item3.indusland_factory_line.condition ==0 ,'btn-warning' : item3.indusland_factory_line.condition ==1||item3.indusland_factory_line.condition ==2 }">
                                                       {{item3.model}} * {{item3.indusland_factory_line.number}}
                                                       <span class="caret"></span>
                                                       </button>
-                                                      <ul class="dropdown-menu" role="menu">
+                                                      <ul class="dropdown-menu" role="menu" :class="{'free' : item3.indusland_factory_line.condition ==0 ,'using' : item3.indusland_factory_line.condition ==1||item3.indusland_factory_line.condition ==2 }">
                                                         <li>
                                                           <a>
                                                             <div align='center'>
@@ -60,7 +60,7 @@
                                                                 <strong>良品率：</strong>{{item3.yield}}<br>
                                                                 <strong>购置价格：</strong>{{item3.price}}w<br>
                                                                 <strong>建设要求：</strong>{{item3.conrequire|formatConrequire}}<br>
-                                                                <strong>数量：</strong>{{item3.indusland_factory_line.number}}<br>
+                                                                <strong>数量：</strong>{{item3.indusland_factory_line.number}}<br>  
                                                               </p>  
                                                             </div>
                                                           </a>
@@ -85,11 +85,13 @@
                   <hr>
                   <p>
                     <strong>注意：工业用地->工厂，工厂->生产线有相应限制，请根据赛制规定操作。</strong><br>
-
+                    <strong style="color:green">
+                      说明：配置生产线后，<block style="color:red">黄色方块</block>表示此挖掘机正在工作，<block style="color:red">绿色方块</block>表示未工作。<br>
+                    </strong>
                     <strong style="color:red">
                       重要：<br>
-                      ①、在进行 添加 工厂 或者 生产线 时，确认此工业用地未在使用中，工业用地使用中无法购买工厂 以及 生产线。<br>
-                      ②、同一个工业用地，相同的工厂下的相同生产线同时只能生产一种产品。<br>
+                      ①、若某工厂下某种生产线正在生产中，则不能在此工厂下配置相同生产线。等待结束并加入库存后可以重新购买。<br>
+                      ②、同一个工业用地，相同的工厂下的相同生产线同时只能生产一种产品，也就是说只能起到加速的功能。<br>
                     </strong>
                   </p>
                 </div>
@@ -251,7 +253,8 @@ export default {
       tempInduslandFactoryId:'',
       // 购买清单
       number: "",
-      temp:'',
+      temp:'',  //-->item1
+      temp1:'',   //-->item
       currentIndustryHaveFactory:'',
       currentIndustryHaveUsedTotalMeasure:''
     };
@@ -327,6 +330,7 @@ export default {
         this.number=0
         this.haveNumber=0
         this.temp=item1
+        this.temp1=item
         print.log('中间表与line关联数据',this.showInduslandFactoryLineItem)
         print.log('当前选中的工厂->',this.temp)
         
@@ -462,6 +466,38 @@ export default {
     },
     //购买生产线 绑定 到工厂
     sendPriceToLine(item,index,money,number,line_id) {
+      req.post_Param('api/ass/indusland_factory_line',{
+        'judge':8,
+        'indusland_factory_id':this.tempInduslandFactoryId
+      })
+      .then(res=>{
+        print.log('已有',res.data[0].lines,'购买',item)
+        if(res.data[0].lines.length == 0) this.getLine(item,index,money,number,line_id);
+        else {
+          for (let i = 0; i <res.data[0].lines.length ; i++) {
+            let judge = false;
+            let e = res.data[0].lines[i];
+            if(e.id == item.id){
+              judge = true;
+              if(e.indusland_factory_line.condition == 1 || e.indusland_factory_line.condition == 2){
+                s_alert.Success('此类型生产线正在工作中','工业用地正在使用此类型生产线时，不能购买此类生产线','warning');
+                break;
+              }else if(e.indusland_factory_line.condition == 0){
+                this.getLine(item,index,money,number,line_id);
+                break;
+              }
+            }else{
+              if( i == res.data[0].lines.length-1 && !judge){
+                this.getLine(item,index,money,number,line_id);
+                break;
+              }else continue;
+            };
+          }
+        }
+      })        
+    },
+    // 购买生产线
+    getLine(item,index,money,number,line_id){
       let that=this
       // 获取资产信息
       apis.getOneStatisticByCompanyId(that.company_id)
@@ -492,14 +528,13 @@ export default {
                 'line_id':line_id
               })
             }else{
-              s_alert.Success("下单失败", "正在加载……", "success");
+              s_alert.Success("下单失败", "正在加载……", "warning");
             }
           })
         }else{
           s_alert.Success("下单失败", "可用流动资金不足……", "warning");
         }
       })
-        
     },
     sendLineNumber(item) {
       //更改 生产线 数量
@@ -597,4 +632,10 @@ export default {
 
 <style>
 
+.using{
+  background-color: yellow
+}
+.free{
+  background-color: yellowgreen
+}
 </style>

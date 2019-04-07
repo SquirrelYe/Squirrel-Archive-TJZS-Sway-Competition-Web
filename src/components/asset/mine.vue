@@ -30,12 +30,12 @@
                                         <div class="col-lg-12">
                                           <div v-if="item1.diggers!=''">已配置挖掘机信息如下：<br>  </div>
                                           <div v-if="item1.diggers==''">暂未配置挖掘机<br>  </div>
-                                          <div class="btn-group" v-for="(item,index) in showCompeteMining[index].diggers" :key="index" v-if='item.mining_digger.number>0'>
-                                              <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-default' : index%4==0,'btn-success' : index%4==1,'btn-warning' : index%4==2,'btn-primary' : index%4==3}">
-                                                {{item.model}} * {{item.mining_digger.number}}
+                                          <div class="btn-group col-lg-6" v-for="(item,index) in showCompeteMining[index].diggers" :key="index" v-if='item.mining_digger.number>0'>
+                                              <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-success' : item.mining_digger.condition ==0 ,'btn-warning' : item.mining_digger.condition ==1||item.mining_digger.condition ==2 }">
+                                                {{item.model}} * 数量{{item.mining_digger.number}}
                                                 <span class="caret"></span>
                                               </button>
-                                              <ul class="dropdown-menu" role="menu">
+                                              <ul class="dropdown-menu" role="menu" :class="{'free' : item.mining_digger.condition ==0 ,'using' : item.mining_digger.condition ==1||item.mining_digger.condition ==2 }">
                                                   <li>
                                                     <a>
                                                       <div align='center'>
@@ -45,7 +45,7 @@
                                                           <strong>挖掘效率：</strong>{{item.efficient}}<br>
                                                           <strong>价值折旧：</strong>{{item.deprelief}}<br>
                                                           <strong>挖机数量：</strong>{{item.mining_digger.number}}<br>
-                                                          <strong style="color:red" data-toggle="modal" data-target="#company" @click="move(item1,item,item.mining_digger.number)">移动挖掘机至其他矿区</strong>
+                                                          <strong style="color:red" data-toggle="modal" data-target="#company" @click="move(item1,item,item.mining_digger.number)" v-if=" item.mining_digger.condition ==0">移动挖掘机至其他矿区</strong>
                                                         </p>  
                                                       </div>
                                                     </a>
@@ -68,11 +68,15 @@
                     <strong>
                       每块矿区允许容纳的最大挖掘机数量为4台，转移挖掘机时需确认转移后矿区挖掘机数量不超过限制。<br>
                     </strong>
+                    <strong style="color:green">
+                      说明：配置挖掘机后，<block style="color:red">黄色方块</block>表示此挖掘机正在工作，<block style="color:red">绿色方块</block>表示未工作。<br>
+                    </strong>
                     <strong style="color:red">
                       重要：<br>
                       ①、在进行 矿区回收 时，需要将矿区已经配置的挖掘机 转移到 其他矿区，否则挖掘机将随矿区回收而消失。<br>
                       ②、同一个矿区配置多个相同的挖掘机只能起到加速开采的功能，开采完成后挖掘机可以移到其他矿区进行开采。<br>
-                      ③、若某个矿区正在被某个类型的挖掘机开采时，不能在此矿区购买此类挖掘机。等此挖掘机开采结束后再购买挖掘机到某矿区。
+                      ③、若某个矿区正在被某个类型的挖掘机开采时，不能在此矿区购买此类挖掘机。等此挖掘机开采结束后再购买挖掘机到某矿区。<br>
+                      ④、使用中的挖掘机不能转移到其他矿区。
                     </strong>
                   </p>
                 </div>
@@ -121,13 +125,7 @@
 
                         <div class="modal-footer">
                           <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                          <button
-                            type="button"
-                            class="btn btn-primary waves-effect waves-light"
-                            data-dismiss="modal"
-                            @click="sendPrice(item,number*item.price,number,item.id)"
-                            v-if="number!='' && number>0 && Number(number)+Number(haveNumber)<=4"
-                          >提交订单</button>
+                          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(item,number*item.price,number,item.id)" v-if="number!='' && number>0 && Number(number)+Number(haveNumber)<=4">提交订单</button>
                         </div>
                     </div> 
                   </div> 
@@ -150,21 +148,7 @@
                 <div class="col-sm-12">
                     <div class="panel panel-default">
                         <div class="panel-heading"><h4>转移挖掘机到其他矿区</h4></div>
-                        <!-- <div class="panel-body">
-                            <form class="form-horizontal" role="form">                             
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label" >目的矿区编号</label>
-                                    <div class="col-md-9">
-                                        <input type="number" class="form-control" v-model="kqbh">
-                                    </div>
-                                    <label class="col-md-3 control-label">目的挖机数量</label>
-                                    <div class="col-md-9">
-                                        <input type="number" class="form-control" v-model="wjjsl">
-                                    </div>
-                                </div>          
-                                <div style="color:red">注意：每个矿区只能容纳四台挖掘机，转移前请检查矿区挖掘机数量。</div>              
-                            </form>
-                        </div> -->
+                        
                         <div class="panel-body">
                             <form class="form-horizontal" role="form">                                    
                                 <div class="form-group">
@@ -182,7 +166,9 @@
                                   </div>
                               </div>                         
                             </form>
+                             <div style="color:red">注意：每个矿区只能容纳四台挖掘机，转移前请检查矿区挖掘机数量。</div>      
                         </div>
+
                     </div>
                 </div>
             </div>         
@@ -323,6 +309,34 @@ export default {
     },
     //购买挖掘机 绑定 到矿区
     sendPrice(item,money,number,digger_id) {
+      print.log('当前挖掘机',this.temp,'购买挖掘机',item)
+      if(this.temp.diggers.length == 0) this.getDigger(item,money,number,digger_id);
+      else{
+        for (let i = 0; i < this.temp.diggers.length; i++) {
+          let judge = false; // 判断有误相同挖掘机
+          const e = this.temp.diggers[i];
+          if(e.id == item.id) {
+            judge = true ; //意思为找到了，有对应的挖掘机
+            if(e.mining_digger.condition == 1 || e.mining_digger.condition == 2){
+              s_alert.Success('此类型挖掘机正在工作中','矿区正在被此类型的挖掘机开采时，不能在此矿区购买此类挖掘机','warning');
+              break;
+            }
+            else if(e.mining_digger.condition == 0) {
+              this.getDigger(item,money,number,digger_id);
+              break;
+            }
+          }else{
+            if( i == this.temp.diggers.length-1 && !judge){
+              this.getDigger(item,money,number,digger_id);
+              break;
+            }else continue;
+          };
+        }  
+      }
+    },
+    // 购买挖掘机
+    getDigger(item,money,number,digger_id){
+      // 执行购买挖掘机
       let that=this
       // 查询个人资产
       apis.getOneStatisticByCompanyId(that.company_id)
@@ -337,7 +351,7 @@ export default {
             'judge':1,
             'mining_id':that.temp.id,
             'digger_id':digger_id
-          })
+          })  
           .then(res => {
             // 写入交易信息
             req.post_Param('api/transaction',{
@@ -436,5 +450,10 @@ export default {
 </script>
 
 <style>
-
+.using{
+  background-color: yellow
+}
+.free{
+  background-color: yellowgreen
+}
 </style>

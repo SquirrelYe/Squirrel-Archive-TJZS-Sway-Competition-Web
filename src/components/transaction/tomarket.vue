@@ -77,7 +77,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showSourceItems" :key="index" v-if="item.source">
+                          <tr v-for="(item,index) in showSourceItems" :key="index" v-if="item.source && item.company">
                             <td>S{{item.id}}</td>
                             <td>{{item.source.name}}</td>
                             <td>{{item.company.name}}</td>
@@ -117,7 +117,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch && item.type == 2'>
+                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch && item.company && item.type == 2'>
                             <td>G{{item.id}}</td>
                             <td>{{item.commerresearch.name}}</td>
                             <td>{{item.company.name}}</td>
@@ -227,7 +227,7 @@
                     </form>
                   </div> 
                   <hr>
-                  <strong align='center' style="color:red">注意：表格中贷款金额单位为万元，当前贷款额度为{{maxLoan}}万元</strong><br>
+                  <strong align='center' style="color:red">注意：表格中贷款金额单位为万元，当前贷款额度为{{maxLoan}}万元。允许提前还款、但利息不变，当上一次贷款还清时才能进行第二次贷款。</strong><br>
                   <hr>
                   <p>
                     <strong>注意：</strong><br>
@@ -802,7 +802,7 @@ export default {
     // 校验贷款金额
     checkLoanNumber(){
       print.log(this.money,this.maxLoan)
-      if(this.money>this.maxLoan) {
+      if(Number(this.money)>Number(this.maxLoan)) {
         s_alert.Warning('超过贷款额度','请改正后重试……');
         this.money=0;
       }
@@ -811,6 +811,10 @@ export default {
     submitForm(){
       if(this.money==0 || this.stay==0 || this.other==''){
         s_alert.Warning('贷款信息填写不能有空','请改正后重试……');
+      }
+      else if(Number(this.money)>Number(this.maxLoan)){
+        s_alert.Warning('超过贷款额度','请改正后重试……');
+        this.money=0;
       }else{
         //市场交易 - 提交贷款
         //贷款信息
