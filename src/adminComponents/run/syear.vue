@@ -83,7 +83,7 @@
                                                 <td>{{item.company.name}}</td>
                                                 <td>{{item.float}}</td>
                                                 <td>{{item.fixed}}</td>
-                                                <td>{{item.total}}</td>
+                                                <td>{{Number(item.float)+Number(item.fixed)}}</td>
                                                 <td>{{item.brand}}</td>
                                                 <td>{{item.updated_at|formatTime}}</td>
                                                 <td class="actions" align="center">

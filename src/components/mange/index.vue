@@ -114,7 +114,7 @@
                     <div class="panel panel-border panel-primary widget-s-1">
                         <div class="panel-heading"> </div>
                         <div class="panel-body">
-                        <div class="h2 text-primary">{{showStasticsItem.total}}</div>
+                        <div class="h2 text-primary">{{Number(showStasticsItem.float)+Number(showStasticsItem.fixed)}}</div>
                         <span class="text-muted">总资产(单位万)</span>
                         <div class="text-right">
                             <i class="ion-android-contacts fa-2x text-primary"></i>
