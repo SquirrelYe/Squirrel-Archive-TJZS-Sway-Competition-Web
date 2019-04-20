@@ -368,7 +368,7 @@ export default {
       .then(res => {
         if(res.data.float>=money){
           let float=res.data.float-money;
-          let fixed=res.data.fixed+money;
+          let fixed=Number(res.data.fixed)+Number(money);
           // 更新资产信息
           req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
           // 绑定工业用地
@@ -504,7 +504,7 @@ export default {
       .then(res => {
         if(res.data.float>=money){
           let float=res.data.float-money;
-          let fixed=res.data.fixed+money;
+          let fixed=Number(res.data.fixed)+Number(money);
           // 更新个人资产
           req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
           // 绑定生产线

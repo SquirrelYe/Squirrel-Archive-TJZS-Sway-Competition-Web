@@ -230,7 +230,7 @@ export default {
       .then(res => {
         if(res.data.float>=money){
           let float=res.data.float-money;
-          let fixed=res.data.fixed+money;
+          let fixed=Number(res.data.fixed)+Number(money);
           // 品牌价值累加算法
           let brand=Number(res.data.brand)+(100*item.brand); //Number(res.data.brand)+(100*currentBrand);
           // 更新个人资产

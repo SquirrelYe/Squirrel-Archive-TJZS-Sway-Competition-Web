@@ -329,11 +329,11 @@ export default {
           // 计算资产差值
           let fix=item.auction;  //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
           //商业用地固定资产 = 目前价值 + （平均成交价 - 目前价值）* 增值空间 ，暂时这样用着。
-          let fixed=res.data.fixed+fix;
-          let total=res.data.total+fix-item.auction;
+          let fixed=Number(res.data.fixed)+Number(fix);
+          let total=Number(res.data.total)+Number(fix)-Number(item.auction);
           let float=res.data.float-item.auction;
           // 品牌价值采用累加算法
-          let brand=Number(res.data.brand)+(100*currentBrand);
+          let brand=Number(res.data.brand)+Number(100*currentBrand);
           print.log('更新品牌价值',brand)
           // 更新资产信息
           req.post_Param('api/statistic',{
