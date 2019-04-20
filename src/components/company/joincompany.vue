@@ -153,7 +153,7 @@ export default {
     //加入公司流程
     joinCompany(item) {
       if(confirm("你确定加入此公司？？？")) {
-        if(JSON.parse(ses.getSes("gameinfo")).Yearid != 0) s_alert.Success("比赛过程中不能加入公司","公司加入在比赛准备中进行",'warning');
+        if(JSON.parse(ses.getSes("gameinfo")).condition != 0) s_alert.Success("未在准备中不能加入公司","公司加入在比赛准备中进行",'warning');
         else this.judgeBlong(item);
       } 
     },

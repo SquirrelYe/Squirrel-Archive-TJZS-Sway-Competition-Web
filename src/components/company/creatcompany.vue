@@ -98,11 +98,12 @@ export default {
       if (this.name == "" || this.legal == ""|| this.code == ""|| this.area == ""|| this.others == "") {
         s_alert.basic("某一项输入为空！");
       } else {
-        if(JSON.parse(ses.getSes("gameinfo")).Yearid != 0) s_alert.Success("比赛过程中不能创建公司","公司创建在比赛准备中进行",'warning');
+        if(JSON.parse(ses.getSes("gameinfo")).condition != 0) s_alert.Success("未在准备中不能创建公司","公司创建在比赛准备中进行",'warning');
         else this.submitcom();        
       }
     },
     submitcom(){
+        s_alert.Success("创建公司中......", "创建后自动进入公司……", "warning");  
         let that=this
         async.waterfall([
         //串行，前一个任务的结果传递给后一个任务。
@@ -176,43 +177,6 @@ export default {
                 this.$router.push({name:'infocompany'})
             }, 2000);
         })
-    },
-
-
-
-    test(){
-        // apis.getAllSway()
-        // apis.getOneSwayById(1)
-        // apis.getAllCompany()
-        // apis.getOneCompanyById(1)
-        // apis.getAllStatistic()
-        // apis.getOneStatisticByCompanyId(1)
-        // apis.getAllTransation()
-        // apis.getOneTransationByCompanyId(1)
-        // apis.getGameYear(1)
-        // apis.getAllGoodsStock()
-        // apis.getOneGoodsStockByCompanyId(1)
-        // apis.getAllSourceStock()
-        // apis.getOneSourceStockByCompanyId(1)
-        // apis.getAllGoods()
-        // apis.getOneGoodByCompanyId(1)
-        for (let i = 0; i < 1000; i++) {
-            req.get_Param('api/company',{
-            'judge':1,
-            'name':'test',
-            'legal':'test',
-            'code':'test',
-            'area':'test',
-            'condition':0
-            })
-            .then(res => {
-                print.log(res.data)
-            })
-            .catch(err => {
-                print.warn(err);
-            });
-        }
-        
     }
 
   }
