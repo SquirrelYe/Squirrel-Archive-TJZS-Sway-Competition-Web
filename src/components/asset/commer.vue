@@ -20,7 +20,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                       
                       <div class="row">
-                            <div class="col-lg-6" v-for="(item,index) in showCompeteCommerland" :key="index">
+                            <div class="col-lg-4" v-for="(item,index) in showCompeteCommerland" :key="index">
                                 <div class="panel panel-fill" :class="{'panel-inverse' : index%3==0,'panel-purple' : index%3==1,'panel-success' : index%3==2}">
                                     <div class="panel-heading" style="height:40px"> 
                                         <h3 class="panel-title" style="float:left">商业用地编号  {{item.id}}，等级 {{item.level|formatLevel}}</h3> 

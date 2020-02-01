@@ -512,7 +512,7 @@ export default {
           .then(res => {
             if(res){
               // 更新页面
-              that.init()
+            //   that.init()
               that.sendLineNumber(item)
               // 写入交易信息
               req.post_Param('api/transaction',{
@@ -557,11 +557,23 @@ export default {
         print.log('定位数量单元',tid1)
         let addNumber= Number(this.showInduslandFactoryLineItem[tid].lines[tid1].indusland_factory_line.number) + Number(that.number)
         print.log(addNumber)
+        // 更新数量 
+        that.updateLineNumber(item,addNumber);
+      } catch (error) {
+        let addNumber= Number(that.number)
+        // 更新数量 
+        that.updateLineNumber(item,addNumber);
+      }    
+    },
+    // 更新数量 # condition设置为 0 状态(0未工作，1工作中，2工作完成)#
+    updateLineNumber( item,addNumber ){
+        let that = this;
         req.post_Param('api/ass/indusland_factory_line',{
           'judge':6,
           'indusland_factory_id':this.tempInduslandFactoryId,
           'line_id':item.id,
-          'number':addNumber
+          'number':addNumber,
+          'condition':0
         })
         .then(res => {       
           that.init()
@@ -572,24 +584,6 @@ export default {
             s_alert.Success("下单失败", "正在加载……", "success");
           }
         })
-      } catch (error) {
-        let addNumber= Number(that.number)
-        req.post_Param('api/ass/indusland_factory_line',{
-          'judge':6,
-          'indusland_factory_id':this.tempInduslandFactoryId,
-          'line_id':item.id,
-          'number':addNumber
-        })
-        .then(res => {          
-          that.init()
-          print.log(res.data)   
-          if(res){
-            s_alert.Success("下单成功", "正在加载……", "success");
-          }else{
-            s_alert.Success("下单失败", "正在加载……", "success");
-          }
-        })
-      }    
     },
     //显示已购 工业用地
     showMyIndusland() {

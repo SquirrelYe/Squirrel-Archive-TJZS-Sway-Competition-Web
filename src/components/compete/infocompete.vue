@@ -22,7 +22,7 @@
                     <th>财年</th>
                     <th>物品种类</th>
                     <th>物品标识符</th>
-                    <th>竞拍价</th>
+                    <th>竞拍价/万元</th>
                     <th>状态</th>
                     <th>更新时间</th>
                     <th>操作</th>
@@ -31,10 +31,10 @@
                 <tbody>
                   <tr class="gradeX" v-for="(item,index) in showItems" :key="item.name" :class="{'important' : item.condition ==1}">
                     <td>{{index}}</td>
-                    <td>C{{item.id}}</td>
+                    <td>C-{{item.id}}</td>
                     <td>{{item.Yearid}}</td>
                     <td>{{item.type|formatType}}</td>
-                    <td>{{item.thingid}}</td>
+                    <td>#{{item.thingid}}</td>
                     <td>{{item.auction}}</td>
                     <td>{{item.condition | formatCondition}}</td>
                     <td>{{item.updated_at|formatTime}}</td>

@@ -151,10 +151,10 @@ export default {
   },
   methods: {
     showMyCompete() {
-      //获取自己公司竞拍情况
+      // 获取自己公司交易情况
       apis.getOneTransationByCompanyId(this.company_id)
       .then(res => {
-          console.log(res.data);
+          console.log('获取自己公司交易情况',res.data);
           this.showCompete = res.data;
           // 分页
           this.currentPage='0'
