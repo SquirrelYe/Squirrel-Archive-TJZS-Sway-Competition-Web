@@ -67,7 +67,8 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
                         <div class="portfolioFilter">
-                            <a href="javascript:void(0)" :class="{'current' : condition==-2}" @click="getGame(-2)">所有赛事</a>
+                            <a href="javascript:void(0)" :class="{'current' : condition==-3}" @click="getGame(-3)">所有赛事</a>
+                            <a href="javascript:void(0)" :class="{'current' : condition==-2}" @click="getGame(-2)">已暂停</a>
                             <a href="javascript:void(0)" :class="{'current' : condition==-1}" @click="getGame(-1)">未开始</a>
                             <a href="javascript:void(0)" :class="{'current' : condition==0}" @click="getGame(0)">准备中</a>
                             <a href="javascript:void(0)" :class="{'current' : condition==1}" @click="getGame(1)">正在进行</a>
@@ -120,7 +121,7 @@ export default {
         return {
             icon_src:"static/images/users/avatar-6.jpg",
             items:'',
-            condition:-1
+            condition:-3
         };
     },
     mounted() {
@@ -128,7 +129,6 @@ export default {
         if (ses.getSes("userinfo")== null) {
             s_alert.basic("登录会话过期，请重新登录！");
             this.$router.push({name:'login'});
-        } else {
         }
     },
     updated() {
@@ -144,7 +144,7 @@ export default {
     methods: {
         init() {
             this.getAllGame();
-            this.condition=-2;
+            this.condition=-3;
         },
         //获取所有公司列表
         getAllGame() {
@@ -157,7 +157,7 @@ export default {
         chooseGame(item){
             print.log('选择赛事',item)
             if(item.condition != 0 && item.condition != 1){
-                s_alert.Success("赛事未开始、已结束或进行中。","请重新选择……","warning");
+                s_alert.Success("赛事未开始、已结束或已暂停。","请重新选择……","warning");
             }else{
                 apis.getOneGameById(item.id)
                 .then(res=>{
@@ -172,7 +172,7 @@ export default {
         // 选择不同状态赛事
         getGame(index){
             this.condition=index;
-            if(index==-2){
+            if(index==-3){
                 this.getAllGame();
             }else{
                 apis.getGameByCondition(index)

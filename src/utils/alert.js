@@ -61,11 +61,11 @@ module.exports = {
     },
 
     //Auto Close Timer
-    Timer(title,msg) {
+    Timer(title,msg,timer = 2000) {
         swal({
             title: title,
             text: msg,
-            timer: 2000,
+            timer,
             showConfirmButton: false
         });
     }

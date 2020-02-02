@@ -110,6 +110,8 @@ export default {
     },
     formatCondition(x){
       if(x==0) return "正常营业";
+      if(x==1) return "存续";
+      if(x==2) return "注销"
     }
   },
   beforeMount(){

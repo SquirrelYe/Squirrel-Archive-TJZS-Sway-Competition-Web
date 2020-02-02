@@ -6,6 +6,8 @@ import recoverypw from '@/components/recoverypw'
 import menu from '@/components/menu'
 import resetpwd from '@/components/resetPwd'
 import game from '@/components/game'
+import pause from '@/components/pause'
+import end from '@/components/end'
 // test
 import init from '@/components/test/init'
 import welcome from '@/components/test/welcome'
@@ -44,6 +46,7 @@ import loan from '@/components/transaction/loan'
 import showtransaction from '@/components/transaction/showtransaction'
 import trade from '@/components/transaction/trade'
 // ---------------------------------管理员端-----------------------------------
+import sgame from '@/adminComponents/sgame'
 // users
 import sway from '@/adminComponents/users/sway'
 import admin from '@/adminComponents/users/admin'
@@ -51,6 +54,7 @@ import company from '@/adminComponents/users/company'
 // game
 import creatgame from '@/adminComponents/game/creatgame'
 import listgame from '@/adminComponents/game/listgame'
+import currentgame from '@/adminComponents/game/currentgame'
 // run
 import scompete from '@/adminComponents/run/scompete'
 import stransation from '@/adminComponents/run/stransation'
@@ -102,6 +106,11 @@ export default new Router({
             component: game
         },
         {
+            path: '/sgame',
+            name: 'sgame',
+            component: sgame
+        },
+        {
             path: '/welcome',
             name: 'welcome',
             component: welcome
@@ -110,6 +119,16 @@ export default new Router({
             path: '/ceshi',
             name: 'ceshi',
             component: ceshi
+        },
+        {
+            path: '/pause',
+            name: 'pause',
+            component: pause
+        },
+        {
+            path: '/end',
+            name: 'end',
+            component: end
         },
         {
             path: '/menu',
@@ -246,6 +265,11 @@ export default new Router({
                     path: 'listgame',   //赛事列表
                     name: 'listgame',
                     component: listgame
+                },
+                {
+                    path: 'currentgame',   // 当前赛事信息
+                    name: 'currentgame',
+                    component: currentgame
                 },
                 {
                     path: 'scompete',   //竞拍管理

@@ -37,7 +37,7 @@
                             </form>
 
                             <ul class="nav navbar-nav navbar-right pull-right">
-                                <li class="dropdown hidden-xs">
+                                <li class="dropdown hidden-xs" v-if="false">
                                     <a
                                         href="#"
                                         data-target="#"
@@ -125,7 +125,7 @@
                                         <img :src="icon_src" alt="user-img" class="img-circle" />
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li>
+                                        <!-- <li>
                                             <a href="javascript:void(0)">
                                                 <i class="md md-face-unlock"></i> 个人简介
                                             </a>
@@ -139,9 +139,9 @@
                                             <a href="javascript:void(0)">
                                                 <i class="md md-lock"></i> 锁屏
                                             </a>
-                                        </li>
+                                        </li> -->
                                         <li>
-                                            <a href="javascript:void(0)">
+                                            <a href="javascript:void(0)" @click="logout()">
                                                 <i class="md md-settings-power"></i> 注销
                                             </a>
                                         </li>
@@ -244,11 +244,14 @@
                                     </span>
                                 </a>
                                 <ul class="list-unstyled">
-                                    <li>
+                                    <li v-if="false">
                                         <a href="javascript:void(0)" @click="creatgame()">新建比赛</a>
                                     </li>
-                                    <li>
+                                    <li v-if="false">
                                         <a href="javascript:void(0)" @click="listgame()">赛事列表</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" @click="currentgame()">赛事信息</a>
                                     </li>
                                 </ul>
                             </li>
@@ -595,7 +598,10 @@ export default {
             judgeUserType: "", //0.参赛者、1.管理员
             startTime: "", //格式 2018-12-11 11:17:16
             // 游戏开始，不能 创建与加入公司
-            isGameStart:true
+            isGameStart:true,
+
+            // 计时器
+            fresh:null
 
         };
     },
@@ -616,7 +622,7 @@ export default {
             }
         }
 
-        setInterval(() => {
+        this.fresh = setInterval(() => {
             //实时更新个人信息
             this.refreshUserinfo();
             this.refreshYearid();
@@ -636,20 +642,22 @@ export default {
                         ses.setSes("userinfo", uinfo);
                         // print.log('个人信息',res.data)
                     });
-                } else {
-                    apis.getOneAdminById(
-                        JSON.parse(ses.getSes("userinfo")).id
-                    ).then(res => {
-                        let uinfo = JSON.stringify(res.data);
-                        ses.setSes("userinfo", uinfo);
-                        // print.log('个人信息',res.data)
-                    });
-                }
+                } 
+                // else {
+                //     apis.getOneAdminById(
+                //         JSON.parse(ses.getSes("userinfo")).id
+                //     ).then(res => {
+                //         let uinfo = JSON.stringify(res.data);
+                //         ses.setSes("userinfo", uinfo);
+                //         // print.log('个人信息',res.data)
+                //     });
+                // }
             }
         },
 
         // 获取赛事财年信息
         refreshYearid() {
+            // 参赛者
             if (ses.getSes("type") == 0) {
                 apis.getOneGameById(JSON.parse(ses.getSes("gameinfo")).id).then(
                     res => {
@@ -657,19 +665,49 @@ export default {
                         ses.setSes("gameinfo", ginfo);
                         // 游戏开始，隐藏创建与 加入公司
                         console.log('游戏状态',res.data.condition)
-                        if(res.data.condition >= 1) this.isGameStart = false;
-                        else this.isGameStart = true
-                        // print.log('财年信息',res.data)
+                        const { condition } = res.data;
+                        condition >= 1 ? this.isGameStart = false : this.isGameStart = true;
+                        // 游戏暂停
+                        if(condition == -2){
+                            s_alert.Timer('游戏暂停','请稍等组委会开启游戏',2000);
+                            setTimeout(() => {
+                                clearInterval(this.fresh)
+                                this.$router.push({ name: "pause" });
+                            }, 2500);
+                        }
+                        // 游戏暂停
+                        if(condition == 2){
+                            s_alert.Timer('游戏已结束','请稍等组委会统计成绩',2000);
+                            setTimeout(() => {
+                                clearInterval(this.fresh)
+                                this.$router.push({ name: "end" });
+                            }, 2500);
+                        }
                     }
                 );
-            } else {
-                // 管理端使用，默认选择 已开始的game
-                apis.getGameByCondition("1").then(res => {
-                    let ginfo = JSON.stringify(res.data[0]);
-                    ses.setSes("gameinfo", ginfo);
-                    // print.log('财年信息',res.data)
-                });
-            }
+            } 
+            // // 管理员
+            // else {
+            //     // 管理端使用，默认选择 已开始的game
+            //     apis.getGameByCondition("1").then(res => {
+            //         let ginfo = JSON.stringify(res.data[0]);
+            //         ses.setSes("gameinfo", ginfo);
+            //         // print.log('财年信息',res.data)
+            //     });
+            // }
+        },
+        // 注销
+        logout(){
+            ses.clearAllSes();
+            s_alert.Timer('注销中，请稍等','waiting',500);
+            setTimeout(() => {                
+                s_alert.Success('注销成功','操作成功','success')
+            }, 1000);
+            setTimeout(() => {
+                clearInterval(this.fresh)
+                this.$router.push({ name: "login" });
+            }, 1500);
+            
         },
 
         // 页面跳转 用户端
@@ -742,6 +780,9 @@ export default {
         }, //赛事管理
         listgame() {
             this.$router.push({ name: "listgame" });
+        },
+        currentgame(){
+            this.$router.push({ name: "currentgame" });
         },
         scompete() {
             this.$router.push({ name: "scompete" });

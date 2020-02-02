@@ -169,15 +169,15 @@
                             <div class="form-group">
                                 <div class="col-md-3 control-label" style="font-weight:900"><strong>矿区编号</strong></div>
                                 <div class="col-md-9">
-                                    <select class="form-control" v-model="mining_id">
-                                        <option v-for="(item,index) in minings" :key="index" :value="item.id">编号：M{{item.id}} 、 {{item.star|formatStar}}</option>
+                                    <select class="form-control" v-model="rep_mining">
+                                        <option v-for="(item,index) in minings" :key="index" :value="item">编号：#{{item.id}} 、 {{item.star|formatStar}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">回收金额:</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" v-model="mining_money" placeholder="请输入回收金额">
+                                    <input type="text" class="form-control" v-model="rep_mining.repurchase" disabled>
                                 </div>
                             </div>
                             <div class="panel-heading">
@@ -221,8 +221,7 @@ export default {
 
       currentStastics:null,
       // 矿区回收
-      mining_id:null,
-      mining_money:null,
+      rep_mining:{},
       minings:null,
 
       // 计算折旧
@@ -311,31 +310,36 @@ export default {
         print.log('当前选中转移资产公司资产信息',model)
         this.currentStastics=model
     },
-    // 获取公司矿区信息
-    mining(item){
-        print.log('当前选中矿区回收公司资产信息',item)
-        this.currentStastics=item
-        req.post_Param('api/mining',{
+    // 获取公司资产、矿区信息
+    async mining(item){
+        let company_id=item.company_id
+        // 资产
+        let res = await apis.getOneStatisticByCompanyId(company_id)
+        print.log('当前选中矿区回收公司资产信息',res.data)
+        this.currentStastics=res.data
+        // 矿区
+        let mining = await req.post_Param('api/mining',{
             'judge':6,
             'company_id':item.company_id
         })
-        .then(res=>{
-            print.log(res.data)
-            this.minings = res.data.rows
-        })
+        print.log('当前选中矿区回收公司矿区信息',mining.data)
+        this.minings = mining.data.rows
     },
     // 回购矿区
-    getmining(){
-        print.log(this.mining_id,this.mining_money)
+    async getmining(){
+        print.log(this.rep_mining)
         // 删除矿区
-        req.post_Param('api/mining',{
-            'judge':3,
-            'id':this.mining_id
-        })
+        // req.post_Param('api/mining',{
+        //     'judge':3,
+        //     'id':this.rep_mining.id
+        // })
+
+        // 更新矿区状态 condition -3 矿区回收
+        await req.post(`api/mining?judge=2&id=${this.rep_mining.id}&condition=-3`)
         .then(res =>{
             // 矿区回收
-            let float=Number(this.mining_money)+Number(this.currentStastics.float);
-            let total=Number(this.mining_money)+Number(this.currentStastics.total);
+            let float=Number(this.rep_mining.repurchase)+Number(this.currentStastics.float);
+            let total=Number(this.rep_mining.repurchase)+Number(this.currentStastics.total);
             // 更新资产信息
             req.post_Param('api/statistic',{
                 'judge':2,
@@ -351,10 +355,10 @@ export default {
                 'inout':2,
                 'type':1,
                 'kind':3,
-                'price':this.givePrice,
+                'price':this.rep_mining.repurchase,
                 'number':1,
                 'me':this.currentStastics.company_id,
-                'detail':`矿区回收：${this.giveDetail}`
+                'detail':`矿区回收：资金流入${this.rep_mining.repurchase}`
             })
             .then(res => {
                 print.log(res.data);

@@ -28,7 +28,7 @@
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="example-email">统一社会信用代码</label>
                             <div class="col-md-10">
-                                <input class="form-control" placeholder="51370113MJD7670793" v-model="code">
+                                <input disabled class="form-control" placeholder="51370113MJD7670793" v-model="code">
                             </div>
                         </div>
                         <div class="form-group">
@@ -84,7 +84,7 @@ export default {
 
         name:'',
         legal:'',
-        code:'',
+        code: '51370113MJD7670793',
         area:'',
         others:''
     };
@@ -92,6 +92,13 @@ export default {
   beforeMount() {
     this.userinfo =JSON.parse(ses.getSes("userinfo")); 
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;   
+  },
+  mounted() {
+      this.code = function (length, chars) {
+            var result = '';
+            for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+            return result;
+        }(18,'0123456789abcdefghijklmnopqrstuvwxyz').toUpperCase();
   },
   methods: {
     submitForm() {

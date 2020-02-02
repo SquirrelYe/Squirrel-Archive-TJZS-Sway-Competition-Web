@@ -73,7 +73,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showItems" :key="index" :class="{'important' : item.condition ==3}">
+                          <tr v-for="(item,index) in showItems" class="" :key="index" :class="{'important' : item.condition ==3,'bold' : item.condition ==-3}">
                             <td>{{index}}</td>
                             <td>M{{item.id}}</td>
                             <td>{{item.star|formatStar}}</td>
@@ -718,6 +718,7 @@ export default {
       return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
     formatCondition(x){
+      if(x==-3) return "#矿区已回购";
       if(x==-2) return '竞拍未开始'
       if(x==-1) return '产品流拍'
       if(x==0) return '竞拍中'
@@ -1265,6 +1266,10 @@ export default {
 <style>
 .important{
   color: green;
+  font-weight: bolder
+}
+.bold{
+  color: black;
   font-weight: bolder
 }
 </style>
