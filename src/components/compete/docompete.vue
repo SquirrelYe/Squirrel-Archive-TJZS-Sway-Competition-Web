@@ -668,245 +668,246 @@ const moment = require("moment");
 var App = app;
 
 export default {
-    name: "docompete",
-    data() {
-        return {
-            company_id: "",
-            Yearid: "",
+  name: "docompete",
+  data() {
+    return {
+      company_id: "",
+      Yearid: "",
 
-            showMiningItems: "",
-            showInduslandItems: "",
-            showCommerlandItems: "",
+      showMiningItems: "",
+      showInduslandItems: "",
+      showCommerlandItems: "",
 
-            model: "",
-            price: "",
-            givePrice: 0,
+      model: "",
+      price: "",
+      givePrice: 0,
 
-            // 分页数据
-            items: [],
-            showItems: [],
-            PageShowSum: 10,
-            currentPage: "0",
-            sumPage: null
-        };
+      // 分页数据
+      items: [],
+      showItems: [],
+      PageShowSum: 10,
+      currentPage: "0",
+      sumPage: null
+    };
+  },
+  beforeMount() {
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+  },
+  mounted() {
+    this.showMining();
+  },
+  updated() {
+    $(function() {
+      $("[data-toggle='tooltip']").tooltip();
+    });
+  },
+  filters: {
+    formatTime(val) {
+      return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
-    beforeMount() {
-        this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
-        this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    formatCondition(val) {
+      if (val == -3) return "#矿区已回购";
+      if (val == -2) return "竞拍未开始";
+      if (val == -1) return "产品流拍";
+      if (val == 0) return "竞拍中";
+      if (val == 1) return "竞拍已结束";
+      if (val == 2) return "定向公司发送";
+      if (val == 3) return "资产已发送";
     },
-    mounted() {
-        this.showMining();
+    formatStar(x) {
+      if (x == 1) return "一星矿区";
+      if (x == 2) return "二星矿区";
+      if (x == 3) return "三星矿区";
+      if (x == 4) return "四星矿区";
+      if (x == 5) return "五星矿区";
     },
-    updated() {
-        $(function() {
-            $("[data-toggle='tooltip']").tooltip();
+    formatSource(x) {
+      if (x == 1) return "金";
+      if (x == 2) return "木";
+      if (x == 3) return "水";
+      if (x == 4) return "火";
+      if (x == 5) return "土";
+    },
+    formatmodel(x) {
+      if (x == 1) return "A";
+      if (x == 2) return "Z";
+      if (x == 3) return "C";
+      if (x == 4) return "S";
+    },
+    formatlevel(x) {
+      if (x == 1) return "投契级";
+      if (x == 2) return "机构级";
+      if (x == 3) return "投资级";
+      if (x == 4) return "地标级";
+    }
+  },
+  methods: {
+    openSetting(item, judge) {
+      print.log("当前选择的竞拍物品", item);
+      this.givePrice = 0;
+      //矿区
+      if (judge == 1) {
+        this.model = item;
+        this.getMaxPrice(this.model, judge);
+      }
+      //工业用地
+      if (judge == 2) {
+        this.model = item;
+        this.getMaxPrice(this.model, judge);
+      }
+      //商业用地
+      if (judge == 3) {
+        this.model = item;
+        this.getMaxPrice(this.model, judge);
+      }
+    },
+    getMaxPrice(m, type) {
+      //获取竞拍时某一商品已出价
+      req
+        .post_Param("api/compete", {
+          judge: 5,
+          type: type,
+          thingid: m.id,
+          company_id: JSON.parse(ses.getSes("userinfo")).company_id
+        })
+        .then(res => {
+          print.log("前一次出价", res.data);
+          this.price = res.data.auction;
         });
     },
-    filters: {
-        formatTime(val) {
-            return moment(val).format("YYYY-MM-DD HH:mm:ss");
-        },
-        formatCondition(val) {
-            if (val == -3) return "#矿区已回购";
-            if (val == -2) return "竞拍未开始";
-            if (val == -1) return "产品流拍";
-            if (val == 0) return "竞拍中";
-            if (val == 1) return "竞拍已结束";
-            if (val == 2) return "定向公司发送";
-            if (val == 3) return "资产已发送";
-        },
-        formatStar(x) {
-            if (x == 1) return "一星矿区";
-            if (x == 2) return "二星矿区";
-            if (x == 3) return "三星矿区";
-            if (x == 4) return "四星矿区";
-            if (x == 5) return "五星矿区";
-        },
-        formatSource(x) {
-            if (x == 1) return "金";
-            if (x == 2) return "木";
-            if (x == 3) return "水";
-            if (x == 4) return "火";
-            if (x == 5) return "土";
-        },
-        formatmodel(x) {
-            if (x == 1) return "A";
-            if (x == 2) return "Z";
-            if (x == 3) return "C";
-            if (x == 4) return "S";
-        },
-        formatlevel(x) {
-            if (x == 1) return "投契级";
-            if (x == 2) return "机构级";
-            if (x == 3) return "投资级";
-            if (x == 4) return "地标级";
+    //出价
+    sendPrice(type) {
+      apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+        print.log("资金", res.data.float, this.givePrice);
+        if (+res.data.float >= this.givePrice) {
+          req
+            .post_Param("api/compete", {
+              judge: 1,
+              type: type,
+              thingid: this.model.id,
+              company_id: JSON.parse(ses.getSes("userinfo")).company_id,
+              auction: this.givePrice
+            })
+            .then(res => {
+              print.log(res.data);
+              // 更新竞拍价
+              req
+                .post_Param("api/compete", {
+                  judge: 4,
+                  type: type,
+                  thingid: this.model.id,
+                  company_id: JSON.parse(ses.getSes("userinfo")).company_id,
+                  auction: this.givePrice,
+                  condition: 0,
+                  Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid
+                })
+                .then(res => {
+                  print.log(res.data);
+                  s_alert.Success(
+                    `你的此次出价为：${this.givePrice}`,
+                    "出价成功",
+                    "success"
+                  );
+                });
+            });
+        } else {
+          s_alert.Success("你的可用流动资金不足", "请检查……", "warning");
         }
+      });
     },
-    methods: {
-        openSetting(item, judge) {
-            print.log("当前选择的竞拍物品", item);
-            this.givePrice = 0;
-            //矿区
-            if (judge == 1) {
-                this.model = item;
-                this.getMaxPrice(this.model, judge);
-            }
-            //工业用地
-            if (judge == 2) {
-                this.model = item;
-                this.getMaxPrice(this.model, judge);
-            }
-            //商业用地
-            if (judge == 3) {
-                this.model = item;
-                this.getMaxPrice(this.model, judge);
-            }
-        },
-        getMaxPrice(m, type) {
-            //获取竞拍时某一商品已出价
-            req.post_Param("api/compete", {
-                judge: 5,
-                type: type,
-                thingid: m.id,
-                company_id: JSON.parse(ses.getSes("userinfo")).company_id
-            }).then(res => {
-                print.log("前一次出价", res.data);
-                this.price = res.data.auction;
-            });
-        },
-        //出价
-        sendPrice(type) {
-            apis.getOneStatisticByCompanyId(this.company_id).then(res => {
-                print.log('资金',res.data.float,this.givePrice)
-                if (+res.data.float >= this.givePrice) {
-                    req.post_Param("api/compete", {
-                        judge: 1,
-                        type: type,
-                        thingid: this.model.id,
-                        company_id: JSON.parse(ses.getSes("userinfo")).company_id,
-                        auction: this.givePrice
-                    }).then(res => {
-                        print.log(res.data);
-                        // 更新竞拍价
-                        req.post_Param("api/compete", {
-                            judge: 4,
-                            type: type,
-                            thingid: this.model.id,
-                            company_id: JSON.parse(ses.getSes("userinfo"))
-                                .company_id,
-                            auction: this.givePrice,
-                            condition: 0,
-                            Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid
-                        }).then(res => {
-                            print.log(res.data);
-                            s_alert.Success(
-                                `你的此次出价为：${this.givePrice}`,
-                                "出价成功",
-                                "success"
-                            );
-                        });
-                    });
-                } else {
-                    s_alert.Success(
-                        "你的可用流动资金不足",
-                        "请检查……",
-                        "warning"
-                    );
-                }
-            });
-        },
-        //获取政府矿区竞拍汇总表
-        showMining() {
-            req.post_Param("api/mining", { judge: 0 }).then(res => {
-                print.log(res.data);
-                this.showMiningItems = res.data;
-                // 分页
-                this.currentPage = "0";
-                this.show(res.data);
-            });
-        },
-        //获取政府工业用地竞拍汇总表
-        showIndus() {
-            req.post_Param("api/indusland", { judge: 0 }).then(res => {
-                print.log(res.data);
-                this.showInduslandItems = res.data;
-                // 分页
-                this.currentPage = "0";
-                this.show(res.data);
-            });
-        },
-        //获取政府商业用地竞拍汇总表
-        showCommer() {
-            req.post_Param("api/commerland", { judge: 0 }).then(res => {
-                print.log(res.data);
-                this.showCommerlandItems = res.data;
-                // 分页
-                this.currentPage = "0";
-                this.show(res.data);
-            });
-        },
+    //获取政府矿区竞拍汇总表
+    showMining() {
+      req.post_Param("api/mining", { judge: 0 }).then(res => {
+        print.log(res.data);
+        this.showMiningItems = res.data;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
+    },
+    //获取政府工业用地竞拍汇总表
+    showIndus() {
+      req.post_Param("api/indusland", { judge: 0 }).then(res => {
+        print.log(res.data);
+        this.showInduslandItems = res.data;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
+    },
+    //获取政府商业用地竞拍汇总表
+    showCommer() {
+      req.post_Param("api/commerland", { judge: 0 }).then(res => {
+        print.log(res.data);
+        this.showCommerlandItems = res.data;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
+    },
 
-        // -----------------------------------------------------------分页模板-------------------------------------------------------------
-        show(items) {
-            this.items = items;
-            this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
-            //页面加载完成，默认加载第一页
-            let page = Number(this.currentPage) + 1;
-            this.showEachPage(page);
-            print.log("当前数据总页为：--->", this.sumPage);
-        },
-        switchPage(page) {
-            let p = page - 1;
-            this.currentPage = `${p}`;
-            print.log("当前-->", page);
-            this.showEachPage(page);
-        },
-        showEachPage(page) {
-            let all = this.items;
-            this.showItems = [];
-            for (
-                let i = (page - 1) * this.PageShowSum;
-                i < page * this.PageShowSum;
-                i++
-            ) {
-                if (all[i] == null) {
-                    break;
-                } else {
-                    this.showItems.push(all[i]);
-                }
-            }
-        },
-        nextPage() {
-            if (this.currentPage == this.sumPage - 1) {
-                s_alert.basic("已经到达最后一页了……");
-            } else {
-                let p = Number(this.currentPage) + 1;
-                this.currentPage = `${p}`;
-                print.log("当前-->", p + 1);
-                this.showEachPage(p + 1);
-            }
-        },
-        previousPage() {
-            if (this.currentPage == "0") {
-                s_alert.basic("已经到达最前面了……");
-            } else {
-                let p = Number(this.currentPage) - 1;
-                this.currentPage = `${p}`;
-                print.log("当前-->", p + 1);
-                this.showEachPage(p + 1);
-            }
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
+    show(items) {
+      this.items = items;
+      this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
+      //页面加载完成，默认加载第一页
+      let page = Number(this.currentPage) + 1;
+      this.showEachPage(page);
+      print.log("当前数据总页为：--->", this.sumPage);
+    },
+    switchPage(page) {
+      let p = page - 1;
+      this.currentPage = `${p}`;
+      print.log("当前-->", page);
+      this.showEachPage(page);
+    },
+    showEachPage(page) {
+      let all = this.items;
+      this.showItems = [];
+      for (
+        let i = (page - 1) * this.PageShowSum;
+        i < page * this.PageShowSum;
+        i++
+      ) {
+        if (all[i] == null) {
+          break;
+        } else {
+          this.showItems.push(all[i]);
         }
+      }
+    },
+    nextPage() {
+      if (this.currentPage == this.sumPage - 1) {
+        s_alert.basic("已经到达最后一页了……");
+      } else {
+        let p = Number(this.currentPage) + 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
+    },
+    previousPage() {
+      if (this.currentPage == "0") {
+        s_alert.basic("已经到达最前面了……");
+      } else {
+        let p = Number(this.currentPage) - 1;
+        this.currentPage = `${p}`;
+        print.log("当前-->", p + 1);
+        this.showEachPage(p + 1);
+      }
     }
+  }
 };
 </script>
 
 <style>
 .important {
-    color: green;
-    font-weight: bolder;
+  color: green;
+  font-weight: bolder;
 }
-.bold{
+.bold {
   color: black;
-  font-weight: bolder
+  font-weight: bolder;
 }
 </style>

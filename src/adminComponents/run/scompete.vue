@@ -634,69 +634,69 @@ export default {
   name: "docompete",
   data() {
     return {
-      Yearid:'',
+      Yearid: "",
 
       showMiningItems: "",
       showInduslandItems: "",
       showCommerlandItems: "",
-      
-      model:"",
-      price:'',
-      givePrice:'',
+
+      model: "",
+      price: "",
+      givePrice: "",
 
       //默认数据
-      star:[1,2,3,4,5],
-      source:[1,2,3,4,5],
-      model:[1,2,3,4],
-      measure:[1,2,3,4],
-      level:[1,2,3,4],
+      star: [1, 2, 3, 4, 5],
+      source: [1, 2, 3, 4, 5],
+      model: [1, 2, 3, 4],
+      measure: [1, 2, 3, 4],
+      level: [1, 2, 3, 4],
 
       //发布竞拍 - 矿区
-      mstar:0,
-      msource_id:0,
-      mreserve:0,
-      mdeprelief:0,
-      mrepurchase:0,
-      mstartprice:0,
-      myear:0,
+      mstar: 0,
+      msource_id: 0,
+      mreserve: 0,
+      mdeprelief: 0,
+      mrepurchase: 0,
+      mstartprice: 0,
+      myear: 0,
 
       //发布竞拍 - 工业用地
-      imodel:0,
-      imeasure:0,
-      iefficient:0,
-      irepurchase:0,
-      iimprove:0,
-      istartprice:0,
-      iyear:0,
+      imodel: 0,
+      imeasure: 0,
+      iefficient: 0,
+      irepurchase: 0,
+      iimprove: 0,
+      istartprice: 0,
+      iyear: 0,
 
       //发布竞拍 - 商业用地
-      clevel:0,
-      cbrand:0,
-      cincrement:0,
-      cstartprice:0,
-      cyear:0,
+      clevel: 0,
+      cbrand: 0,
+      cincrement: 0,
+      cstartprice: 0,
+      cyear: 0,
 
       //选择
-      chooseItem:'',
-      chooseType:1,
+      chooseItem: "",
+      chooseType: 1,
 
       //定向发送
-      company:'',
-      company_id:'',
-      givePrice:'',
+      company: "",
+      company_id: "",
+      givePrice: "",
 
       //排序表
-      showDesc:'',
+      showDesc: "",
 
       //储存钱
-      money:'',
+      money: "",
 
       // 分页数据
       items: [],
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null,
+      sumPage: null
     };
   },
   beforeMount() {
@@ -707,511 +707,597 @@ export default {
     this.getAllCompany();
     // 实时获取info
     setTimeout(() => {
-    this.getInfo();
+      this.getInfo();
     }, 10000);
   },
-  updated() {    
-    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+  updated() {
+    $(function() {
+      $("[data-toggle='tooltip']").tooltip();
+    });
   },
   filters: {
     formatTime(x) {
       return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatCondition(x){
-      if(x==-3) return "#矿区已回购";
-      if(x==-2) return '竞拍未开始'
-      if(x==-1) return '产品流拍'
-      if(x==0) return '竞拍中'
-      if(x==1) return '竞拍已结束'
-      if(x==2) return '定向公司发送'
-      if(x==3) return '资产已发送'
+    formatCondition(x) {
+      if (x == -3) return "#矿区已回购";
+      if (x == -2) return "竞拍未开始";
+      if (x == -1) return "产品流拍";
+      if (x == 0) return "竞拍中";
+      if (x == 1) return "竞拍已结束";
+      if (x == 2) return "定向公司发送";
+      if (x == 3) return "资产已发送";
     },
-    formatStar(x){
-      if(x==1) return '一星矿区'
-      if(x==2) return '二星矿区'
-      if(x==3) return '三星矿区'
-      if(x==4) return '四星矿区'
-      if(x==5) return '五星矿区'
+    formatStar(x) {
+      if (x == 1) return "一星矿区";
+      if (x == 2) return "二星矿区";
+      if (x == 3) return "三星矿区";
+      if (x == 4) return "四星矿区";
+      if (x == 5) return "五星矿区";
     },
-    formatSource(x){
-      if(x==1) return '金'
-      if(x==2) return '木'
-      if(x==3) return '水'
-      if(x==4) return '火'
-      if(x==5) return '土'
+    formatSource(x) {
+      if (x == 1) return "金";
+      if (x == 2) return "木";
+      if (x == 3) return "水";
+      if (x == 4) return "火";
+      if (x == 5) return "土";
     },
-    formatmodel(x){
-      if(x==1) return 'A'
-      if(x==2) return 'Z'
-      if(x==3) return 'C'
-      if(x==4) return 'S'
+    formatmodel(x) {
+      if (x == 1) return "A";
+      if (x == 2) return "Z";
+      if (x == 3) return "C";
+      if (x == 4) return "S";
     },
-    formatlevel(x){
-      if(x==1) return '投契级'
-      if(x==2) return '机构级'
-      if(x==3) return '投资级'
-      if(x==4) return '地标级'
+    formatlevel(x) {
+      if (x == 1) return "投契级";
+      if (x == 2) return "机构级";
+      if (x == 3) return "投资级";
+      if (x == 4) return "地标级";
     }
   },
   methods: {
-    getInfo(){
+    getInfo() {
       this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
       this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
     },
-    init(){
-        this.showMining();
-        this.showIndus();
-        this.showCommer();
-        this.getAllCompany();
+    init() {
+      this.showMining();
+      this.showIndus();
+      this.showCommer();
+      this.getAllCompany();
     },
-    sendCompete(index){
+    sendCompete(index) {
       //矿区
-      if(index==1){
-        let s=`api/mining?judge=1&star=${this.mstar}&totalreserve=${this.mreserve}&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${this.mrepurchase}&startprice=${this.mstartprice}&condition=-2&Yearid=${this.myear}&source_id=${this.msource_id}`
-        print.log(s)
-        this.tempSendCompete(s,index)
-        
-        this.mstar=0
-        this.msource_id=0
-        this.mreserve=0
-        this.mdeprelief=0
-        this.mrepurchase=0
-        this.mstartprice=0
-        this.myear=0
+      if (index == 1) {
+        let s = `api/mining?judge=1&star=${this.mstar}&totalreserve=${
+          this.mreserve
+        }&reserve=${this.mreserve}&deprelief=${this.mdeprelief}&repurchase=${
+          this.mrepurchase
+        }&startprice=${this.mstartprice}&condition=-2&Yearid=${
+          this.myear
+        }&source_id=${this.msource_id}`;
+        print.log(s);
+        this.tempSendCompete(s, index);
+
+        this.mstar = 0;
+        this.msource_id = 0;
+        this.mreserve = 0;
+        this.mdeprelief = 0;
+        this.mrepurchase = 0;
+        this.mstartprice = 0;
+        this.myear = 0;
       }
       //工业用地
-      if(index==2){
-        let s=`api/indusland?judge=1&model=${this.imodel}&measure=${this.imeasure}&efficient=${this.iefficient}&repurchase=${this.irepurchase}&isimprove=0&improve=${this.iimprove}&startprice=${this.istartprice}&condition=-2&Yearid=${this.iyear}`
-        print.log(s)
-        this.tempSendCompete(s,index)
-        
-        this.imodel=0
-        this.imeasure=0
-        this.iefficient=0
-        this.irepurchase=0
-        this.iimprove=0
-        this.istartprice=0
-        this.iyear=0
+      if (index == 2) {
+        let s = `api/indusland?judge=1&model=${this.imodel}&measure=${
+          this.imeasure
+        }&efficient=${this.iefficient}&repurchase=${
+          this.irepurchase
+        }&isimprove=0&improve=${this.iimprove}&startprice=${
+          this.istartprice
+        }&condition=-2&Yearid=${this.iyear}`;
+        print.log(s);
+        this.tempSendCompete(s, index);
+
+        this.imodel = 0;
+        this.imeasure = 0;
+        this.iefficient = 0;
+        this.irepurchase = 0;
+        this.iimprove = 0;
+        this.istartprice = 0;
+        this.iyear = 0;
       }
       //商业用地
-      if(index==3){
-        let s=`api/commerland?judge=1&level=${this.clevel}&brand=${this.cbrand}&increment=${this.cincrement}&startprice=${this.istartprice}&condition=-2&Yearid=${this.cyear}`
-        print.log(s)
-        this.tempSendCompete(s,index) 
-        
-        this.clevel=0
-        this.cbrand=0
-        this.cincrement=0
-        this.cstartprice=0
-        this.cyear=0
+      if (index == 3) {
+        let s = `api/commerland?judge=1&level=${this.clevel}&brand=${
+          this.cbrand
+        }&increment=${this.cincrement}&startprice=${
+          this.istartprice
+        }&condition=-2&Yearid=${this.cyear}`;
+        print.log(s);
+        this.tempSendCompete(s, index);
+
+        this.clevel = 0;
+        this.cbrand = 0;
+        this.cincrement = 0;
+        this.cstartprice = 0;
+        this.cyear = 0;
       }
     },
     //发布订单模板
-    tempSendCompete(s,index){
-        req.post(s)
-        .then(res => {
-            print.log(res.data);
-            s_alert.Success("发布竞拍成功", "注意，默认为未开启竞拍状态，点击开始按钮开始竞拍", "success");
-            if(index==1) this.showMining();
-            if(index==2) this.showIndus();
-            if(index==3) this.showCommer();
-        })
+    tempSendCompete(s, index) {
+      req.post(s).then(res => {
+        print.log(res.data);
+        s_alert.Success(
+          "发布竞拍成功",
+          "注意，默认为未开启竞拍状态，点击开始按钮开始竞拍",
+          "success"
+        );
+        if (index == 1) this.showMining();
+        if (index == 2) this.showIndus();
+        if (index == 3) this.showCommer();
+      });
     },
     //开始竞拍
-    start(item,index){
-        if(index==1){
-          let s=`api/mining?judge=2&condition=0&id=${item.id}`
-          this.StartCompeteUpdateCondition(s)
-        }
-        else if(index==2){
-          let s=`api/indusland?judge=2&condition=0&id=${item.id}`
-          this.StartCompeteUpdateCondition(s)
-        }
-        else if(index==3){
-          let s=`api/commerland?judge=2&condition=0&id=${item.id}`
-          this.StartCompeteUpdateCondition(s)
-        }else{
-          s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
-        }
+    start(item, index) {
+      if (index == 1) {
+        let s = `api/mining?judge=2&condition=0&id=${item.id}`;
+        this.StartCompeteUpdateCondition(s);
+      } else if (index == 2) {
+        let s = `api/indusland?judge=2&condition=0&id=${item.id}`;
+        this.StartCompeteUpdateCondition(s);
+      } else if (index == 3) {
+        let s = `api/commerland?judge=2&condition=0&id=${item.id}`;
+        this.StartCompeteUpdateCondition(s);
+      } else {
+        s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
+      }
     },
-    // 结束竞拍 
-    stop(item,index){
-        if(index==1){
-          let s=`api/mining?judge=2&condition=1&id=${item.id}`
-          this.StartCompeteUpdateCondition(s)
-        }
-        else if(index==2){
-          let s=`api/indusland?judge=2&condition=1&id=${item.id}`
-          this.StartCompeteUpdateCondition(s)
-        }
-        else if(index==3){
-          let s=`api/commerland?judge=2&condition=1&id=${item.id}`
-          this.StartCompeteUpdateCondition(s)
-        }else{
-          s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
-        }
+    // 结束竞拍
+    stop(item, index) {
+      if (index == 1) {
+        let s = `api/mining?judge=2&condition=1&id=${item.id}`;
+        this.StartCompeteUpdateCondition(s);
+      } else if (index == 2) {
+        let s = `api/indusland?judge=2&condition=1&id=${item.id}`;
+        this.StartCompeteUpdateCondition(s);
+      } else if (index == 3) {
+        let s = `api/commerland?judge=2&condition=1&id=${item.id}`;
+        this.StartCompeteUpdateCondition(s);
+      } else {
+        s_alert.Success("发布竞拍失败", "请联系管理人员", "warning");
+      }
     },
     // 定向公司发布 & 竞价排名
-    opensetting(item,type,func){    //选择发放
-        this.chooseItem=item
-        this.chooseType=type
-        // 初始化定向公司发布信息
-        this.company_id=''
-        this.givePrice=0
-        print.log(item,type)
-        if(func==2){
-          // 获取竞价排名
-          this.getDesc(item,type)
-        }
+    opensetting(item, type, func) {
+      //选择发放
+      this.chooseItem = item;
+      this.chooseType = type;
+      // 初始化定向公司发布信息
+      this.company_id = "";
+      this.givePrice = 0;
+      print.log(item, type);
+      if (func == 2) {
+        // 获取竞价排名
+        this.getDesc(item, type);
+      }
     },
     // 定向公司发布
-    sendToCompany(){
-        if(this.chooseType==1){
-            // 获取个人资产
-            apis.getOneStatisticByCompanyId(this.company_id)
-            .then(res=>{
-              print.log('获取个人资产',res.data)
-              if(this.givePrice<=res.data.float){
-                // 更新自己资产信息
-                let float=res.data.float-this.givePrice;
-                let total=res.data.total-this.givePrice;
-                // 更新拍得公司资产信息
-                req.post_Param('api/statistic',{
-                    'judge':4,
-                    'total':total,
-                    'float':float,
-                    'company_id':this.company_id
-                })
-                // 更新竞拍状态
-                let s=`api/mining?judge=2&condition=3&id=${this.chooseItem.id}&company_id=${this.company_id}&price=${this.givePrice}`
-                this.StartCompeteUpdateCondition(s)
-                // 写入交易信息
-                req.post_Param('api/transaction',{
-                    'judge':1,
-                    'id':0,
-                    'Yearid':this.Yearid,
-                    'inout':1,
-                    'type':4,
-                    'kind':3,
-                    'price':this.givePrice,
-                    'number':1,
-                    'me':this.company_id,
-                    'detail':`竞拍：资产类别${this.chooseType},资产编号${this.chooseItem.id}`
-                }) 
-              }else{
-                swal("竞拍失败!", "可用流动资金不足", "warning");
-              }
-            })
-        }else if(this.chooseType==2){
-            // 获取个人资产
-            apis.getOneStatisticByCompanyId(this.company_id)
-            .then(res=>{
-              print.log('获取个人资产',res.data)
-              if(this.givePrice<=res.data.float){
-                // 更新自己资产信息
-                let float=res.data.float-this.givePrice;
-                let total=res.data.total-this.givePrice;
-                // 更新拍得公司资产信息
-                req.post_Param('api/statistic',{
-                    'judge':4,
-                    'total':total,
-                    'float':float,
-                    'company_id':this.company_id
-                })
-                // 更新竞拍状态
-                let s=`api/indusland?judge=2&condition=3&id=${this.chooseItem.id}&company_id=${this.company_id}&price=${this.givePrice}`
-                this.StartCompeteUpdateCondition(s)
-                // 写入交易信息
-                req.post_Param('api/transaction',{
-                    'judge':1,
-                    'id':0,
-                    'Yearid':this.Yearid,
-                    'inout':1,
-                    'type':4,
-                    'kind':3,
-                    'price':this.givePrice,
-                    'number':1,
-                    'me':this.company_id,
-                    'detail':`竞拍：资产类别${this.chooseType},资产编号${this.chooseItem.id}`
-                }) 
-              }else{
-                swal("竞拍失败!", "可用流动资金不足", "warning");
-              }
-            })
-        }else if(this.chooseType==3){
-            // 获取个人资产
-            apis.getOneStatisticByCompanyId(this.company_id)
-            .then(res=>{
-              print.log('获取个人资产',res.data)
-              if(this.givePrice<=res.data.float){
-                // 更新自己资产信息
-                let fixed = Number(res.data.fixed)+Number(this.givePrice);                
-                let float=res.data.float-this.givePrice;
-                let total=res.data.total-this.givePrice;
-                // 品牌价值采用累加算法
-                let brand=Number(res.data.brand)+Number(100*this.chooseItem.brand);
-                // 更新拍得公司资产信息
-                req.post_Param('api/statistic',{
-                    'judge':4,
-                    'fixed':fixed,
-                    'total':total,
-                    'float':float,
-                    'brand':brand,
-                    'company_id':this.company_id
-                })
-                // 更新竞拍状态
-                let s=`api/commerland?judge=2&condition=3&id=${this.chooseItem.id}&company_id=${this.company_id}&price=${this.givePrice}`
-                this.StartCompeteUpdateCondition(s)
-                // 写入交易信息
-                req.post_Param('api/transaction',{
-                    'judge':1,
-                    'id':0,
-                    'Yearid':this.Yearid,
-                    'inout':1,
-                    'type':4,
-                    'kind':3,
-                    'price':this.givePrice,
-                    'number':1,
-                    'me':this.company_id,
-                    'detail':`竞拍：资产类别${this.chooseType},资产编号${this.chooseItem.id}`
-                }) 
-              }else{
-                swal("竞拍失败!", "可用流动资金不足", "warning");
-              }
-            })
-        }
+    sendToCompany() {
+      if (this.chooseType == 1) {
+        // 获取个人资产
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
+          if (this.givePrice <= res.data.float) {
+            // 更新自己资产信息
+            let float = Number(res.data.float) - Number(this.givePrice);
+            let total = Number(res.data.total) - Number(this.givePrice);
+            // 更新拍得公司资产信息
+            req.post_Param("api/statistic", {
+              judge: 4,
+              total: total,
+              float: float,
+              company_id: this.company_id
+            });
+            // 更新竞拍状态
+            let s = `api/mining?judge=2&condition=3&id=${
+              this.chooseItem.id
+            }&company_id=${this.company_id}&price=${this.givePrice}`;
+            this.StartCompeteUpdateCondition(s);
+            // 写入交易信息
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: this.Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: this.givePrice,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍：资产类别${this.chooseType},资产编号${
+                this.chooseItem.id
+              }`
+            });
+          } else {
+            swal("竞拍失败!", "可用流动资金不足", "warning");
+          }
+        });
+      } else if (this.chooseType == 2) {
+        // 获取个人资产
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
+          if (this.givePrice <= res.data.float) {
+            // 更新自己资产信息
+            let float = Number(res.data.float) - Number(this.givePrice);
+            let total = Number(res.data.total) - Number(this.givePrice);
+            // 更新拍得公司资产信息
+            req.post_Param("api/statistic", {
+              judge: 4,
+              total: total,
+              float: float,
+              company_id: this.company_id
+            });
+            // 更新竞拍状态
+            let s = `api/indusland?judge=2&condition=3&id=${
+              this.chooseItem.id
+            }&company_id=${this.company_id}&price=${this.givePrice}`;
+            this.StartCompeteUpdateCondition(s);
+            // 写入交易信息
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: this.Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: this.givePrice,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍：资产类别${this.chooseType},资产编号${
+                this.chooseItem.id
+              }`
+            });
+          } else {
+            swal("竞拍失败!", "可用流动资金不足", "warning");
+          }
+        });
+      } else if (this.chooseType == 3) {
+        // 获取个人资产
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
+          if (this.givePrice <= res.data.float) {
+            // 更新自己资产信息
+            let fixed = Number(res.data.fixed) + Number(this.givePrice);
+            let float = Number(res.data.float) - Number(this.givePrice);
+            let total = Number(res.data.total) - Number(this.givePrice);
+            // 品牌价值采用累加算法
+            let brand =
+              Number(res.data.brand) + Number(100 * this.chooseItem.brand);
+            // 更新拍得公司资产信息
+            req.post_Param("api/statistic", {
+              judge: 4,
+              fixed: fixed,
+              total: total,
+              float: float,
+              brand: brand,
+              company_id: this.company_id
+            });
+            // 更新竞拍状态
+            let s = `api/commerland?judge=2&condition=3&id=${
+              this.chooseItem.id
+            }&company_id=${this.company_id}&price=${this.givePrice}`;
+            this.StartCompeteUpdateCondition(s);
+            // 写入交易信息
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: this.Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: this.givePrice,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍：资产类别${this.chooseType},资产编号${
+                this.chooseItem.id
+              }`
+            });
+          } else {
+            swal("竞拍失败!", "可用流动资金不足", "warning");
+          }
+        });
+      }
     },
     // 获取竞价排名
-    getDesc(item,type){
-        req.post_Param('api/compete',{
-            'judge':7,
-            'type':type,
-            'thingid':item.id
+    getDesc(item, type) {
+      req
+        .post_Param("api/compete", {
+          judge: 7,
+          type: type,
+          thingid: item.id
         })
         .then(res => {
-            this.showDesc=res.data;
-            print.log('竞价排名',this.showDesc)
-        })
+          this.showDesc = res.data;
+          print.log("竞价排名", this.showDesc);
+        });
     },
     // 根据竞价排名发给公司
-    getit(item){
-        print.log('根据竞价排名发给公司',item,this.chooseItem)
-        if(this.chooseType==1){
-            let s=`api/mining?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
-            print.log(s)
-            this.StartCompeteUpdateCondition(s) 
-            // 更新竞拍单状态
-            apis.updateOneCompeteConditionById(item.id,1);
-            // 更新资产
-            // let m=`api/statistic?judge=5&company_id=${item.company.id}`
-            // this.updateFixedAssets(m,item.auction,item.company.id)
-        }else if(this.chooseType==2){
-            let s=`api/indusland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
-            print.log(s)
-            this.StartCompeteUpdateCondition(s)
-            // 更新竞拍单状态
-            apis.updateOneCompeteConditionById(item.id,1);
-            // 更新资产
-            // let m=`api/statistic?judge=5&company_id=${item.company.id}`
-            // this.updateFixedAssets(m,item.auction,item.company.id)   
-        }else if(this.chooseType==3){
-            let s=`api/commerland?judge=2&condition=1&id=${this.chooseItem.id}&company_id=${item.company.id}&price=${item.auction}`
-            print.log(s)
-            this.StartCompeteUpdateCondition(s)
-            // 更新竞拍单状态
-            apis.updateOneCompeteConditionById(item.id,1);
-            // 更新资产
-            // let m=`api/statistic?judge=5&company_id=${item.company.id}`
-            // 更新商业用地 固定资产
-            // this.updateFixedAssetsForCommerland(m,item)
-        }
-    },     
-    //更新资产信息  
-    updateFixedAssetsForCommerland(m,item){  
-        // 获取资产信息
-        req.post(m)
-        .then(res => {
-            print.log('商业用地资产信息',res.data)
-            // 计算资产差值
-            let fix=item.auction;  //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
-            //商业用地固定资产 = 目前价值 + （平均成交价 - 目前价值）* 增值空间 ，暂时这样用着。
-            let fixed=Number(res.data.fixed)+Number(fix);
-            let total=Number(res.data.total)+Number(fix)-item.auction;
-            let float=res.data.float-item.auction;
-            let brand=Number(res.data.brand)+Number(100*this.chooseItem.brand);
-            print.log('更新品牌价值',brand)
-            // 更新资产信息
-            req.post_Param('api/statistic',{
-                'judge':4,
-                'fixed':fixed,
-                'total':total,
-                'float':float,
-                'brand':brand,
-                'company_id':item.company.id
-            })
-            .then(res => {
-                print.log(res.data);
-                if(this.chooseType==1) this.showMining();
-                if(this.chooseType==2) this.showIndus();
-                if(this.chooseType==3) this.showCommer();
-            })
-        })
+    getit(item) {
+      print.log("根据竞价排名发给公司", item, this.chooseItem);
+      if (this.chooseType == 1) {
+        let s = `api/mining?judge=2&condition=1&id=${
+          this.chooseItem.id
+        }&company_id=${item.company.id}&price=${item.auction}`;
+        print.log(s);
+        this.StartCompeteUpdateCondition(s);
+        // 更新竞拍单状态
+        apis.updateOneCompeteConditionById(item.id, 1);
+        // 更新资产
+        // let m=`api/statistic?judge=5&company_id=${item.company.id}`
+        // this.updateFixedAssets(m,item.auction,item.company.id)
+      } else if (this.chooseType == 2) {
+        let s = `api/indusland?judge=2&condition=1&id=${
+          this.chooseItem.id
+        }&company_id=${item.company.id}&price=${item.auction}`;
+        print.log(s);
+        this.StartCompeteUpdateCondition(s);
+        // 更新竞拍单状态
+        apis.updateOneCompeteConditionById(item.id, 1);
+        // 更新资产
+        // let m=`api/statistic?judge=5&company_id=${item.company.id}`
+        // this.updateFixedAssets(m,item.auction,item.company.id)
+      } else if (this.chooseType == 3) {
+        let s = `api/commerland?judge=2&condition=1&id=${
+          this.chooseItem.id
+        }&company_id=${item.company.id}&price=${item.auction}`;
+        print.log(s);
+        this.StartCompeteUpdateCondition(s);
+        // 更新竞拍单状态
+        apis.updateOneCompeteConditionById(item.id, 1);
+        // 更新资产
+        // let m=`api/statistic?judge=5&company_id=${item.company.id}`
+        // 更新商业用地 固定资产
+        // this.updateFixedAssetsForCommerland(m,item)
+      }
     },
-     //竞拍状态更新模板
-    StartCompeteUpdateCondition(s){    
-        req.post(s)
-        .then(res => {
-            if(res.data.success){
-                s_alert.Success("竞拍状态更新成功", "", "success");
-                if(this.chooseType==1) this.showMining();
-                if(this.chooseType==2) this.showIndus();
-                if(this.chooseType==3) this.showCommer();
-            }else{
-                s_alert.Success("竞拍状态更新失败", "", "warning");
-                if(this.chooseType==1) this.showMining();
-                if(this.chooseType==2) this.showIndus();
-                if(this.chooseType==3) this.showCommer();
-            }
-        })
+    //更新资产信息
+    updateFixedAssetsForCommerland(m, item) {
+      // 获取资产信息
+      req.post(m).then(res => {
+        print.log("商业用地资产信息", res.data);
+        // 计算资产差值
+        let fix = item.auction; //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
+        //商业用地固定资产 = 目前价值 + （平均成交价 - 目前价值）* 增值空间 ，暂时这样用着。
+        let fixed = Number(res.data.fixed) + Number(fix);
+        let total = Number(res.data.total) + Number(fix) - item.auction;
+        let float = res.data.float - item.auction;
+        let brand =
+          Number(res.data.brand) + Number(100 * this.chooseItem.brand);
+        print.log("更新品牌价值", brand);
+        // 更新资产信息
+        req
+          .post_Param("api/statistic", {
+            judge: 4,
+            fixed: fixed,
+            total: total,
+            float: float,
+            brand: brand,
+            company_id: item.company.id
+          })
+          .then(res => {
+            print.log(res.data);
+            if (this.chooseType == 1) this.showMining();
+            if (this.chooseType == 2) this.showIndus();
+            if (this.chooseType == 3) this.showCommer();
+          });
+      });
+    },
+    //竞拍状态更新模板
+    StartCompeteUpdateCondition(s) {
+      req.post(s).then(res => {
+        if (res.data.success) {
+          s_alert.Success("竞拍状态更新成功", "", "success");
+          if (this.chooseType == 1) this.showMining();
+          if (this.chooseType == 2) this.showIndus();
+          if (this.chooseType == 3) this.showCommer();
+        } else {
+          s_alert.Success("竞拍状态更新失败", "", "warning");
+          if (this.chooseType == 1) this.showMining();
+          if (this.chooseType == 2) this.showIndus();
+          if (this.chooseType == 3) this.showCommer();
+        }
+      });
     },
     //更新固定资产
-    updateFixedAssets(s,m,c){
-        req.post(s)
-        .then(res => {
-            this.money=res.data
-            let float=res.data.float-m;
-            let total=res.data.total-m;
-            // 更新拍得公司资产信息
-            req.post_Param('api/statistic',{
-                'judge':4,
-                'total':total,
-                'float':float,
-                'company_id':c
-            })
-            .then(res => {
-                swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
-                if(this.chooseType==1) this.showMining();
-                if(this.chooseType==2) this.showIndus();
-                if(this.chooseType==3) this.showCommer();
-            })
-        })
+    updateFixedAssets(s, m, c) {
+      req.post(s).then(res => {
+        this.money = res.data;
+        let float = res.data.float - m;
+        let total = res.data.total - m;
+        // 更新拍得公司资产信息
+        req
+          .post_Param("api/statistic", {
+            judge: 4,
+            total: total,
+            float: float,
+            company_id: c
+          })
+          .then(res => {
+            swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
+            if (this.chooseType == 1) this.showMining();
+            if (this.chooseType == 2) this.showIndus();
+            if (this.chooseType == 3) this.showCommer();
+          });
+      });
     },
     // 删除矿区
-    deleMining(item){
-      print.log('删除矿区',item)
-      if(confirm('你确定要删除码？')){
-        req.post_Param('api/mining',{
-          'judge':3,
-          'id':item.id
-        })
-        .then(res=>{
-          if(this.chooseType==1) this.showMining();
-          if(this.chooseType==2) this.showIndus();
-          if(this.chooseType==3) this.showCommer();
-          s_alert.Success('删除成功！','','success')
-        })
+    deleMining(item) {
+      print.log("删除矿区", item);
+      if (confirm("你确定要删除码？")) {
+        req
+          .post_Param("api/mining", {
+            judge: 3,
+            id: item.id
+          })
+          .then(res => {
+            if (this.chooseType == 1) this.showMining();
+            if (this.chooseType == 2) this.showIndus();
+            if (this.chooseType == 3) this.showCommer();
+            s_alert.Success("删除成功！", "", "success");
+          });
       }
     },
     // 删除工业用地
-    deleIndus(item){
-      print.log('删除工业用地',item)
-      if(confirm('你确定要删除？')){
-        req.post_Param('api/indusland',{
-          'judge':3,
-          'id':item.id
-        })
-        .then(res=>{
-          if(this.chooseType==1) this.showMining();
-          if(this.chooseType==2) this.showIndus();
-          if(this.chooseType==3) this.showCommer();
-          s_alert.Success('删除成功！','','success')
-        })
+    deleIndus(item) {
+      print.log("删除工业用地", item);
+      if (confirm("你确定要删除？")) {
+        req
+          .post_Param("api/indusland", {
+            judge: 3,
+            id: item.id
+          })
+          .then(res => {
+            if (this.chooseType == 1) this.showMining();
+            if (this.chooseType == 2) this.showIndus();
+            if (this.chooseType == 3) this.showCommer();
+            s_alert.Success("删除成功！", "", "success");
+          });
       }
     },
     // 删除商业用地
-    deleCommer(item){
-      print.log('删除商业用地',item)
-      if(confirm('你确定要删除？')){
-        req.post_Param('api/commerland',{
-          'judge':3,
-          'id':item.id
-        })
-        .then(res=>{
-          if(this.chooseType==1) this.showMining();
-          if(this.chooseType==2) this.showIndus();
-          if(this.chooseType==3) this.showCommer();
-          s_alert.Success('删除成功！','','success')
-        })
+    deleCommer(item) {
+      print.log("删除商业用地", item);
+      if (confirm("你确定要删除？")) {
+        req
+          .post_Param("api/commerland", {
+            judge: 3,
+            id: item.id
+          })
+          .then(res => {
+            if (this.chooseType == 1) this.showMining();
+            if (this.chooseType == 2) this.showIndus();
+            if (this.chooseType == 3) this.showCommer();
+            s_alert.Success("删除成功！", "", "success");
+          });
       }
     },
     //获取公司列表
-    getAllCompany(){        
-        apis.getAllCompany()
-        .then(res => {
-          this.company = res.data;
-          print.log('所有公司列表->',res.data)
-        })
+    getAllCompany() {
+      apis.getAllCompany().then(res => {
+        this.company = res.data;
+        print.log("所有公司列表->", res.data);
+      });
     },
     // 根据星级设置矿区储量
-    getstar(){
-        if(this.mstar==1){ this.mreserve = Math.round(Math.random()*(6000-4000)+4000);this.mdeprelief=0;this.mrepurchase=120;}
-        if(this.mstar==2){ this.mreserve = Math.round(Math.random()*(10000-8000)+8000);this.mdeprelief=0.1;this.mrepurchase=160;}
-        if(this.mstar==3){ this.mreserve = Math.round(Math.random()*(15000-12000)+12000);this.mdeprelief=0.2;this.mrepurchase=200;}
-        if(this.mstar==4){ this.mreserve = Math.round(Math.random()*(24000-18000)+18000);this.mdeprelief=0.25;this.mrepurchase=300;}
-        if(this.mstar==5){ this.mreserve = Math.round(Math.random()*(32000-26000)+26000);this.mdeprelief=0.3;this.mrepurchase=450;}
+    getstar() {
+      if (this.mstar == 1) {
+        this.mreserve = Math.round(Math.random() * (6000 - 4000) + 4000);
+        this.mdeprelief = 0;
+        this.mrepurchase = 120;
+      }
+      if (this.mstar == 2) {
+        this.mreserve = Math.round(Math.random() * (10000 - 8000) + 8000);
+        this.mdeprelief = 0.1;
+        this.mrepurchase = 160;
+      }
+      if (this.mstar == 3) {
+        this.mreserve = Math.round(Math.random() * (15000 - 12000) + 12000);
+        this.mdeprelief = 0.2;
+        this.mrepurchase = 200;
+      }
+      if (this.mstar == 4) {
+        this.mreserve = Math.round(Math.random() * (24000 - 18000) + 18000);
+        this.mdeprelief = 0.25;
+        this.mrepurchase = 300;
+      }
+      if (this.mstar == 5) {
+        this.mreserve = Math.round(Math.random() * (32000 - 26000) + 26000);
+        this.mdeprelief = 0.3;
+        this.mrepurchase = 450;
+      }
     },
     // 根据工业用地型号设置面积等等信息
-    getModel(){
-      if(this.imodel==1){ this.imeasure=5; this.iefficient=0; this.irepurchase=0; this.iimprove=0}
-      if(this.imodel==2){ this.imeasure=5; this.iefficient=0.1; this.irepurchase=0.4; this.iimprove=500}
-      if(this.imodel==3){ this.imeasure=10; this.iefficient=0.2; this.irepurchase=0.1; this.iimprove=500}
-      if(this.imodel==4){ this.imeasure=8; this.iefficient=0.3; this.irepurchase=0.1; this.iimprove=500}
+    getModel() {
+      if (this.imodel == 1) {
+        this.imeasure = 5;
+        this.iefficient = 0;
+        this.irepurchase = 0;
+        this.iimprove = 0;
+      }
+      if (this.imodel == 2) {
+        this.imeasure = 5;
+        this.iefficient = 0.1;
+        this.irepurchase = 0.4;
+        this.iimprove = 500;
+      }
+      if (this.imodel == 3) {
+        this.imeasure = 10;
+        this.iefficient = 0.2;
+        this.irepurchase = 0.1;
+        this.iimprove = 500;
+      }
+      if (this.imodel == 4) {
+        this.imeasure = 8;
+        this.iefficient = 0.3;
+        this.irepurchase = 0.1;
+        this.iimprove = 500;
+      }
     },
     // 根据商业用地等级设置品牌提升等等信息
-    getLevel(){
-      if(this.clevel==1){ this.cbrand=0; this.cincrement=0.1; }
-      if(this.clevel==2){ this.cbrand=0.1; this.cincrement=0.3; }
-      if(this.clevel==3){ this.cbrand=0.2; this.cincrement=0.8; }
-      if(this.clevel==4){ this.cbrand=0.3; this.cincrement=1.2; }
+    getLevel() {
+      if (this.clevel == 1) {
+        this.cbrand = 0;
+        this.cincrement = 0.1;
+      }
+      if (this.clevel == 2) {
+        this.cbrand = 0.1;
+        this.cincrement = 0.3;
+      }
+      if (this.clevel == 3) {
+        this.cbrand = 0.2;
+        this.cincrement = 0.8;
+      }
+      if (this.clevel == 4) {
+        this.cbrand = 0.3;
+        this.cincrement = 1.2;
+      }
     },
     //获取政府矿区竞拍汇总表
     showMining() {
-        req.post_Param('api/mining',{'judge':0})
-        .then(res => {
-          this.showMiningItems = res.data;
-          this.chooseType=1;
-          // 分页
-          this.currentPage='0'
-          this.show(res.data)
-        })
+      req.post_Param("api/mining", { judge: 0 }).then(res => {
+        this.showMiningItems = res.data;
+        this.chooseType = 1;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
     },
     //获取政府工业用地竞拍汇总表
     showIndus() {
-        req.post_Param('api/indusland',{'judge':0})
-        .then(res => {
-          print.log('工业用地竞拍汇总表',res.data)
-          this.showInduslandItems = res.data;
-          this.chooseType=2;
-          // 分页
-          this.currentPage='0'
-          this.show(res.data)
-        })
+      req.post_Param("api/indusland", { judge: 0 }).then(res => {
+        print.log("工业用地竞拍汇总表", res.data);
+        this.showInduslandItems = res.data;
+        this.chooseType = 2;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
     },
     //获取政府商业用地竞拍汇总表
     showCommer() {
-        req.post_Param('api/commerland',{'judge':0})
-        .then(res => {
-          this.showCommerlandItems = res.data;
-          this.chooseType=3;
-          // 分页
-          this.currentPage='0'
-          this.show(res.data)
-        })
+      req.post_Param("api/commerland", { judge: 0 }).then(res => {
+        this.showCommerlandItems = res.data;
+        this.chooseType = 3;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
-      this.items=items;
+      this.items = items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let page = Number(this.currentPage) + 1;
@@ -1264,12 +1350,12 @@ export default {
 </script>
 
 <style>
-.important{
+.important {
   color: green;
-  font-weight: bolder
+  font-weight: bolder;
 }
-.bold{
+.bold {
   color: black;
-  font-weight: bolder
+  font-weight: bolder;
 }
 </style>

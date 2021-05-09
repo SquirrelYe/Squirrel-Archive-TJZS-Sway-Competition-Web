@@ -149,22 +149,22 @@ export default {
   name: "mine",
   data() {
     return {
-      company_id:'',
-      Yearid:'',
+      company_id: "",
+      Yearid: "",
       // 显示信息
-      showCompeteCommerland:'',
-      showResearchItems:'',
+      showCompeteCommerland: "",
+      showResearchItems: "",
       //购买研究所
-      temp:'',
-      judgeShowResearch:[]
+      temp: "",
+      judgeShowResearch: []
     };
   },
-  beforeMount(){
+  beforeMount() {
     this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-    this.init()
+    this.init();
     // 实时获取info
     setTimeout(() => {
       this.getInfo();
@@ -178,103 +178,114 @@ export default {
       return x * y;
       print.log(x, y);
     },
-    formatLevel(x){
-      if(x==1) return '投契级';
-      if(x==2) return '机构级';
-      if(x==3) return '投资级';
-      if(x==4) return '地标级';
+    formatLevel(x) {
+      if (x == 1) return "投契级";
+      if (x == 2) return "机构级";
+      if (x == 3) return "投资级";
+      if (x == 4) return "地标级";
     },
-    formatConrequire(x){
-      if(x==0) return '无要求';
-      if(x==3) return '投资级';
-      if(x==4) return '地标级';
+    formatConrequire(x) {
+      if (x == 0) return "无要求";
+      if (x == 3) return "投资级";
+      if (x == 4) return "地标级";
     }
   },
   methods: {
-    getInfo(){
+    getInfo() {
       this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
       this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
     },
-    init(){
+    init() {
       this.showMyCommerland();
-      this.showResearch()
+      this.showResearch();
     },
     // 打开设置
     openSetting(item) {
-      this.judgeShowResearch=[]
-      this.temp=item
-      let level=item.level
+      this.judgeShowResearch = [];
+      this.temp = item;
+      let level = item.level;
       // 根据商业用地等级确定显示生产线
-      if(level==4){
-        this.judgeShowResearch=this.showResearchItems
-      }else if(level==3){
+      if (level == 4) {
+        this.judgeShowResearch = this.showResearchItems;
+      } else if (level == 3) {
         this.showResearchItems.forEach(e => {
-          if(e.conrequire<=level){
-            this.judgeShowResearch.push(e)
+          if (e.conrequire <= level) {
+            this.judgeShowResearch.push(e);
           }
         });
-      }else if(level==2 || level==1){
+      } else if (level == 2 || level == 1) {
         this.showResearchItems.forEach(e => {
-          if(e.conrequire<=2){
-            this.judgeShowResearch.push(e)
+          if (e.conrequire <= 2) {
+            this.judgeShowResearch.push(e);
           }
         });
       }
-      print.log(this.temp)
+      print.log(this.temp);
     },
     //购买研究所 绑定 到 商业用地
-    sendPrice(item,money,research_id) {
-      let that=this
+    sendPrice(item, money, research_id) {
+      let that = this;
       // 查询个人资产
-      apis.getOneStatisticByCompanyId(that.company_id)
-      .then(res => {
-        if(res.data.float>=money){
-          let float=res.data.float-money;
-          let fixed=Number(res.data.fixed)+Number(money);
+      apis.getOneStatisticByCompanyId(that.company_id).then(res => {
+        if (res.data.float >= money) {
+          let float = res.data.float - money;
+          let fixed = Number(res.data.fixed) + Number(money);
           // 品牌价值累加算法
-          let brand=Number(res.data.brand)+(100*item.brand); //Number(res.data.brand)+(100*currentBrand);
+          let brand = Number(res.data.brand) + 100 * item.brand; //Number(res.data.brand)+(100*currentBrand);
           // 更新个人资产
-          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&brand=${brand}&company_id=${that.company_id}`).then(res=>{})
+          req
+            .post(
+              `api/statistic?judge=4&float=${float}&fixed=${fixed}&brand=${brand}&company_id=${
+                that.company_id
+              }`
+            )
+            .then(res => {});
           // 绑定研究所
-          req.post_Param('api/ass/commerland_research',{
-            'judge':6,
-            'commerland_id':that.temp.id,
-            'research_id':item.id
-          })
-          .then(res => {          
-            s_alert.Success("下单成功", "正在加载……", "success");
-            that.showMyCommerland();
-            // 写入交易
-            req.post(`api/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money}&number=1&me=${that.company_id}&research_id=${research_id}`)
-          })
-        }else{
+          req
+            .post_Param("api/ass/commerland_research", {
+              judge: 6,
+              commerland_id: that.temp.id,
+              research_id: item.id
+            })
+            .then(res => {
+              s_alert.Success("下单成功", "正在加载……", "success");
+              that.showMyCommerland();
+              // 写入交易
+              req.post(
+                `api/transaction?judge=1&id=0&Yearid=${
+                  that.Yearid
+                }&inout=1&type=4&kind=3&price=${money}&number=1&me=${
+                  that.company_id
+                }&research_id=${research_id}`
+              );
+            });
+        } else {
           s_alert.Success("下单失败", "可用流动资金不足……", "warning");
-        }          
-      })      
+        }
+      });
     },
     //显示已购 商业用地
     showMyCommerland() {
-      req.post_Param('api/ass/commerland_research',{
-        'judge':4,
-        'company_id':this.company_id
-      })
-        .then(res => {
-          this.showCompeteCommerland=res.data;
-          print.log(this.showCompeteCommerland)
+      req
+        .post_Param("api/ass/commerland_research", {
+          judge: 4,
+          company_id: this.company_id
         })
+        .then(res => {
+          this.showCompeteCommerland = res.data;
+          print.log(this.showCompeteCommerland);
+        });
     },
     //显示 研究所 信息
     showResearch() {
-      req.post_Param('api/research',{'judge':0})
-        .then(res => {
-          print.log(res.data);
-          this.showResearchItems = res.data;
-        })
+      req.post_Param("api/research", { judge: 0 }).then(res => {
+        print.log(res.data);
+        this.showResearchItems = res.data;
+      });
     }
   }
 };
 </script>
 
 <style>
-
 </style>

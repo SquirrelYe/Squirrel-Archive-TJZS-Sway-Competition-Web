@@ -136,7 +136,7 @@
                     <div class="modal-body" align='center'> 
                         <form class="form-horizontal" role="form">
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">金额:</label>
+                                <label class="col-sm-3 control-label">金额(万):</label>
                                 <div class="col-sm-9">
                                     <input type="number" class="form-control"  v-model="givePrice" placeholder="正值转入，负值扣款">
                                 </div>
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-3 control-label">回收金额:</label>
+                                <label class="col-sm-3 control-label">回收金额（万）:</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" v-model="rep_mining.repurchase" disabled>
                                 </div>
@@ -203,59 +203,61 @@ const print = require("../../utils/print");
 const apis = require("../../utils/api/apis");
 
 import app from "../../App.vue";
-const async=require('async')
+const async = require("async");
 const notify = require("bootstrap-notify");
 
 export default {
   name: "syear",
   data() {
     return {
-      company_id:'',
-      Yearid:'',
-      
+      company_id: "",
+      Yearid: "",
+
       showGameItems: "",
       showStasticsItems: "",
 
-      givePrice:0,
-      giveDetail:'',
+      givePrice: 0,
+      giveDetail: "",
 
-      currentStastics:null,
+      currentStastics: null,
       // 矿区回收
-      rep_mining:{},
-      minings:null,
+      rep_mining: {},
+      minings: null,
 
       // 计算折旧
-      diggerDeprelief:[],
-      lineDeprelief:[],
+      diggerDeprelief: [],
+      lineDeprelief: [],
 
       // 分页数据
       items: [],
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null,
+      sumPage: null
     };
   },
-  beforeMount(){
+  beforeMount() {
     this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-      this.init()
+    this.init();
   },
-  updated() {    
-    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+  updated() {
+    $(function() {
+      $("[data-toggle='tooltip']").tooltip();
+    });
   },
   filters: {
     formatTime(val) {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatStar(x){
-      if(x==1) return '一星矿区'
-      if(x==2) return '二星矿区'
-      if(x==3) return '三星矿区'
-      if(x==4) return '四星矿区'
-      if(x==5) return '五星矿区'
+    formatStar(x) {
+      if (x == 1) return "一星矿区";
+      if (x == 2) return "二星矿区";
+      if (x == 3) return "三星矿区";
+      if (x == 4) return "四星矿区";
+      if (x == 5) return "五星矿区";
     }
   },
   methods: {
@@ -265,319 +267,359 @@ export default {
     },
     // 显示比赛信息
     getshowGameItems() {
-        apis.getGameByCondition('1')
-        .then(res => {
-            print.log('显示比赛信息',res.data);
-            this.showGameItems = res.data[0];
-        })
+      apis.getGameByCondition("1").then(res => {
+        print.log("显示比赛信息", res.data);
+        this.showGameItems = res.data[0];
+      });
     },
     // 点击进入下一财年
     nextYear(showGameItems) {
-        print.log('当前比赛信息',showGameItems)
+      print.log("当前比赛信息", showGameItems);
       if (confirm("你确定要进入下一财年？这将对参赛者固定资产进行清算！")) {
-        this.init()
+        this.init();
         this.updateYear(showGameItems);
       }
     },
     // 更新财年信息
     updateYear(showGameItems) {
-        req.post_Param('api/game',{
-            'judge':2,
-            'Yearid':showGameItems.Yearid+1,
-            'id':showGameItems.id
+      req
+        .post_Param("api/game", {
+          judge: 2,
+          Yearid: showGameItems.Yearid + 1,
+          id: showGameItems.id
         })
         .then(res => {
           print.log(res.data);
-          if(res.data.success){
-            this.init()
-            this.updateRelief()
+          if (res.data.success) {
+            this.init();
+            this.updateRelief();
           }
-        })
+        });
     },
     // 获取参赛公司资产信息
     getStasticsItems() {
-        req.post_Param('api/ass/company_statistic',{'judge':4})
-        .then(res => {
-          print.log(res.data);
-          this.showStasticsItems=res.data
-          // 分页
-          this.currentPage='0'
-          this.show(res.data)
-        })
+      req.post_Param("api/ass/company_statistic", { judge: 4 }).then(res => {
+        print.log(res.data);
+        this.showStasticsItems = res.data;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
     },
     // 点击转账到此公司，中转信息
-    tran(model){
-        print.log('当前选中转移资产公司资产信息',model)
-        this.currentStastics=model
+    tran(model) {
+      print.log("当前选中转移资产公司资产信息", model);
+      this.currentStastics = model;
     },
     // 获取公司资产、矿区信息
-    async mining(item){
-        let company_id=item.company_id
-        // 资产
-        let res = await apis.getOneStatisticByCompanyId(company_id)
-        print.log('当前选中矿区回收公司资产信息',res.data)
-        this.currentStastics=res.data
-        // 矿区
-        let mining = await req.post_Param('api/mining',{
-            'judge':6,
-            'company_id':item.company_id
-        })
-        print.log('当前选中矿区回收公司矿区信息',mining.data)
-        this.minings = mining.data.rows
+    async mining(item) {
+      let company_id = item.company_id;
+      // 资产
+      let res = await apis.getOneStatisticByCompanyId(company_id);
+      print.log("当前选中矿区回收公司资产信息", res.data);
+      this.currentStastics = res.data;
+      // 矿区
+      let mining = await req.post_Param("api/mining", {
+        judge: 6,
+        company_id: item.company_id
+      });
+      print.log("当前选中矿区回收公司矿区信息", mining.data);
+      this.minings = mining.data.rows;
     },
     // 回购矿区
-    async getmining(){
-        print.log(this.rep_mining)
-        // 删除矿区
-        // req.post_Param('api/mining',{
-        //     'judge':3,
-        //     'id':this.rep_mining.id
-        // })
+    async getmining() {
+      print.log(this.rep_mining);
+      // 删除矿区
+      // req.post_Param('api/mining',{
+      //     'judge':3,
+      //     'id':this.rep_mining.id
+      // })
 
-        // 更新矿区状态 condition -3 矿区回收
-        await req.post(`api/mining?judge=2&id=${this.rep_mining.id}&condition=-3`)
-        .then(res =>{
-            // 矿区回收
-            let float=Number(this.rep_mining.repurchase)+Number(this.currentStastics.float);
-            let total=Number(this.rep_mining.repurchase)+Number(this.currentStastics.total);
-            // 更新资产信息
-            req.post_Param('api/statistic',{
-                'judge':2,
-                'id':this.currentStastics.id,
-                'float':float,
-                'total':total
-            })
-            // 写入交易信息
-            req.post_Param('api/transaction',{
-                'judge':1,
-                'id':0,
-                'Yearid':this.Yearid,
-                'inout':2,
-                'type':1,
-                'kind':3,
-                'price':this.rep_mining.repurchase,
-                'number':1,
-                'me':this.currentStastics.company_id,
-                'detail':`矿区回收：资金流入${this.rep_mining.repurchase}`
+      // 更新矿区状态 condition -3 矿区回收
+      await req
+        .post(`api/mining?judge=2&id=${this.rep_mining.id}&condition=-3`)
+        .then(res => {
+          // 矿区回收
+          let float =
+            Number(this.rep_mining.repurchase) +
+            Number(this.currentStastics.float);
+          let total =
+            Number(this.rep_mining.repurchase) +
+            Number(this.currentStastics.total);
+          // 更新资产信息
+          req.post_Param("api/statistic", {
+            judge: 2,
+            id: this.currentStastics.id,
+            float: float,
+            total: total
+          });
+          // 写入交易信息
+          req
+            .post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: this.Yearid,
+              inout: 2,
+              type: 1,
+              kind: 3,
+              price: this.rep_mining.repurchase,
+              number: 1,
+              me: this.currentStastics.company_id,
+              detail: `矿区回收：资金流入${this.rep_mining.repurchase}`
             })
             .then(res => {
-                print.log(res.data);
-                swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
-                this.init()
-            })
-        })        
+              print.log(res.data);
+              swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
+              this.init();
+            });
+        });
     },
     // 转账
-    updateMoney(){
-        let float=Number(this.givePrice)+Number(this.currentStastics.float);
-        let total=Number(this.givePrice)+Number(this.currentStastics.total);
-        // 更新资产信息
-        req.post_Param('api/statistic',{
-            'judge':2,
-            'id':this.currentStastics.id,
-            'float':float,
-            'total':total
-        })
-        // 写入交易信息
-        req.post_Param('api/transaction',{
-            'judge':1,
-            'id':0,
-            'Yearid':this.Yearid,
-            'inout':2,
-            'type':1,
-            'kind':3,
-            'price':this.givePrice,
-            'number':1,
-            'me':this.currentStastics.company_id,
-            'detail':`组委会转账：${this.giveDetail}`
+    updateMoney() {
+      let float = Number(this.givePrice) + Number(this.currentStastics.float);
+      let total = Number(this.givePrice) + Number(this.currentStastics.total);
+      // 更新资产信息
+      req.post_Param("api/statistic", {
+        judge: 2,
+        id: this.currentStastics.id,
+        float: float,
+        total: total
+      });
+      // 写入交易信息
+      req
+        .post_Param("api/transaction", {
+          judge: 1,
+          id: 0,
+          Yearid: this.Yearid,
+          inout: 2,
+          type: 1,
+          kind: 3,
+          price: this.givePrice,
+          number: 1,
+          me: this.currentStastics.company_id,
+          detail: `组委会转账：${this.giveDetail}`
         })
         .then(res => {
-            print.log(res.data);
-            swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
-            this.init()
-        })
+          print.log(res.data);
+          swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
+          this.init();
+        });
     },
     // ---------------------------------------------------计算折旧---------------------------------------------------
-    updateRelief(){   
-        s_alert.Warning('正在获取固定资产信息，请稍等……','固定资产更新成功会在右上角提示')
-        this.getStasticsItems() //初始化资产列表
-        print.log('最新统计资产信息',this.showStasticsItems)
+    updateRelief() {
+      s_alert.Warning(
+        "正在获取固定资产信息，请稍等……",
+        "固定资产更新成功会在右上角提示"
+      );
+      this.getStasticsItems(); //初始化资产列表
+      print.log("最新统计资产信息", this.showStasticsItems);
 
-        for (let i = 0; i < this.showStasticsItems.length; i++) {
-            print.log('执行公司资产信息更新--->',this.showStasticsItems[i])
-            //对折旧价值初始化.
-            let index=i
-            this.diggerDeprelief[index]=0
-            this.lineDeprelief[index]=0
-            //循环计算折旧价值
-            const re = this.showStasticsItems[i];
-            let cid=re.company_id;
-            let that=this
-            async.series([
-                //串行同时执行
-                function(callback) {          
-                    //计算挖掘机折旧      
-                    that.getMiningDigger(index,cid,callback);
-                },
-                function(callback) {
-                    // 计算生产线折旧
-                    that.getInduslandFactory(index,cid,callback);
-                }],
-                function(err, results) {
-                    //等上面两个执行完返回结果
-                    print.log('更新固定资产统计信息',results)
-                    if(i==that.showStasticsItems.length-1){
-                        that.updateFixedMoney(cid,re,results,1)
-                    }else{
-                        that.updateFixedMoney(cid,re,results,0)
-                    }
-                })            
-        };
+      for (let i = 0; i < this.showStasticsItems.length; i++) {
+        print.log("执行公司资产信息更新--->", this.showStasticsItems[i]);
+        //对折旧价值初始化.
+        let index = i;
+        this.diggerDeprelief[index] = 0;
+        this.lineDeprelief[index] = 0;
+        //循环计算折旧价值
+        const re = this.showStasticsItems[i];
+        let cid = re.company_id;
+        let that = this;
+        async.series(
+          [
+            //串行同时执行
+            function(callback) {
+              //计算挖掘机折旧
+              that.getMiningDigger(index, cid, callback);
+            },
+            function(callback) {
+              // 计算生产线折旧
+              that.getInduslandFactory(index, cid, callback);
+            }
+          ],
+          function(err, results) {
+            //等上面两个执行完返回结果
+            print.log("更新固定资产统计信息", results);
+            if (i == that.showStasticsItems.length - 1) {
+              that.updateFixedMoney(cid, re, results, 1);
+            } else {
+              that.updateFixedMoney(cid, re, results, 0);
+            }
+          }
+        );
+      }
     },
     // 获取 矿区 - 挖掘机
-    getMiningDigger(index,cid,callback){
-        req.post_Param('api/ass/mining_digger',{
-            'judge':5,
-            'company_id':cid
+    getMiningDigger(index, cid, callback) {
+      req
+        .post_Param("api/ass/mining_digger", {
+          judge: 5,
+          company_id: cid
         })
         .then(res => {
-            // print.log('矿区 - 挖掘机',res.data)
-            this.diggerDeprelief[index]=0
-            for (let i = 0; i < res.data.length; i++) {  //对矿区 循环，找到某一个矿区
-                const w = res.data[i];
-                let kdepre=w.deprelief; //找到某一矿区 折旧减免值
-                for (let j = 0; j < w.diggers.length; j++) {  //对挖掘机 进行循环，找到某一类挖掘机
-                    const wjj = w.diggers[j];
-                    let totalDepre=(1-kdepre)*wjj.deprelief*wjj.mining_digger.number*wjj.price;
-                    this.diggerDeprelief[index]+=totalDepre
-                }
+          // print.log('矿区 - 挖掘机',res.data)
+          this.diggerDeprelief[index] = 0;
+          for (let i = 0; i < res.data.length; i++) {
+            //对矿区 循环，找到某一个矿区
+            const w = res.data[i];
+            let kdepre = w.deprelief; //找到某一矿区 折旧减免值
+            for (let j = 0; j < w.diggers.length; j++) {
+              //对挖掘机 进行循环，找到某一类挖掘机
+              const wjj = w.diggers[j];
+              let totalDepre =
+                (1 - kdepre) *
+                wjj.deprelief *
+                wjj.mining_digger.number *
+                wjj.price;
+              this.diggerDeprelief[index] += totalDepre;
             }
-            print.log('统计所有的挖掘机折旧',this.diggerDeprelief[index])   
-            callback(null, this.diggerDeprelief[index]);
-        })
+          }
+          print.log("统计所有的挖掘机折旧", this.diggerDeprelief[index]);
+          callback(null, this.diggerDeprelief[index]);
+        });
     },
     // 获取 工业用地 - 工厂
-    getInduslandFactory(index,cid,callback){
-        req.post_Param('api/ass/indusland_factory',{
-            'judge':4,
-            'company_id':cid
+    getInduslandFactory(index, cid, callback) {
+      req
+        .post_Param("api/ass/indusland_factory", {
+          judge: 4,
+          company_id: cid
         })
         .then(res => {
-            print.log('工业用地 - 工厂',res.data)
-            this.lineDeprelief[index]=0
-            if(res.data.length>0){      //如果存在工业用地
-                let judgeHaveFactory=0;
-                for (let i = 0; i < res.data.length; i++) {  //对工业用地循环 找到 工业用地-工厂 中间表，从而获取到 对应的生产线
-                    const w = res.data[i];
-                    let idepre=w.repurchase; //找到某一工业用地 折旧减免值
-                    // 判定有工业用地 是否有 工厂                    
-                    if( w.factories.length!=0){            // 有工厂
-                        judgeHaveFactory++;
-                        for (let j = 0; j < w.factories.length; j++) {  //对工业用地下的 工厂 进行循环，找到中间表id，从而找到 对应的生产线
-                            let judgeHaveLine=0;
-                            if(w.factories[j].indusland_factory!=null){     //有生产线
-                                judgeHaveLine++;
-                                const infa = w.factories[j].indusland_factory.id;
-                                //对找到的 中间表id，寻找生产线，计算折旧
-                                // print.log('工业用地 - 工厂、中间表id',infa)
-                                //逐层回调，找到最终结果
-                                if(i==res.data.length-1 && j==w.factories.length-1){
-                                    this.getLineDepre(index,infa,idepre,callback,true);
-                                }else{
-                                    this.getLineDepre(index,infa,idepre,callback,false);
-                                }
-                            }else{
-                                if(j==w.factories.length-1 && judgeHaveLine==0){
-                                    this.lineDeprelief[index]=0
-                                    callback(null,this.lineDeprelief[index])
-                                }
-                            }
-                            
-                        }
-                    }else{          // 无工厂
-                        if(i==res.data.length-1 && judgeHaveFactory==0){
-                            this.lineDeprelief[index]=0
-                            callback(null,this.lineDeprelief[index])
-                        }
+          print.log("工业用地 - 工厂", res.data);
+          this.lineDeprelief[index] = 0;
+          if (res.data.length > 0) {
+            //如果存在工业用地
+            let judgeHaveFactory = 0;
+            for (let i = 0; i < res.data.length; i++) {
+              //对工业用地循环 找到 工业用地-工厂 中间表，从而获取到 对应的生产线
+              const w = res.data[i];
+              let idepre = w.repurchase; //找到某一工业用地 折旧减免值
+              // 判定有工业用地 是否有 工厂
+              if (w.factories.length != 0) {
+                // 有工厂
+                judgeHaveFactory++;
+                for (let j = 0; j < w.factories.length; j++) {
+                  //对工业用地下的 工厂 进行循环，找到中间表id，从而找到 对应的生产线
+                  let judgeHaveLine = 0;
+                  if (w.factories[j].indusland_factory != null) {
+                    //有生产线
+                    judgeHaveLine++;
+                    const infa = w.factories[j].indusland_factory.id;
+                    //对找到的 中间表id，寻找生产线，计算折旧
+                    // print.log('工业用地 - 工厂、中间表id',infa)
+                    //逐层回调，找到最终结果
+                    if (
+                      i == res.data.length - 1 &&
+                      j == w.factories.length - 1
+                    ) {
+                      this.getLineDepre(index, infa, idepre, callback, true);
+                    } else {
+                      this.getLineDepre(index, infa, idepre, callback, false);
                     }
-                    
+                  } else {
+                    if (j == w.factories.length - 1 && judgeHaveLine == 0) {
+                      this.lineDeprelief[index] = 0;
+                      callback(null, this.lineDeprelief[index]);
+                    }
+                  }
                 }
-            }else{      //如果不存在工业用地
-                this.lineDeprelief[index]=0
-                callback(null, this.lineDeprelief[index]);
+              } else {
+                // 无工厂
+                if (i == res.data.length - 1 && judgeHaveFactory == 0) {
+                  this.lineDeprelief[index] = 0;
+                  callback(null, this.lineDeprelief[index]);
+                }
+              }
             }
-        })
+          } else {
+            //如果不存在工业用地
+            this.lineDeprelief[index] = 0;
+            callback(null, this.lineDeprelief[index]);
+          }
+        });
     },
     // 获取 工业用地 - 工厂 - 生产线
-    getLineDepre(index,infa,idepre,callback,sure){  //infa,idepre 分别为 中间表id与 工业用地 折旧减免值
-        req.post_Param('api/ass/indusland_factory_line',{
-            'judge':8,
-            'indusland_factory_id':infa
+    getLineDepre(index, infa, idepre, callback, sure) {
+      //infa,idepre 分别为 中间表id与 工业用地 折旧减免值
+      req
+        .post_Param("api/ass/indusland_factory_line", {
+          judge: 8,
+          indusland_factory_id: infa
         })
         .then(res => {
-            // print.log('工业用地 - 工厂 - 生产线',res.data)
-            for (let i = 0; i < res.data.length; i++) {  //对中间表-生产线 信息 循环，从而获取到 对应的生产线 & 数量
-                const w = res.data[i];
-                for (let j = 0; j < w.lines.length; j++) {  //对工业用地 - 工厂 - 生产线 进行循环，找到生产线，从而找到 对应的生产线 折旧率
-                    const line = w.lines[j];
-                    let totalDepre=(1-idepre)*line.relief*line.indusland_factory_line.number*line.price;
-                    this.lineDeprelief[index]+=totalDepre
-                }
+          // print.log('工业用地 - 工厂 - 生产线',res.data)
+          for (let i = 0; i < res.data.length; i++) {
+            //对中间表-生产线 信息 循环，从而获取到 对应的生产线 & 数量
+            const w = res.data[i];
+            for (let j = 0; j < w.lines.length; j++) {
+              //对工业用地 - 工厂 - 生产线 进行循环，找到生产线，从而找到 对应的生产线 折旧率
+              const line = w.lines[j];
+              let totalDepre =
+                (1 - idepre) *
+                line.relief *
+                line.indusland_factory_line.number *
+                line.price;
+              this.lineDeprelief[index] += totalDepre;
             }
-            if(sure){
-                print.log('统计所有的生产线折旧',this.lineDeprelief[index])   
-                callback(null, this.lineDeprelief[index]);
-            }
-        })
+          }
+          if (sure) {
+            print.log("统计所有的生产线折旧", this.lineDeprelief[index]);
+            callback(null, this.lineDeprelief[index]);
+          }
+        });
     },
     // 更新公司资产
-    updateFixedMoney(cid,re,result,judge){
-        print.log(re,result)
-        let fixed=Number(re.fixed)-(Number(result[0])+Number(result[1]));
-        let total=Number(re.total)-(Number(result[0])+Number(result[1]));
-        // 更新个人资产
-        req.post_Param('api/statistic',{
-            'judge':4,
-            'company_id':cid,
-            'fixed':fixed,
-            'total':total
+    updateFixedMoney(cid, re, result, judge) {
+      print.log(re, result);
+      let fixed = Number(re.fixed) - (Number(result[0]) + Number(result[1]));
+      let total = Number(re.total) - (Number(result[0]) + Number(result[1]));
+      // 更新个人资产
+      req
+        .post_Param("api/statistic", {
+          judge: 4,
+          company_id: cid,
+          fixed: fixed,
+          total: total
         })
         .then(res => {
-            if(res.data){
-                $.notify(
-                    {message: `${re.company.name}->公司资产更新成功！减少${(Number(result[0])+Number(result[1])).toFixed(2)}w`},
-                    {type: "success"}
-                );
-                // 写入交易信息
-                req.post_Param('api/transaction',{
-                    'judge':1,
-                    'id':0,
-                    'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-                    'inout':1,
-                    'type':4,
-                    'kind':3,
-                    'price':Number(result[0])+Number(result[1]),
-                    'number':1,
-                    'me':cid,
-                    'detail':`固定资产折旧：${Number(result[0])+Number(result[1])}`
-                })
-                this.init()
-                if(judge==1){
-                    swal("更新财年信息成功!", "参赛者资产信息更新成功", "success");
-                }
-            }else{
-                $.notify(
-                    {message: `${re.company.name}->资产更新失败！请检查！！`},
-                    {type: "warning"}
-                );
-                this.init()
+          if (res.data) {
+            $.notify(
+              {
+                message: `${re.company.name}->公司资产更新成功！减少${(
+                  Number(result[0]) + Number(result[1])
+                ).toFixed(2)}w`
+              },
+              { type: "success" }
+            );
+            // 写入交易信息
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: Number(result[0]) + Number(result[1]),
+              number: 1,
+              me: cid,
+              detail: `固定资产折旧：${Number(result[0]) + Number(result[1])}`
+            });
+            this.init();
+            if (judge == 1) {
+              swal("更新财年信息成功!", "参赛者资产信息更新成功", "success");
             }
-        })
-        
+          } else {
+            $.notify(
+              { message: `${re.company.name}->资产更新失败！请检查！！` },
+              { type: "warning" }
+            );
+            this.init();
+          }
+        });
     },
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
-      this.items=items;
+      this.items = items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let page = Number(this.currentPage) + 1;
@@ -626,11 +668,9 @@ export default {
       }
     }
     //结束分页
-
   }
 };
 </script>
 
 <style>
-
 </style>

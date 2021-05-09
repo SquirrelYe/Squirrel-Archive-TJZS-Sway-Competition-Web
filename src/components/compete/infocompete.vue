@@ -86,7 +86,6 @@ const req = require("../../utils/axios");
 const print = require("../../utils/print");
 const apis = require("../../utils/api/apis");
 
-
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -95,8 +94,8 @@ export default {
   name: "infocompete",
   data() {
     return {
-      company_id:'',
-      Yearid:'',
+      company_id: "",
+      Yearid: "",
 
       showCompete: "",
       // 分页数据
@@ -104,7 +103,7 @@ export default {
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null,
+      sumPage: null
     };
   },
   beforeMount() {
@@ -114,251 +113,289 @@ export default {
   mounted() {
     this.init();
   },
-  updated() {    
-    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+  updated() {
+    $(function() {
+      $("[data-toggle='tooltip']").tooltip();
+    });
   },
-  filters:{
+  filters: {
     formatTime(val) {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatCondition(val){
-      if(val==-2) return '竞拍未开始'
-      if(val==-1) return '产品流拍'
-      if(val==0) return '竞拍中'
-      if(val==1) return '竞拍已结束,请操作'
-      if(val==2) return '竞拍成功'
+    formatCondition(val) {
+      if (val == -2) return "竞拍未开始";
+      if (val == -1) return "产品流拍";
+      if (val == 0) return "竞拍中";
+      if (val == 1) return "竞拍已结束,请操作";
+      if (val == 2) return "竞拍成功";
     },
-    formatType(x){
-      if(x==1) return '矿区'
-      if(x==2) return '工业用地'
-      if(x==3) return '商业用地'
+    formatType(x) {
+      if (x == 1) return "矿区";
+      if (x == 2) return "工业用地";
+      if (x == 3) return "商业用地";
     }
   },
   methods: {
-    init(){
-      this.showMyCompete()
+    init() {
+      this.showMyCompete();
     },
     // 获取自己公司竞拍情况
     showMyCompete() {
-      req.post_Param('api/compete',{
-        'judge':6,
-        'company_id':this.company_id
-      })
+      req
+        .post_Param("api/compete", {
+          judge: 6,
+          company_id: this.company_id
+        })
         .then(res => {
           console.log(res.data);
           this.showCompete = res.data;
           // 分页
-          this.currentPage='0'
-          this.show(res.data)
-        })
+          this.currentPage = "0";
+          this.show(res.data);
+        });
     },
     // 接收竞拍资产
-    accept(item){
-      print.log('接收竞拍资产',item)
-      s_alert.Success('正在接收中，请不要重复点击^_^','重复点击可能重复扣款，接收失败请联系组委会','warning')
-      if(item.type==1){     // 矿区
-        apis.getOneStatisticByCompanyId(this.company_id)
-        .then(res=>{
-          print.log('获取个人资产',res.data)
-          if(item.auction<=res.data.float){
+    accept(item) {
+      print.log("接收竞拍资产", item);
+      s_alert.Success(
+        "正在接收中，请不要重复点击^_^",
+        "重复点击可能重复扣款，接收失败请联系组委会",
+        "warning"
+      );
+      if (item.type == 1) {
+        // 矿区
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
+          if (item.auction <= res.data.float) {
             // 更新资产
-            let m=`api/statistic?judge=5&company_id=${item.company_id}`
-            this.updateFixedAssets(m,item)
+            let m = `api/statistic?judge=5&company_id=${item.company_id}`;
+            this.updateFixedAssets(m, item);
             // 更新竞拍状态
-            req.post(`api/mining?judge=2&condition=3&id=${item.thingid}&company_id=${this.company_id}`)
+            req.post(
+              `api/mining?judge=2&condition=3&id=${item.thingid}&company_id=${
+                this.company_id
+              }`
+            );
             // 写入交易信息
-            req.post_Param('api/transaction',{
-                'judge':1,
-                'id':0,
-                'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-                'inout':1,
-                'type':4,
-                'kind':3,
-                'price':item.auction,
-                'number':1,
-                'me':this.company_id,
-                'detail':`竞拍：资产类别${item.type},资产编号${item.thingid}`
-            }) 
-          }else{
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: item.auction,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`
+            });
+          } else {
             swal("竞拍失败!", "可用流动资金不足", "warning");
           }
-        })
-      }
-      else if(item.type==2){   //工业用地
-        apis.getOneStatisticByCompanyId(this.company_id)
-        .then(res=>{
-          print.log('获取个人资产',res.data)
-          if(item.auction<=res.data.float){
+        });
+      } else if (item.type == 2) {
+        //工业用地
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
+          if (item.auction <= res.data.float) {
             // 更新资产
-            let m=`api/statistic?judge=5&company_id=${item.company_id}`
-            this.updateFixedAssets(m,item)
+            let m = `api/statistic?judge=5&company_id=${item.company_id}`;
+            this.updateFixedAssets(m, item);
             // 更新竞拍状态
-            req.post(`api/indusland?judge=2&condition=3&id=${item.thingid}&company_id=${this.company_id}`)
+            req.post(
+              `api/indusland?judge=2&condition=3&id=${
+                item.thingid
+              }&company_id=${this.company_id}`
+            );
             // 写入交易信息
-            req.post_Param('api/transaction',{
-                'judge':1,
-                'id':0,
-                'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-                'inout':1,
-                'type':4,
-                'kind':3,
-                'price':item.auction,
-                'number':1,
-                'me':this.company_id,
-                'detail':`竞拍：资产类别${item.type},资产编号${item.thingid}`
-            }) 
-          }else{
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: item.auction,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`
+            });
+          } else {
             swal("竞拍失败!", "可用流动资金不足", "warning");
           }
-        })
-      }
-      else if(item.type==3){    //商业用地
-        apis.getOneStatisticByCompanyId(this.company_id)
-          .then(res=>{
-            print.log('获取个人资产',res.data)
-            if(item.auction<=res.data.float){
-              // 更新资产
-              let m=`api/statistic?judge=5&company_id=${item.company_id}`
-              // 更新商业用地 固定资产
-              this.updateFixedAssetsForCommerland(m,item)
-              // 更新竞拍状态
-              req.post(`api/commerland?judge=2&condition=3&id=${item.thingid}&company_id=${this.company_id}`)
-              // 写入交易信息
-              req.post_Param('api/transaction',{
-                  'judge':1,
-                  'id':0,
-                  'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-                  'inout':1,
-                  'type':4,
-                  'kind':3,
-                  'price':item.auction,
-                  'number':1,
-                  'me':this.company_id,
-                  'detail':`竞拍：资产类别${item.type},资产编号${item.thingid}`
-              }) 
-            }else{
-              swal("竞拍失败!", "可用流动资金不足", "warning");
-            }
-          })
+        });
+      } else if (item.type == 3) {
+        //商业用地
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
+          if (item.auction <= res.data.float) {
+            // 更新资产
+            let m = `api/statistic?judge=5&company_id=${item.company_id}`;
+            // 更新商业用地 固定资产
+            this.updateFixedAssetsForCommerland(m, item);
+            // 更新竞拍状态
+            req.post(
+              `api/commerland?judge=2&condition=3&id=${
+                item.thingid
+              }&company_id=${this.company_id}`
+            );
+            // 写入交易信息
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: item.auction,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`
+            });
+          } else {
+            swal("竞拍失败!", "可用流动资金不足", "warning");
+          }
+        });
       }
     },
     // 拒绝竞拍资产
-    reject(item){
-      print.log('拒绝竞拍资产',item)
-      if(confirm(`拒绝接收将会扣取出价的20%作为违约金。违约金为：${(item.auction*0.2).toFixed(2)}万`)){
+    reject(item) {
+      print.log("拒绝竞拍资产", item);
+      if (
+        confirm(
+          `拒绝接收将会扣取出价的20%作为违约金。违约金为：${(
+            item.auction * 0.2
+          ).toFixed(2)}万`
+        )
+      ) {
         // 获取个人资产
-        apis.getOneStatisticByCompanyId(this.company_id)
-        .then(res=>{
-          print.log('获取个人资产',res.data)
+        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          print.log("获取个人资产", res.data);
           // 更新自己资产信息
-          let float=res.data.float-item.auction*0.2;
-          let total=res.data.total-item.auction*0.2;
+          let float = res.data.float - item.auction * 0.2;
+          let total = res.data.total - item.auction * 0.2;
           // 更新拍得公司资产信息
-          req.post_Param('api/statistic',{
-              'judge':4,
-              'total':total,
-              'float':float,
-              'company_id':this.company_id
-          })
+          req.post_Param("api/statistic", {
+            judge: 4,
+            total: total,
+            float: float,
+            company_id: this.company_id
+          });
           // 更新竞拍状态
-          if(item.type==1){
-            req.post(`api/mining?judge=2&condition=-1&id=${item.thingid}&company_id=${this.company_id}&price=${item.auction*0.2}`)          
-          }else if(item.type==2){
-            req.post(`api/indusland?judge=2&condition=-1&id=${item.thingid}&company_id=${this.company_id}&price=${item.auction*0.2}`)
-          }else if(item.type==3){
-            req.post(`api/commerland?judge=2&condition=-1&id=${item.thingid}&company_id=${this.company_id}&price=${item.auction*0.2}`)
+          if (item.type == 1) {
+            req.post(
+              `api/mining?judge=2&condition=-1&id=${item.thingid}&company_id=${
+                this.company_id
+              }&price=${item.auction * 0.2}`
+            );
+          } else if (item.type == 2) {
+            req.post(
+              `api/indusland?judge=2&condition=-1&id=${
+                item.thingid
+              }&company_id=${this.company_id}&price=${item.auction * 0.2}`
+            );
+          } else if (item.type == 3) {
+            req.post(
+              `api/commerland?judge=2&condition=-1&id=${
+                item.thingid
+              }&company_id=${this.company_id}&price=${item.auction * 0.2}`
+            );
           }
           // 写入交易信息
-          req.post_Param('api/transaction',{
-              'judge':1,
-              'id':0,
-              'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-              'inout':1,
-              'type':4,
-              'kind':3,
-              'price':item.auction*0.2,
-              'number':1,
-              'me':this.company_id,
-              'detail':`竞拍拒绝接收：资产类别${item.type},资产编号${item.thingid}，物品流拍`
-          })
-          .then(res=>{
-            swal("资金信息更新成功!", "资产信息更新成功", "success");
-            // 更新竞拍单状态
-            apis.updateOneCompeteConditionById(item.id,-1);
-            this.init()
-          })
-        })
-      }
-    },
-    //更新固定资产
-    updateFixedAssets(m,item){
-        req.post(m)
-        .then(res => {
-            let float=res.data.float-item.auction;
-            let total=res.data.total-item.auction;
-            // 更新拍得公司资产信息
-            req.post_Param('api/statistic',{
-                'judge':4,
-                'total':total,
-                'float':float,
-                'company_id':item.company_id
+          req
+            .post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+              inout: 1,
+              type: 4,
+              kind: 3,
+              price: item.auction * 0.2,
+              number: 1,
+              me: this.company_id,
+              detail: `竞拍拒绝接收：资产类别${item.type},资产编号${
+                item.thingid
+              }，物品流拍`
             })
             .then(res => {
               swal("资金信息更新成功!", "资产信息更新成功", "success");
               // 更新竞拍单状态
-              apis.updateOneCompeteConditionById(item.id,2);
-              this.init()
-            })
-        })
+              apis.updateOneCompeteConditionById(item.id, -1);
+              this.init();
+            });
+        });
+      }
     },
-    //更新资产信息  
-    updateFixedAssetsForCommerland(m,item){  
-      // 获取商业用地详细信息
-      req.post_Param('api/commerland',{
-        'judge':6,
-        'id':item.thingid
-      })
-      .then(res=>{
-        print.log('商业用地详细信息',res.data)
-        let currentBrand=res.data.brand;
-
-        // 获取资产信息
-        req.post(m)
-        .then(res => {
-          print.log('商业用地资产信息',res.data)
-          // 计算资产差值
-          let fix=item.auction;  //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
-          //商业用地固定资产 = 目前价值 + （平均成交价 - 目前价值）* 增值空间 ，暂时这样用着。
-          let fixed=Number(res.data.fixed)+Number(fix);
-          let total=Number(res.data.total)+Number(fix)-Number(item.auction);
-          let float=res.data.float-item.auction;
-          // 品牌价值采用累加算法
-          let brand=Number(res.data.brand)+Number(100*currentBrand);
-          print.log('更新品牌价值',brand)
-          // 更新资产信息
-          req.post_Param('api/statistic',{
-              'judge':4,
-              'fixed':fixed,
-              'total':total,
-              'float':float,
-              'brand':brand,
-              'company_id':item.company_id
+    //更新固定资产
+    updateFixedAssets(m, item) {
+      req.post(m).then(res => {
+        let float = res.data.float - item.auction;
+        let total = res.data.total - item.auction;
+        // 更新拍得公司资产信息
+        req
+          .post_Param("api/statistic", {
+            judge: 4,
+            total: total,
+            float: float,
+            company_id: item.company_id
           })
           .then(res => {
-              print.log(res.data);
-              // 更新竞拍单状态
-              apis.updateOneCompeteConditionById(item.id,2);
-              swal("资金信息更新成功!", "资产信息更新成功", "success");
-              this.init()
-          })
+            swal("资金信息更新成功!", "资产信息更新成功", "success");
+            // 更新竞拍单状态
+            apis.updateOneCompeteConditionById(item.id, 2);
+            this.init();
+          });
+      });
+    },
+    //更新资产信息
+    updateFixedAssetsForCommerland(m, item) {
+      // 获取商业用地详细信息
+      req
+        .post_Param("api/commerland", {
+          judge: 6,
+          id: item.thingid
         })
+        .then(res => {
+          print.log("商业用地详细信息", res.data);
+          let currentBrand = res.data.brand;
 
-      })
+          // 获取资产信息
+          req.post(m).then(res => {
+            print.log("商业用地资产信息", res.data);
+            // 计算资产差值
+            let fix = item.auction; //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
+            //商业用地固定资产 = 目前价值 + （平均成交价 - 目前价值）* 增值空间 ，暂时这样用着。
+            let fixed = Number(res.data.fixed) + Number(fix);
+            let total =
+              Number(res.data.total) + Number(fix) - Number(item.auction);
+            let float = res.data.float - item.auction;
+            // 品牌价值采用累加算法
+            let brand = Number(res.data.brand) + Number(100 * currentBrand);
+            print.log("更新品牌价值", brand);
+            // 更新资产信息
+            req
+              .post_Param("api/statistic", {
+                judge: 4,
+                fixed: fixed,
+                total: total,
+                float: float,
+                brand: brand,
+                company_id: item.company_id
+              })
+              .then(res => {
+                print.log(res.data);
+                // 更新竞拍单状态
+                apis.updateOneCompeteConditionById(item.id, 2);
+                swal("资金信息更新成功!", "资产信息更新成功", "success");
+                this.init();
+              });
+          });
+        });
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
-      this.items=items;
+      this.items = items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let page = Number(this.currentPage) + 1;
@@ -412,8 +449,8 @@ export default {
 </script>
 
 <style>
-.important{
+.important {
   color: green;
-  font-weight: bolder
+  font-weight: bolder;
 }
 </style>

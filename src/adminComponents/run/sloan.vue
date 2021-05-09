@@ -95,7 +95,6 @@ const req = require("../../utils/axios");
 const print = require("../../utils/print");
 const apis = require("../../utils/api/apis");
 
-
 import app from "../../App.vue";
 const moment = require("moment");
 var App = app;
@@ -104,7 +103,7 @@ export default {
   name: "infocompete",
   data() {
     return {
-      Yearid:'',
+      Yearid: "",
 
       showAllLoanItem: "",
       // 分页数据
@@ -112,7 +111,7 @@ export default {
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null,
+      sumPage: null
     };
   },
   beforeMount() {
@@ -121,149 +120,161 @@ export default {
   mounted() {
     this.init();
   },
-  updated() {    
-    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+  updated() {
+    $(function() {
+      $("[data-toggle='tooltip']").tooltip();
+    });
   },
-  filters:{
+  filters: {
     formatTime(val) {
       return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatCondition(val){
-      if(val==0) return '未还贷款'
-      if(val==1) return '贷款已结清'
+    formatCondition(val) {
+      if (val == 0) return "未还贷款";
+      if (val == 1) return "贷款已结清";
     }
   },
   methods: {
-    init(){
-      this.showAllLoan()
+    init() {
+      this.showAllLoan();
     },
     // 获取自己公司竞拍情况
     showAllLoan() {
-      req.post_Param('api/ass/company_loan',{
-        'judge':4
-      })
+      req
+        .post_Param("api/ass/company_loan", {
+          judge: 4
+        })
         .then(res => {
           console.log(res.data);
           this.showAllLoanItem = res.data;
           // 分页
-          this.currentPage='0'
-          this.show(res.data)
-        })
+          this.currentPage = "0";
+          this.show(res.data);
+        });
     },
     // 强制还款
-    force(item){
-        print.log('强制还款',item)
-        apis.getOneStatisticByCompanyId(item.company_id)
-        .then(res=>{
-            let float=res.data.float-Number(item.send);
-            let total=res.data.total-Number(item.send);
-            if(res.data.float<item.send){
-                if(confirm('该公司流动资金不足以偿还贷款？是否强制还款，流动资金将变为负值。')){
-                    // 更新个人资产
-                    req.post_Param('api/statistic',{
-                        'judge':4,
-                        'total':total,
-                        'float':float,
-                        'company_id':item.company_id
-                    })
-                    // 写入交易信息
-                    req.post_Param('api/transaction',{
-                        'judge':1,
-                        'id':0,
-                        'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-                        'inout':1,
-                        'type':3,
-                        'kind':3,
-                        'price':item.send,
-                        'number':1,
-                        'me':item.company_id,
-                        'detail':`组委会强制还清贷款：${item.send}`
-                    })
-                    // 更新贷款状态
-                    req.post_Param('api/loan',{
-                      'judge':2,
-                      'id':item.id,
-                      'condition':1
-                    })
-                    .then(res => {
-                      print.log(res.data);
-                      s_alert.Success("还清贷款成功", "正在加载……", "success");
-                      // 刷新页面
-                      this.init()
-                    })
-                }else{
-                    s_alert.Success("还清贷款失败，请联系该公司。", "正在加载……", "warning");
-                }
-            }else{
-                // 更新个人资产
-                req.post_Param('api/statistic',{
-                    'judge':4,
-                    'total':total,
-                    'float':float,
-                    'company_id':item.company_id
-                })
-                // 写入交易信息
-                req.post_Param('api/transaction',{
-                    'judge':1,
-                    'id':0,
-                    'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-                    'inout':1,
-                    'type':3,
-                    'kind':3,
-                    'price':item.send,
-                    'number':1,
-                    'me':item.company_id,
-                    'detail':`组委会强制还清贷款：${item.send}`
-                })
-                // 更新贷款状态
-                req.post_Param('api/loan',{
-                    'judge':2,
-                    'id':item.id,
-                    'condition':1
-                })
-                .then(res => {
-                    print.log(res.data);
-                    s_alert.Success("还清贷款成功", "正在加载……", "success");
-                    // 刷新页面
-                    this.init()
-                })
-            }
-        })
-        
+    force(item) {
+      print.log("强制还款", item);
+      apis.getOneStatisticByCompanyId(item.company_id).then(res => {
+        let float = res.data.float - Number(item.send);
+        let total = res.data.total - Number(item.send);
+        if (res.data.float < item.send) {
+          if (
+            confirm(
+              "该公司流动资金不足以偿还贷款？是否强制还款，流动资金将变为负值。"
+            )
+          ) {
+            // 更新个人资产
+            req.post_Param("api/statistic", {
+              judge: 4,
+              total: total,
+              float: float,
+              company_id: item.company_id
+            });
+            // 写入交易信息
+            req.post_Param("api/transaction", {
+              judge: 1,
+              id: 0,
+              Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+              inout: 1,
+              type: 3,
+              kind: 3,
+              price: item.send,
+              number: 1,
+              me: item.company_id,
+              detail: `组委会强制还清贷款：${item.send}`
+            });
+            // 更新贷款状态
+            req
+              .post_Param("api/loan", {
+                judge: 2,
+                id: item.id,
+                condition: 1
+              })
+              .then(res => {
+                print.log(res.data);
+                s_alert.Success("还清贷款成功", "正在加载……", "success");
+                // 刷新页面
+                this.init();
+              });
+          } else {
+            s_alert.Success(
+              "还清贷款失败，请联系该公司。",
+              "正在加载……",
+              "warning"
+            );
+          }
+        } else {
+          // 更新个人资产
+          req.post_Param("api/statistic", {
+            judge: 4,
+            total: total,
+            float: float,
+            company_id: item.company_id
+          });
+          // 写入交易信息
+          req.post_Param("api/transaction", {
+            judge: 1,
+            id: 0,
+            Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+            inout: 1,
+            type: 3,
+            kind: 3,
+            price: item.send,
+            number: 1,
+            me: item.company_id,
+            detail: `组委会强制还清贷款：${item.send}`
+          });
+          // 更新贷款状态
+          req
+            .post_Param("api/loan", {
+              judge: 2,
+              id: item.id,
+              condition: 1
+            })
+            .then(res => {
+              print.log(res.data);
+              s_alert.Success("还清贷款成功", "正在加载……", "success");
+              // 刷新页面
+              this.init();
+            });
+        }
+      });
     },
     // 免费还款
-    free(item){
-        print.log('免费还款',item)
-        // 写入交易信息
-        req.post_Param('api/transaction',{
-            'judge':1,
-            'id':0,
-            'Yearid':JSON.parse(ses.getSes('gameinfo')).Yearid,
-            'inout':1,
-            'type':3,
-            'kind':3,
-            'price':0,
-            'number':1,
-            'me':item.company_id,
-            'detail':`组委会免费还清贷款：0`
-        })
-        // 更新贷款状态
-        req.post_Param('api/loan',{
-            'judge':2,
-            'id':item.id,
-            'condition':1
+    free(item) {
+      print.log("免费还款", item);
+      // 写入交易信息
+      req.post_Param("api/transaction", {
+        judge: 1,
+        id: 0,
+        Yearid: JSON.parse(ses.getSes("gameinfo")).Yearid,
+        inout: 1,
+        type: 3,
+        kind: 3,
+        price: 0,
+        number: 1,
+        me: item.company_id,
+        detail: `组委会免费还清贷款：0`
+      });
+      // 更新贷款状态
+      req
+        .post_Param("api/loan", {
+          judge: 2,
+          id: item.id,
+          condition: 1
         })
         .then(res => {
-            print.log(res.data);
-            s_alert.Success("还清贷款成功", "正在加载……", "success");
-            // 刷新页面
-            this.init()
-        })
+          print.log(res.data);
+          s_alert.Success("还清贷款成功", "正在加载……", "success");
+          // 刷新页面
+          this.init();
+        });
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
-      this.items=items;
+      this.items = items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let page = Number(this.currentPage) + 1;
@@ -317,5 +328,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

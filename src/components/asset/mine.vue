@@ -332,332 +332,338 @@ import app from "../../App.vue";
 var App = app;
 
 export default {
-    name: "mines",
-    data() {
-        return {
-            company_id: "",
-            Yearid: "",
+  name: "mines",
+  data() {
+    return {
+      company_id: "",
+      Yearid: "",
 
-            showCompeteMining: "",
-            showDiggerItems: "",
-            //购买挖掘机
-            haveNumber: 0,
-            number: "",
-            temp: "",
+      showCompeteMining: "",
+      showDiggerItems: "",
+      //购买挖掘机
+      haveNumber: 0,
+      number: "",
+      temp: "",
 
-            //转移挖掘机
-            kqbh: "",
-            wjjsl: "",
-            m1: "",
-            m2: "",
-            m3: 0
-        };
+      //转移挖掘机
+      kqbh: "",
+      wjjsl: "",
+      m1: "",
+      m2: "",
+      m3: 0
+    };
+  },
+  beforeMount() {
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+    this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+  },
+  mounted() {
+    this.init();
+    setTimeout(() => {
+      this.getInfo();
+    }, 10000);
+  },
+  updated() {
+    $(function() {
+      $("[data-toggle='tooltip']").tooltip();
+    });
+  },
+  filters: {
+    formatTime(x) {
+      return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
-    beforeMount() {
-        this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
-        this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    sumPrice(x, y) {
+      return x * y;
+      print.log(x, y);
     },
-    mounted() {
-        this.init();
-        setTimeout(() => {
-            this.getInfo();
-        }, 10000);
+    formatDiggerNumber(x) {
+      if (x == null) return "暂未配置挖掘机";
+      else return x;
     },
-    updated() {
-        $(function() {
-            $("[data-toggle='tooltip']").tooltip();
+    formatStar(x) {
+      if (x == 1) return "一星矿区";
+      if (x == 2) return "二星矿区";
+      if (x == 3) return "三星矿区";
+      if (x == 4) return "四星矿区";
+      if (x == 5) return "五星矿区";
+    }
+  },
+  methods: {
+    getInfo() {
+      this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
+    },
+    init() {
+      this.showMyMining();
+      this.showDigger();
+    },
+    // 点击配置挖掘机
+    openSetting(item) {
+      this.number = 0;
+      this.haveNumber = 0;
+      this.temp = item;
+      print.log("--->当前矿区配置清单", item);
+      this.showDigger();
+      this.getHaveNumber(item.id);
+    },
+    //获取当前 矿区 已有挖掘机数量
+    getHaveNumber(mid) {
+      req
+        .post_Param("api/ass/mining_digger", {
+          judge: 7,
+          mining_id: mid
+        })
+        .then(res => {
+          print.log(res.data);
+          let n = 0;
+          res.data.rows.forEach(e => {
+            n += e.number;
+          });
+          this.haveNumber = n; //当前矿区已配置挖掘机数量
         });
     },
-    filters: {
-        formatTime(x) {
-            return moment(x).format("YYYY-MM-DD HH:mm:ss");
-        },
-        sumPrice(x, y) {
-            return x * y;
-            print.log(x, y);
-        },
-        formatDiggerNumber(x) {
-            if (x == null) return "暂未配置挖掘机";
-            else return x;
-        },
-        formatStar(x) {
-            if (x == 1) return "一星矿区";
-            if (x == 2) return "二星矿区";
-            if (x == 3) return "三星矿区";
-            if (x == 4) return "四星矿区";
-            if (x == 5) return "五星矿区";
-        }
+    // 获取挖掘机移动信息
+    move(item1, item, number) {
+      print.log(item1, item, number);
+      this.m1 = item1; //所属矿区信息
+      this.m2 = item; //挖掘机信息
+      this.m3 = number; //数量
+      this.kqbh = "";
+      this.wjjsl = "";
     },
-    methods: {
-        getInfo() {
-            this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
-            this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
-        },
-        init() {
-            this.showMyMining();
-            this.showDigger();
-        },
-        // 点击配置挖掘机
-        openSetting(item) {
-            this.number = 0;
-            this.haveNumber = 0;
-            this.temp = item;
-            print.log("--->当前矿区配置清单", item);
-            this.showDigger();
-            this.getHaveNumber(item.id);
-        },
-        //获取当前 矿区 已有挖掘机数量
-        getHaveNumber(mid) {
-            req.post_Param("api/ass/mining_digger", {
-                judge: 7,
-                mining_id: mid
-            }).then(res => {
-                print.log(res.data);
-                let n = 0;
-                res.data.rows.forEach(e => {
-                    n += e.number;
-                });
-                this.haveNumber = n; //当前矿区已配置挖掘机数量
-            });
-        },
-        // 获取挖掘机移动信息
-        move(item1, item, number) {
-            print.log(item1, item, number);
-            this.m1 = item1; //所属矿区信息
-            this.m2 = item; //挖掘机信息
-            this.m3 = number; //数量
-            this.kqbh = "";
-            this.wjjsl = "";
-        },
-        // 移动挖掘机
-        moveDigger() {
-            print.log("当前矿区", this.m1.id, "移动矿区", this.kqbh);
-            if (this.m1.id == this.kqbh) {
-                s_alert.Success(
-                    "不能转移矿区给自己哦",
-                    "矿区转移失败",
-                    "warning"
-                );
-                return;
+    // 移动挖掘机
+    moveDigger() {
+      print.log("当前矿区", this.m1.id, "移动矿区", this.kqbh);
+      if (this.m1.id == this.kqbh) {
+        s_alert.Success("不能转移矿区给自己哦", "矿区转移失败", "warning");
+        return;
+      }
+      //查询有无相同挖掘机,无则创建
+      req
+        .post(
+          `api/ass/mining_digger?judge=10&mining_id=${this.kqbh}&digger_id=${
+            this.m2.id
+          }&id=0&number=${this.wjjsl}`
+        )
+        .then(res => {
+          print.log("矿区有无此类挖掘机", res.data);
+          let number = Number(res.data[0].number) + Number(this.wjjsl);
+          if (!res.data[1]) {
+            if (res.data[0].condition != 0) {
+              s_alert.Success(
+                "对方此类型挖掘机正在工作中",
+                "矿区正在被此类型的挖掘机开采时，不能转移此类挖掘机",
+                "warning"
+              );
+              return;
             }
-            //查询有无相同挖掘机,无则创建
+            //减少自己挖掘机数量
             req.post(
-                `api/ass/mining_digger?judge=10&mining_id=${this.kqbh}&digger_id=${this.m2.id}&id=0&number=${this.wjjsl}`
-            ).then(res => {
-                print.log("矿区有无此类挖掘机", res.data);
-                let number = Number(res.data[0].number) + Number(this.wjjsl);
-                if (!res.data[1]) {
-                    if (res.data[0].condition != 0) {
-                        s_alert.Success(
-                            "对方此类型挖掘机正在工作中",
-                            "矿区正在被此类型的挖掘机开采时，不能转移此类挖掘机",
-                            "warning"
-                        );
-                        return;
-                    }
-                    //减少自己挖掘机数量
-                    req.post(
-                        `api/ass/mining_digger?judge=6&mining_id=${
-                            this.m1.id
-                        }&digger_id=${this.m2.id}&number=${Number(this.m3) -
-                            Number(this.wjjsl)}`
-                    );
-                    // 增加对面的挖掘机数量
-                    req.post(
-                        `api/ass/mining_digger?judge=6&mining_id=${res.data[0].mining_id}&digger_id=${res.data[0].digger_id}&number=${number}`
-                    );
-                } else {
-                    //减少自己挖掘机数量
-                    req.post(
-                        `api/ass/mining_digger?judge=6&mining_id=${
-                            this.m1.id
-                        }&digger_id=${this.m2.id}&number=${Number(this.m3) -
-                            Number(this.wjjsl)}`
-                    );
-                }
-                s_alert.Success("挖掘机转移成功~", "操作完成", "success");
-                this.init();
-            });
-        },
-        //购买挖掘机 绑定 到矿区
-        sendPrice(item, money, number, digger_id) {
-            print.log("当前挖掘机", this.temp, "购买挖掘机", item);
-            if (this.temp.diggers.length == 0)
-                this.getDigger(item, money, number, digger_id);
-            else {
-                for (let i = 0; i < this.temp.diggers.length; i++) {
-                    let judge = false; // 判断有无相同挖掘机
-                    const e = this.temp.diggers[i];
-                    if (e.id == item.id) {
-                        judge = true; // 意思为找到了，有对应的挖掘机
-                        if (
-                            e.mining_digger.condition == 1 ||
-                            e.mining_digger.condition == 2
-                        ) {
-                            s_alert.Success(
-                                "此类型挖掘机正在工作中",
-                                "矿区正在被此类型的挖掘机开采时，不能在此矿区购买此类挖掘机",
-                                "warning"
-                            );
-                            break;
-                        } else if (e.mining_digger.condition == 0) {
-                            this.getDigger(item, money, number, digger_id);
-                            break;
-                        }
-                    } else {
-                        if (i == this.temp.diggers.length - 1 && !judge) {
-                            this.getDigger(item, money, number, digger_id);
-                            break;
-                        } else continue;
-                    }
-                }
+              `api/ass/mining_digger?judge=6&mining_id=${
+                this.m1.id
+              }&digger_id=${this.m2.id}&number=${Number(this.m3) -
+                Number(this.wjjsl)}`
+            );
+            // 增加对面的挖掘机数量
+            req.post(
+              `api/ass/mining_digger?judge=6&mining_id=${
+                res.data[0].mining_id
+              }&digger_id=${res.data[0].digger_id}&number=${number}`
+            );
+          } else {
+            //减少自己挖掘机数量
+            req.post(
+              `api/ass/mining_digger?judge=6&mining_id=${
+                this.m1.id
+              }&digger_id=${this.m2.id}&number=${Number(this.m3) -
+                Number(this.wjjsl)}`
+            );
+          }
+          s_alert.Success("挖掘机转移成功~", "操作完成", "success");
+          this.init();
+        });
+    },
+    //购买挖掘机 绑定 到矿区
+    sendPrice(item, money, number, digger_id) {
+      print.log("当前挖掘机", this.temp, "购买挖掘机", item);
+      if (this.temp.diggers.length == 0)
+        this.getDigger(item, money, number, digger_id);
+      else {
+        for (let i = 0; i < this.temp.diggers.length; i++) {
+          let judge = false; // 判断有无相同挖掘机
+          const e = this.temp.diggers[i];
+          if (e.id == item.id) {
+            judge = true; // 意思为找到了，有对应的挖掘机
+            if (
+              e.mining_digger.condition == 1 ||
+              e.mining_digger.condition == 2
+            ) {
+              s_alert.Success(
+                "此类型挖掘机正在工作中",
+                "矿区正在被此类型的挖掘机开采时，不能在此矿区购买此类挖掘机",
+                "warning"
+              );
+              break;
+            } else if (e.mining_digger.condition == 0) {
+              this.getDigger(item, money, number, digger_id);
+              break;
             }
-        },
-        // 购买挖掘机
-        getDigger(item, money, number, digger_id) {
-            // 执行购买挖掘机
-            let that = this;
-            // 查询个人资产
-            apis.getOneStatisticByCompanyId(that.company_id).then(res => {
-                if (res.data.float >= money) {
-                    let float = res.data.float - money;
-                    let fixed = Number(res.data.fixed) + Number(money);
-                    // 更新个人资产
-                    req.post(
-                        `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`
-                    );
-                    // 绑定挖掘机
-                    req.post_Param("api/ass/mining_digger", {
-                        judge: 1,
-                        mining_id: that.temp.id,
-                        digger_id: digger_id
-                    }).then(res => {
-                        // 写入交易信息
-                        req.post_Param("api/transaction", {
-                            judge: 1,
-                            id: 0,
-                            Yearid: that.Yearid,
-                            inout: 1,
-                            type: 4,
-                            kind: 3,
-                            price: money / number,
-                            number: number,
-                            me: that.company_id,
-                            digger_id: digger_id
-                        });
-                        // 更新页面
-                        that.init();
-                        // 更新数量
-                        that.sendNumber(item);
-                    });
-                } else {
-                    s_alert.Success(
-                        "下单失败",
-                        "可用流动资金不足……",
-                        "warning"
-                    );
-                }
+          } else {
+            if (i == this.temp.diggers.length - 1 && !judge) {
+              this.getDigger(item, money, number, digger_id);
+              break;
+            } else continue;
+          }
+        }
+      }
+    },
+    // 购买挖掘机
+    getDigger(item, money, number, digger_id) {
+      // 执行购买挖掘机
+      let that = this;
+      // 查询个人资产
+      apis.getOneStatisticByCompanyId(that.company_id).then(res => {
+        if (res.data.float >= money) {
+          let float = res.data.float - money;
+          let fixed = Number(res.data.fixed) + Number(money);
+          // 更新个人资产
+          req.post(
+            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${
+              that.company_id
+            }`
+          );
+          // 绑定挖掘机
+          req
+            .post_Param("api/ass/mining_digger", {
+              judge: 1,
+              mining_id: that.temp.id,
+              digger_id: digger_id
+            })
+            .then(res => {
+              // 写入交易信息
+              req.post_Param("api/transaction", {
+                judge: 1,
+                id: 0,
+                Yearid: that.Yearid,
+                inout: 1,
+                type: 4,
+                kind: 3,
+                price: money / number,
+                number: number,
+                me: that.company_id,
+                digger_id: digger_id
+              });
+              // 更新页面
+              that.init();
+              // 更新数量
+              that.sendNumber(item);
             });
-        },
-        //更改 挖掘机 数量
-        sendNumber(item) {
-            try {
-                let n1 = 0;
-                for (let i = 0; i < this.temp.diggers.length; i++) {
-                    const e = this.temp.diggers[i];
-                    if (e.id == item.id) n1 += e.mining_digger.number;
-                }
-                let addNumber = Number(n1) + Number(this.number);
-                // 更新矿区挖掘机数量
-                req.post_Param("api/ass/mining_digger", {
-                    judge: 6,
-                    mining_id: this.temp.id,
-                    digger_id: item.id,
-                    number: addNumber
-                }).then(res => {
-                    if (res) {
-                        s_alert.Success("下单成功", "正在加载……", "success");
-                        this.init();
-                    } else {
-                        s_alert.Success("下单失败", "正在加载……", "success");
-                    }
-                });
-            } catch (error) {
-                let addNumber = Number(this.number);
-                // 更新矿区挖掘机数量
-                req.post_Param("api/ass/mining_digger", {
-                    judge: 6,
-                    mining_id: this.temp.id,
-                    digger_id: item.id,
-                    number: addNumber
-                }).then(res => {
-                    if (res) {
-                        s_alert.Success("下单成功", "正在加载……", "success");
-                        this.init();
-                    } else {
-                        s_alert.Success("下单失败", "正在加载……", "success");
-                    }
-                });
+        } else {
+          s_alert.Success("下单失败", "可用流动资金不足……", "warning");
+        }
+      });
+    },
+    //更改 挖掘机 数量
+    sendNumber(item) {
+      try {
+        let n1 = 0;
+        for (let i = 0; i < this.temp.diggers.length; i++) {
+          const e = this.temp.diggers[i];
+          if (e.id == item.id) n1 += e.mining_digger.number;
+        }
+        let addNumber = Number(n1) + Number(this.number);
+        // 更新矿区挖掘机数量
+        req
+          .post_Param("api/ass/mining_digger", {
+            judge: 6,
+            mining_id: this.temp.id,
+            digger_id: item.id,
+            number: addNumber
+          })
+          .then(res => {
+            if (res) {
+              s_alert.Success("下单成功", "正在加载……", "success");
+              this.init();
+            } else {
+              s_alert.Success("下单失败", "正在加载……", "success");
             }
-        },
-        // 检查矿区挖掘机数量限制
-        checkMaxNumber() {
-            if (Number(this.number) + Number(this.haveNumber) > 4) {
-                s_alert.Success(
-                    "矿区挖掘机数量不超过4个",
-                    "正在加载……",
-                    "warning"
-                );
+          });
+      } catch (error) {
+        let addNumber = Number(this.number);
+        // 更新矿区挖掘机数量
+        req
+          .post_Param("api/ass/mining_digger", {
+            judge: 6,
+            mining_id: this.temp.id,
+            digger_id: item.id,
+            number: addNumber
+          })
+          .then(res => {
+            if (res) {
+              s_alert.Success("下单成功", "正在加载……", "success");
+              this.init();
+            } else {
+              s_alert.Success("下单失败", "正在加载……", "success");
             }
-        },
-        //显示已购 矿区
-        showMyMining() {
-            req.post_Param("api/ass/mining_digger", {
-                judge: 5,
-                company_id: this.company_id
-            }).then(res => {
-                this.showCompeteMining = res.data;
-                print.log("显示已购 矿区", this.showCompeteMining);
-            });
-        },
-        //显示 挖掘机 信息
-        showDigger() {
-            req.post_Param("api/digger", { judge: 0 }).then(res => {
-                print.log("显示 挖掘机 信息", res.data);
-                this.showDiggerItems = res.data;
-            });
-        },
-        // 矿区回购  管理员端已有
-        // async bacgMining(item) {
-        //     print.log("矿区回购信息", item);
-        //     // 1.增加流动资金（回购价值）
-        //     let res = await req.post(`api/statistic?judge=5&company_id=${this.company_id}`)
-        //     let float = res.data.float + item.repurchase;
-        //     // let total = res.data.total + item.repurchase;
-        //     print.log('公司资产变化',res.data.float,float)
-        //     // 更新公司资产信息
-        //     await req.post_Param("api/statistic", {
-        //         judge: 4,
-        //         // total: total,
-        //         float,
-        //         company_id: this.company_id
-        //     })
-        //     // 2.更新矿区状态 condition -3
-        //     await req.post(`api/mining?judge=2&id=${item.id}&condition=-3`)
-        //     // 3.写入交易
-
-        //     swal("矿区回购成功!", "操作成功", "success");
-        //     this.init();
-        // }
+          });
+      }
+    },
+    // 检查矿区挖掘机数量限制
+    checkMaxNumber() {
+      if (Number(this.number) + Number(this.haveNumber) > 4) {
+        s_alert.Success("矿区挖掘机数量不超过4个", "正在加载……", "warning");
+      }
+    },
+    //显示已购 矿区
+    showMyMining() {
+      req
+        .post_Param("api/ass/mining_digger", {
+          judge: 5,
+          company_id: this.company_id
+        })
+        .then(res => {
+          this.showCompeteMining = res.data;
+          print.log("显示已购 矿区", this.showCompeteMining);
+        });
+    },
+    //显示 挖掘机 信息
+    showDigger() {
+      req.post_Param("api/digger", { judge: 0 }).then(res => {
+        print.log("显示 挖掘机 信息", res.data);
+        this.showDiggerItems = res.data;
+      });
     }
+    // 矿区回购  管理员端已有
+    // async bacgMining(item) {
+    //     print.log("矿区回购信息", item);
+    //     // 1.增加流动资金（回购价值）
+    //     let res = await req.post(`api/statistic?judge=5&company_id=${this.company_id}`)
+    //     let float = res.data.float + item.repurchase;
+    //     // let total = res.data.total + item.repurchase;
+    //     print.log('公司资产变化',res.data.float,float)
+    //     // 更新公司资产信息
+    //     await req.post_Param("api/statistic", {
+    //         judge: 4,
+    //         // total: total,
+    //         float,
+    //         company_id: this.company_id
+    //     })
+    //     // 2.更新矿区状态 condition -3
+    //     await req.post(`api/mining?judge=2&id=${item.id}&condition=-3`)
+    //     // 3.写入交易
+
+    //     swal("矿区回购成功!", "操作成功", "success");
+    //     this.init();
+    // }
+  }
 };
 </script>
 
 <style>
 .using {
-    background-color: yellow;
+  background-color: yellow;
 }
 .free {
-    background-color: yellowgreen;
+  background-color: yellowgreen;
 }
 </style>

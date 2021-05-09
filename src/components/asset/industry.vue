@@ -237,34 +237,34 @@ export default {
   name: "industry",
   data() {
     return {
-      company_id:'',
-      Yearid:'',
+      company_id: "",
+      Yearid: "",
 
-      showCompeteIndusland:'',
-      showLineItem:'',
-      showFactoryItem:'',
-      showInduslandFactoryLineItem:'',
+      showCompeteIndusland: "",
+      showLineItem: "",
+      showFactoryItem: "",
+      showInduslandFactoryLineItem: "",
       //处理选择 配置工厂 or 生产线
-      chooseFunction:'',
-      chooseLineByFactoryIdNumber:'',
-      currentChoosedFactoryItem:'',
-      currentChoosedFactoryHaveLineTotal:0,
+      chooseFunction: "",
+      chooseLineByFactoryIdNumber: "",
+      currentChoosedFactoryItem: "",
+      currentChoosedFactoryHaveLineTotal: 0,
       //暂存 工业用地-工厂 中间表 id
-      tempInduslandFactoryId:'',
+      tempInduslandFactoryId: "",
       // 购买清单
       number: "",
-      temp:'',  //-->item1
-      temp1:'',   //-->item
-      currentIndustryHaveFactory:'',
-      currentIndustryHaveUsedTotalMeasure:''
+      temp: "", //-->item1
+      temp1: "", //-->item
+      currentIndustryHaveFactory: "",
+      currentIndustryHaveUsedTotalMeasure: ""
     };
   },
-  beforeMount(){
+  beforeMount() {
     this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-    this.init()
+    this.init();
     // 实时获取info
     setTimeout(() => {
       this.getInfo();
@@ -278,358 +278,406 @@ export default {
       return x * y;
       print.log(x, y);
     },
-    formatConrequire(x){
-      if(x==1) return '无要求';
-      if(x==2) return '大型工厂';
-      if(x==3) return '巨无霸工厂';
-      if(x==4) return '富士康工厂';
+    formatConrequire(x) {
+      if (x == 1) return "无要求";
+      if (x == 2) return "大型工厂";
+      if (x == 3) return "巨无霸工厂";
+      if (x == 4) return "富士康工厂";
     },
-    formatmodel(x){
-      if(x==1) return 'A'
-      if(x==2) return 'Z'
-      if(x==3) return 'C'
-      if(x==4) return 'S'
-    },
+    formatmodel(x) {
+      if (x == 1) return "A";
+      if (x == 2) return "Z";
+      if (x == 3) return "C";
+      if (x == 4) return "S";
+    }
   },
   methods: {
-    getInfo(){
+    getInfo() {
       this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
       this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
     },
-    init(){
+    init() {
       this.showMyIndusland();
       this.showInduslandFactoryLine();
-      this.showAllFactory()  //获取工厂列表
+      this.showAllFactory(); //获取工厂列表
     },
     //配置工厂 & 生产线
-    openSetting(item,item1,choose) {
-
-      if(Number(choose)==0){
+    openSetting(item, item1, choose) {
+      if (Number(choose) == 0) {
         //处理选择 配置工厂 or 配置生产线
-        this.chooseFunction=0
+        this.chooseFunction = 0;
 
-        this.number=0
-        this.haveNumber=0
-        this.temp=item1
-        print.log('当前选中的工业用地->',this.temp)
-        this.getCurrentIndustryHaveFactory(item1)
-      }
-      
-      else if(Number(choose)==1){
+        this.number = 0;
+        this.haveNumber = 0;
+        this.temp = item1;
+        print.log("当前选中的工业用地->", this.temp);
+        this.getCurrentIndustryHaveFactory(item1);
+      } else if (Number(choose) == 1) {
         //获取工厂ID进行选择 生产线 页面渲染
-        this.chooseLineByFactoryIdNumber=item1.id
-        this.showFactoryItem.forEach(e => {  //查找容纳生产线数量
-          if(Number(item1.id)==Number(e.id)){
-            this.currentChoosedFactoryItem=e
+        this.chooseLineByFactoryIdNumber = item1.id;
+        this.showFactoryItem.forEach(e => {
+          //查找容纳生产线数量
+          if (Number(item1.id) == Number(e.id)) {
+            this.currentChoosedFactoryItem = e;
           }
         });
-        print.log('当前选择的工厂信息来配置生产线',this.currentChoosedFactoryItem)
+        print.log(
+          "当前选择的工厂信息来配置生产线",
+          this.currentChoosedFactoryItem
+        );
         //处理选择 配置工厂 or 配置生产线
-        this.chooseFunction=1
+        this.chooseFunction = 1;
 
-        this.number=0
-        this.haveNumber=0
-        this.temp=item1
-        this.temp1=item
-        print.log('中间表与line关联数据',this.showInduslandFactoryLineItem)
-        print.log('当前选中的工厂->',this.temp)
-        
-        this.showAllLine();   //获取生产线列表
-        this.getInduslandFactoryId(item.id,item1.id) //获取工业用地-工厂 中间表id，来配置新生产线
+        this.number = 0;
+        this.haveNumber = 0;
+        this.temp = item1;
+        this.temp1 = item;
+        print.log("中间表与line关联数据", this.showInduslandFactoryLineItem);
+        print.log("当前选中的工厂->", this.temp);
+
+        this.showAllLine(); //获取生产线列表
+        this.getInduslandFactoryId(item.id, item1.id); //获取工业用地-工厂 中间表id，来配置新生产线
       }
     },
     //查询 当前 工业用不同工厂数量
-    getCurrentIndustryHaveFactory(item1) {      
-      req.post_Param('api/ass/indusland_factory',{
-        'judge':6,
-        'indusland_id':item1.id
-      })
-      .then(res => {       
-        print.log(res.data)  
-        this.currentIndustryHaveFactory=res.data
-        //获取面积使用情况
-        let tempMeasure=0;
-        res.data.rows.forEach(e => {
-          this.temp.factories.forEach(el => {
-            if(el.id==e.factory_id) {
-              tempMeasure+=el.measure*e.number;
-            }
+    getCurrentIndustryHaveFactory(item1) {
+      req
+        .post_Param("api/ass/indusland_factory", {
+          judge: 6,
+          indusland_id: item1.id
+        })
+        .then(res => {
+          print.log(res.data);
+          this.currentIndustryHaveFactory = res.data;
+          //获取面积使用情况
+          let tempMeasure = 0;
+          res.data.rows.forEach(e => {
+            this.temp.factories.forEach(el => {
+              if (el.id == e.factory_id) {
+                tempMeasure += el.measure * e.number;
+              }
+            });
           });
+          print.log("面积使用情况->", tempMeasure);
+          this.currentIndustryHaveUsedTotalMeasure = tempMeasure;
         });
-        print.log('面积使用情况->',tempMeasure)
-        this.currentIndustryHaveUsedTotalMeasure=tempMeasure
-      })
     },
     //购买工厂 绑定 到工业用地
-    sendPriceToFactory(item,money,number,factory_id) {      
-      let that=this;
+    sendPriceToFactory(item, money, number, factory_id) {
+      let that = this;
       // 查询资产信息
-      apis.getOneStatisticByCompanyId(that.company_id)
-      .then(res => {
-        if(res.data.float>=money){
-          let float=res.data.float-money;
-          let fixed=Number(res.data.fixed)+Number(money);
+      apis.getOneStatisticByCompanyId(that.company_id).then(res => {
+        if (res.data.float >= money) {
+          let float = res.data.float - money;
+          let fixed = Number(res.data.fixed) + Number(money);
           // 更新资产信息
-          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`)
+          req.post(
+            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${
+              that.company_id
+            }`
+          );
           // 绑定工业用地
-          req.post(`api/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${factory_id}`)  // this.temp选择的工业用地
-          .then(res => {
-            if(res){
-              // 更新数量
-              that.sendNumber(item)           
-              // 写入交易
-              req.post(`api/transaction?judge=1&id=0&Yearid=${that.Yearid}&inout=1&type=4&kind=3&price=${money/number}&number=${number}&me=${that.company_id}&factory_id=${factory_id}`)
-            }else{
-              s_alert.Success("下单失败", "正在加载……", "success");
-            }
-          })
-        }else{
+          req
+            .post(
+              `api/ass/indusland_factory?judge=1&indusland_id=${
+                this.temp.id
+              }&factory_id=${factory_id}`
+            ) // this.temp选择的工业用地
+            .then(res => {
+              if (res) {
+                // 更新数量
+                that.sendNumber(item);
+                // 写入交易
+                req.post(
+                  `api/transaction?judge=1&id=0&Yearid=${
+                    that.Yearid
+                  }&inout=1&type=4&kind=3&price=${money /
+                    number}&number=${number}&me=${
+                    that.company_id
+                  }&factory_id=${factory_id}`
+                );
+              } else {
+                s_alert.Success("下单失败", "正在加载……", "success");
+              }
+            });
+        } else {
           s_alert.Success("下单失败", "可用流动资金不足……", "warning");
-        }        
-      })
+        }
+      });
     },
     sendNumber(item) {
       //更改 工厂 数量
-      let that=this
-      print.log(that.temp,item)      
+      let that = this;
+      print.log(that.temp, item);
       try {
-        let n1=0;
+        let n1 = 0;
         for (let i = 0; i < this.temp.factories.length; i++) {
           const e = this.temp.factories[i];
-          if(e.id==item.id) n1+=e.indusland_factory.number;
+          if (e.id == item.id) n1 += e.indusland_factory.number;
         }
-        let addNumber= Number(n1) + Number(that.number)
-        req.post_Param('api/ass/indusland_factory',{
-          judge:5,
-          indusland_id:that.temp.id,
-          factory_id:item.id,
-          number:addNumber
-        })
-        .then(res => {       
-          print.log(res.data)   
-          if(res){
-            s_alert.Success("下单成功", "正在加载……", "success");
-            that.init()
-          }else{
-            s_alert.Success("下单失败", "正在加载……", "success");
-          }
-        })
-      } 
-      catch (error) {
-        let addNumber= Number(that.number)
-        print.log(addNumber)
-        req.post_Param('api/ass/indusland_factory',{
-          'judge':5,
-          'indusland_id':that.temp.id,
-          'factory_id':item.id,
-          'number':addNumber
-        })
-        .then(res => {       
-          print.log(res.data)   
-          if(res){
-            s_alert.Success("下单成功", "正在加载……", "success");
-            that.init()
-          }else{
-            s_alert.Success("下单失败", "正在加载……", "success");
-          }
-        })
-      }     
+        let addNumber = Number(n1) + Number(that.number);
+        req
+          .post_Param("api/ass/indusland_factory", {
+            judge: 5,
+            indusland_id: that.temp.id,
+            factory_id: item.id,
+            number: addNumber
+          })
+          .then(res => {
+            print.log(res.data);
+            if (res) {
+              s_alert.Success("下单成功", "正在加载……", "success");
+              that.init();
+            } else {
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          });
+      } catch (error) {
+        let addNumber = Number(that.number);
+        print.log(addNumber);
+        req
+          .post_Param("api/ass/indusland_factory", {
+            judge: 5,
+            indusland_id: that.temp.id,
+            factory_id: item.id,
+            number: addNumber
+          })
+          .then(res => {
+            print.log(res.data);
+            if (res) {
+              s_alert.Success("下单成功", "正在加载……", "success");
+              that.init();
+            } else {
+              s_alert.Success("下单失败", "正在加载……", "success");
+            }
+          });
+      }
     },
     //获取工业用地-工厂 中间表id，来配置新生产线
-    getInduslandFactoryId(indusland_id,factory_id) {
-      req.post_Param('api/ass/indusland_factory',{
-        'judge':7,
-        'indusland_id':indusland_id,
-        'factory_id':factory_id
-      })
-        .then(res => {
-          if(res){
-            print.log(res.data)
-            this.tempInduslandFactoryId=res.data.id
-            this.getTotalFactoryHaveLine();
-          }else{
-            s_alert.Success("获取工业用地-工厂 中间表id失败", "正在加载……", "warning");
-          }
+    getInduslandFactoryId(indusland_id, factory_id) {
+      req
+        .post_Param("api/ass/indusland_factory", {
+          judge: 7,
+          indusland_id: indusland_id,
+          factory_id: factory_id
         })
+        .then(res => {
+          if (res) {
+            print.log(res.data);
+            this.tempInduslandFactoryId = res.data.id;
+            this.getTotalFactoryHaveLine();
+          } else {
+            s_alert.Success(
+              "获取工业用地-工厂 中间表id失败",
+              "正在加载……",
+              "warning"
+            );
+          }
+        });
     },
     //获取当前工厂已有生产线总数
-    getTotalFactoryHaveLine(){       
-        let total=0;
-        this.showInduslandFactoryLineItem.forEach(el => {
-          if(Number(el.id)==Number(this.tempInduslandFactoryId)){
-            el.lines.forEach(element => {
-              total+=element.indusland_factory_line.number
-            });
-          }
-        });    
-        this.currentChoosedFactoryHaveLineTotal=total;
+    getTotalFactoryHaveLine() {
+      let total = 0;
+      this.showInduslandFactoryLineItem.forEach(el => {
+        if (Number(el.id) == Number(this.tempInduslandFactoryId)) {
+          el.lines.forEach(element => {
+            total += element.indusland_factory_line.number;
+          });
+        }
+      });
+      this.currentChoosedFactoryHaveLineTotal = total;
     },
     //购买生产线 绑定 到工厂
-    sendPriceToLine(item,index,money,number,line_id) {
-      req.post_Param('api/ass/indusland_factory_line',{
-        'judge':8,
-        'indusland_factory_id':this.tempInduslandFactoryId
-      })
-      .then(res=>{
-        print.log('已有',res.data[0].lines,'购买',item)
-        if(res.data[0].lines.length == 0) this.getLine(item,index,money,number,line_id);
-        else {
-          for (let i = 0; i <res.data[0].lines.length ; i++) {
-            let judge = false;
-            let e = res.data[0].lines[i];
-            if(e.id == item.id){
-              judge = true;
-              if(e.indusland_factory_line.condition == 1 || e.indusland_factory_line.condition == 2){
-                s_alert.Success('此类型生产线正在工作中','工业用地正在使用此类型生产线时，不能购买此类生产线','warning');
-                break;
-              }else if(e.indusland_factory_line.condition == 0){
-                this.getLine(item,index,money,number,line_id);
-                break;
+    sendPriceToLine(item, index, money, number, line_id) {
+      req
+        .post_Param("api/ass/indusland_factory_line", {
+          judge: 8,
+          indusland_factory_id: this.tempInduslandFactoryId
+        })
+        .then(res => {
+          print.log("已有", res.data[0].lines, "购买", item);
+          if (res.data[0].lines.length == 0)
+            this.getLine(item, index, money, number, line_id);
+          else {
+            for (let i = 0; i < res.data[0].lines.length; i++) {
+              let judge = false;
+              let e = res.data[0].lines[i];
+              if (e.id == item.id) {
+                judge = true;
+                if (
+                  e.indusland_factory_line.condition == 1 ||
+                  e.indusland_factory_line.condition == 2
+                ) {
+                  s_alert.Success(
+                    "此类型生产线正在工作中",
+                    "工业用地正在使用此类型生产线时，不能购买此类生产线",
+                    "warning"
+                  );
+                  break;
+                } else if (e.indusland_factory_line.condition == 0) {
+                  this.getLine(item, index, money, number, line_id);
+                  break;
+                }
+              } else {
+                if (i == res.data[0].lines.length - 1 && !judge) {
+                  this.getLine(item, index, money, number, line_id);
+                  break;
+                } else continue;
               }
-            }else{
-              if( i == res.data[0].lines.length-1 && !judge){
-                this.getLine(item,index,money,number,line_id);
-                break;
-              }else continue;
-            };
+            }
           }
-        }
-      })        
+        });
     },
     // 购买生产线
-    getLine(item,index,money,number,line_id){
-      let that=this
+    getLine(item, index, money, number, line_id) {
+      let that = this;
       // 获取资产信息
-      apis.getOneStatisticByCompanyId(that.company_id)
-      .then(res => {
-        if(res.data.float>=money){
-          let float=res.data.float-money;
-          let fixed=Number(res.data.fixed)+Number(money);
+      apis.getOneStatisticByCompanyId(that.company_id).then(res => {
+        if (res.data.float >= money) {
+          let float = res.data.float - money;
+          let fixed = Number(res.data.fixed) + Number(money);
           // 更新个人资产
-          req.post(`api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`);
+          req.post(
+            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${
+              that.company_id
+            }`
+          );
           // 绑定生产线
-          req.post(`api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`)
-          .then(res => {
-            if(res){
-              // 更新页面
-            //   that.init()
-              that.sendLineNumber(item)
-              // 写入交易信息
-              req.post_Param('api/transaction',{
-                'judge':1,
-                'id':0,
-                'Yearid':that.Yearid,
-                'inout':1,
-                'type':4,
-                'kind':3,
-                'price':money/number,
-                'number':number,
-                'me':that.company_id,
-                'line_id':line_id
-              })
-            }else{
-              s_alert.Success("下单失败", "正在加载……", "warning");
-            }
-          })
-        }else{
+          req
+            .post(
+              `api/ass/indusland_factory_line?judge=1&indusland_factory_id=${
+                this.tempInduslandFactoryId
+              }&line_id=${line_id}`
+            )
+            .then(res => {
+              if (res) {
+                // 更新页面
+                //   that.init()
+                that.sendLineNumber(item);
+                // 写入交易信息
+                req.post_Param("api/transaction", {
+                  judge: 1,
+                  id: 0,
+                  Yearid: that.Yearid,
+                  inout: 1,
+                  type: 4,
+                  kind: 3,
+                  price: money / number,
+                  number: number,
+                  me: that.company_id,
+                  line_id: line_id
+                });
+              } else {
+                s_alert.Success("下单失败", "正在加载……", "warning");
+              }
+            });
+        } else {
           s_alert.Success("下单失败", "可用流动资金不足……", "warning");
         }
-      })
+      });
     },
     sendLineNumber(item) {
       //更改 生产线 数量
-      let that=this        
+      let that = this;
       try {
-        let tid=null;
+        let tid = null;
         for (let i = 0; i < this.showInduslandFactoryLineItem.length; i++) {
           const e = this.showInduslandFactoryLineItem[i];
-          if(e.id==this.tempInduslandFactoryId) {
-            tid=i; 
+          if (e.id == this.tempInduslandFactoryId) {
+            tid = i;
           }
         }
-        let tid1=null;
-        for (let j = 0; j < this.showInduslandFactoryLineItem[tid].lines.length; j++) {
+        let tid1 = null;
+        for (
+          let j = 0;
+          j < this.showInduslandFactoryLineItem[tid].lines.length;
+          j++
+        ) {
           const e = this.showInduslandFactoryLineItem[tid].lines[j];
-          if(e.id==item.id) {
-            tid1=j; 
-          }    
+          if (e.id == item.id) {
+            tid1 = j;
+          }
         }
-        print.log('定位数量单元',tid1)
-        let addNumber= Number(this.showInduslandFactoryLineItem[tid].lines[tid1].indusland_factory_line.number) + Number(that.number)
-        print.log(addNumber)
-        // 更新数量 
-        that.updateLineNumber(item,addNumber);
+        print.log("定位数量单元", tid1);
+        let addNumber =
+          Number(
+            this.showInduslandFactoryLineItem[tid].lines[tid1]
+              .indusland_factory_line.number
+          ) + Number(that.number);
+        print.log(addNumber);
+        // 更新数量
+        that.updateLineNumber(item, addNumber);
       } catch (error) {
-        let addNumber= Number(that.number)
-        // 更新数量 
-        that.updateLineNumber(item,addNumber);
-      }    
+        let addNumber = Number(that.number);
+        // 更新数量
+        that.updateLineNumber(item, addNumber);
+      }
     },
     // 更新数量 # condition设置为 0 状态(0未工作，1工作中，2工作完成)#
-    updateLineNumber( item,addNumber ){
-        let that = this;
-        req.post_Param('api/ass/indusland_factory_line',{
-          'judge':6,
-          'indusland_factory_id':this.tempInduslandFactoryId,
-          'line_id':item.id,
-          'number':addNumber,
-          'condition':0
+    updateLineNumber(item, addNumber) {
+      let that = this;
+      req
+        .post_Param("api/ass/indusland_factory_line", {
+          judge: 6,
+          indusland_factory_id: this.tempInduslandFactoryId,
+          line_id: item.id,
+          number: addNumber,
+          condition: 0
         })
-        .then(res => {       
-          that.init()
-          print.log(res.data)   
-          if(res){
+        .then(res => {
+          that.init();
+          print.log(res.data);
+          if (res) {
             s_alert.Success("下单成功", "正在加载……", "success");
-          }else{
+          } else {
             s_alert.Success("下单失败", "正在加载……", "success");
           }
-        })
+        });
     },
     //显示已购 工业用地
     showMyIndusland() {
-      req.post_Param('api/ass/indusland_factory',{
-        'judge':4,
-        'company_id':this.company_id
-      })
-        .then(res => {          
-          this.showCompeteIndusland=res.data;
-          print.log('工业用地-工厂 对应关系',this.showCompeteIndusland)
+      req
+        .post_Param("api/ass/indusland_factory", {
+          judge: 4,
+          company_id: this.company_id
         })
+        .then(res => {
+          this.showCompeteIndusland = res.data;
+          print.log("工业用地-工厂 对应关系", this.showCompeteIndusland);
+        });
     },
     //显示 工厂
     showAllFactory() {
-      req.post_Param('api/factory',{'judge':0})
-        .then(res => {
-          print.log('不同种类的生产线',res.data);
-          this.showFactoryItem = res.data;
-        })
+      req.post_Param("api/factory", { judge: 0 }).then(res => {
+        print.log("不同种类的生产线", res.data);
+        this.showFactoryItem = res.data;
+      });
     },
-    //显示 生产线 
-    showAllLine() {      
-      req.post_Param('api/line',{'judge':0})
-        .then(res => {
-          print.log('不同种类的生产线',res.data);
-          this.showLineItem = res.data;
-        })
+    //显示 生产线
+    showAllLine() {
+      req.post_Param("api/line", { judge: 0 }).then(res => {
+        print.log("不同种类的生产线", res.data);
+        this.showLineItem = res.data;
+      });
     },
     //显示 生产线  (工业用地-工厂 对应的 生产线 汇总信息)
-    showInduslandFactoryLine() {    
-      req.post_Param('api/ass/indusland_factory_line',{'judge':5})
+    showInduslandFactoryLine() {
+      req
+        .post_Param("api/ass/indusland_factory_line", { judge: 5 })
         .then(res => {
-          print.log('工业用地-工厂对应 生产线',res.data);
+          print.log("工业用地-工厂对应 生产线", res.data);
           this.showInduslandFactoryLineItem = res.data;
-        })
+        });
     }
   }
 };
 </script>
 
 <style>
-
-.using{
-  background-color: yellow
+.using {
+  background-color: yellow;
 }
-.free{
-  background-color: yellowgreen
+.free {
+  background-color: yellowgreen;
 }
 </style>

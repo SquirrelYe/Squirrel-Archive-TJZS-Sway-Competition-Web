@@ -237,61 +237,61 @@ import app from "../../App.vue";
 var App = app;
 
 export default {
-    name: "index",
-    data() {
-        return {
-            showStasticsItem: "",
-            userinfo: JSON.parse(ses.getSes("userinfo")),
-            gameinfo: JSON.parse(ses.getSes("gameinfo")),
-            type: ses.getSes("type"),
-            fresh: null
-        };
-    },
-    filters: {
-        formatTime(val) {
-            return moment(val).format("YYYY-MM-DD HH:mm:ss");
-        }
-    },
-    mounted() {
-        this.init();
-        this.fresh = setInterval(() => {
-              this.init()
-          }, 10000);
-    },
-    beforeRouteLeave (to, from, next) {
-        clearInterval(this.fresh);
-        next();  
-    },
-    methods: {
-        init() {
-            this.showStastics();
-            this.getinfo();
-        },
-        // 获取资产信息
-        showStastics() {
-            if (this.type == 1) return;
-            let company_id = JSON.parse(ses.getSes("userinfo")).company_id;
-            apis.getOneStatisticByCompanyId(company_id).then(res => {
-                //   print.log('公司资产信息',res.data)
-                this.showStasticsItem = res.data;
-            });
-        },
-        // 获取个人信息
-        getinfo() {
-            this.userinfo = JSON.parse(ses.getSes("userinfo"));
-            this.gameinfo = JSON.parse(ses.getSes("gameinfo"));
-        }
+  name: "index",
+  data() {
+    return {
+      showStasticsItem: "",
+      userinfo: JSON.parse(ses.getSes("userinfo")),
+      gameinfo: JSON.parse(ses.getSes("gameinfo")),
+      type: ses.getSes("type"),
+      fresh: null
+    };
+  },
+  filters: {
+    formatTime(val) {
+      return moment(val).format("YYYY-MM-DD HH:mm:ss");
     }
+  },
+  mounted() {
+    this.init();
+    this.fresh = setInterval(() => {
+      this.init();
+    }, 10000);
+  },
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.fresh);
+    next();
+  },
+  methods: {
+    init() {
+      this.showStastics();
+      this.getinfo();
+    },
+    // 获取资产信息
+    showStastics() {
+      if (this.type == 1) return;
+      let company_id = JSON.parse(ses.getSes("userinfo")).company_id;
+      apis.getOneStatisticByCompanyId(company_id).then(res => {
+        //   print.log('公司资产信息',res.data)
+        this.showStasticsItem = res.data;
+      });
+    },
+    // 获取个人信息
+    getinfo() {
+      this.userinfo = JSON.parse(ses.getSes("userinfo"));
+      this.gameinfo = JSON.parse(ses.getSes("gameinfo"));
+    }
+  }
 };
 </script>
 
 <style scoped>
 .line1 {
-    background-image: url("../../assets/images/line1.png");
-    background-size: 100% 100%;
+  background-image: url("../../assets/images/line1.png");
+  background-size: 100% 100%;
 }
 .line2 {
-    background-image: url("../../assets/images/line2.png");
-    background-size: 100% 100%;
+  background-image: url("../../assets/images/line2.png");
+  background-size: 100% 100%;
 }
 </style>
