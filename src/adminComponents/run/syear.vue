@@ -1,198 +1,344 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <h4 class="pull-left page-title">赛事运营</h4>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Sway商战大赛-财年管理</h3>
-                    </div>
-                    <!-- 财年管理 -->
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="table-responsive">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">财年设置</h3>
-                                    </div>
-                                    <table
-                                        class="table table-bordered table-striped"
-                                        style
-                                        id="datatable-editable"
-                                    >
-                                        <thead>
-                                            <tr>
-                                                <th>当前赛事</th>
-                                                <th>财年持续时间(分钟)</th>
-                                                <th>当前财年</th>
-                                                <th>执行操作</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody v-if="showGameItems">
-                                            <tr>
-                                                <td>{{showGameItems.name}}</td>
-                                                <td>{{showGameItems.stay}}</td>
-                                                <td style="color:red">{{showGameItems.Yearid}}</td>
-                                                <td class="actions" align="center">
-                                                    <a
-                                                        class="on-default remove-row font-weight-bold"
-                                                        @click="nextYear(showGameItems)"
-                                                        href="javascript:void(0)"
-                                                    >进入下一财年</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 资金流清算 -->
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
-                                <div class="table-responsive">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">参赛者资产清算</h3>
-                                    </div>
-                                    <table
-                                        class="table table-bordered table-striped"
-                                        style
-                                        id="datatable-editable"
-                                    >
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>公司名称</th>
-                                                <th>流动资金</th>
-                                                <th>固定资金</th>
-                                                <th>总资产</th>
-                                                <th>品牌价值</th>
-                                                <th>更新时间</th>
-                                                <th>执行操作</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
-                                                <td>{{index}}</td>
-                                                <td>{{item.company.name}}</td>
-                                                <td>{{item.float}}</td>
-                                                <td>{{item.fixed}}</td>
-                                                <td>{{Number(item.float)+Number(item.fixed)}}</td>
-                                                <td>{{item.brand}}</td>
-                                                <td>{{item.updated_at|formatTime}}</td>
-                                                <td class="actions" align="center">
-                                                    <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="转账到此公司"  @click="tran(item)">
-                                                        <i class="fa  fa-tags" data-toggle="modal" data-target="#myModal2" ></i>
-                                                    </a>
-                                                    <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="矿区回收"  @click="mining(item)">
-                                                        <i class="fa  fa-reply-all" data-toggle="modal" data-target="#myModal3" ></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                                        <ul class="pagination" style="float:right">
-                                            <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                                            <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                                            </li>
-                                            <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                                            <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                                            </li>
-                                            <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                                            <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                                            </li>
-                                        </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 指向公司转账 -->
-        <div id="myModal2" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="currentStastics">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="myModalLabel" v-if="currentStastics.company">指向公司转账 -- {{currentStastics.company.name}}</h4>
-                    </div>
-                    <div class="modal-body" align='center'> 
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">金额(万):</label>
-                                <div class="col-sm-9">
-                                    <input type="number" class="form-control"  v-model="givePrice" placeholder="正值转入，负值扣款">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">备注:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" v-model="giveDetail" placeholder="请输入转账原因">
-                                </div>
-                            </div>
-                        </form>            
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="updateMoney()">提交出价</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 矿区回收 -->
-        <div id="myModal3" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="currentStastics">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="myModalLabel" v-if="currentStastics.company">公司矿区回收 -- {{currentStastics.company.name}}</h4>
-                    </div>
-                    <div class="modal-body" align='center'> 
-                        <form class="form-horizontal" role="form">
-                            <div class="form-group">
-                                <div class="col-md-3 control-label" style="font-weight:900"><strong>矿区编号</strong></div>
-                                <div class="col-md-9">
-                                    <select class="form-control" v-model="rep_mining">
-                                        <option v-for="(item,index) in minings" :key="index" :value="item">编号：#{{item.id}} 、 {{item.star|formatStar}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">回收金额（万）:</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" v-model="rep_mining.repurchase" disabled>
-                                </div>
-                            </div>
-                            <div class="panel-heading">
-                                <h3 class="panel-title">注意：请提醒参赛者将矿区下的挖掘机移动至其他矿区，否则将清空矿区下的挖掘机！</h3>
-                            </div>
-                        </form>            
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="getmining()">回购矿区</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <h4 class="pull-left page-title">赛事运营</h4>
+      </div>
     </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Sway商战大赛-财年管理</h3>
+          </div>
+          <!-- 财年管理 -->
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="table-responsive">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">财年设置</h3>
+                  </div>
+                  <table
+                    class="table table-bordered table-striped"
+                    style
+                    id="datatable-editable"
+                  >
+                    <thead>
+                      <tr>
+                        <th>当前赛事</th>
+                        <th>财年持续时间(分钟)</th>
+                        <th>当前财年</th>
+                        <th>执行操作</th>
+                      </tr>
+                    </thead>
+                    <tbody v-if="showGameItems">
+                      <tr>
+                        <td>{{ showGameItems.name }}</td>
+                        <td>{{ showGameItems.stay }}</td>
+                        <td style="color: red">{{ showGameItems.Yearid }}</td>
+                        <td class="actions" align="center">
+                          <a
+                            class="on-default remove-row font-weight-bold"
+                            @click="nextYear(showGameItems)"
+                            href="javascript:void(0)"
+                            >进入下一财年</a
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 资金流清算 -->
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="table-responsive">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">参赛者资产清算</h3>
+                  </div>
+                  <table
+                    class="table table-bordered table-striped"
+                    style
+                    id="datatable-editable"
+                  >
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>公司名称</th>
+                        <th>流动资金</th>
+                        <th>固定资金</th>
+                        <th>总资产</th>
+                        <th>品牌价值</th>
+                        <th>更新时间</th>
+                        <th>执行操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        class="gradeX"
+                        v-for="(item, index) in showItems"
+                        :key="index"
+                      >
+                        <td>{{ index }}</td>
+                        <td>{{ item.company.name }}</td>
+                        <td>{{ item.float }}</td>
+                        <td>{{ item.fixed }}</td>
+                        <td>{{ Number(item.float) + Number(item.fixed) }}</td>
+                        <td>{{ item.brand }}</td>
+                        <td>{{ item.updated_at | formatTime }}</td>
+                        <td class="actions" align="center">
+                          <a
+                            class="waves-effect waves-light"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="转账到此公司"
+                            @click="tran(item)"
+                          >
+                            <i
+                              class="fa fa-tags"
+                              data-toggle="modal"
+                              data-target="#myModal2"
+                            ></i>
+                          </a>
+                          <a
+                            class="waves-effect waves-light"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="矿区回收"
+                            @click="mining(item)"
+                          >
+                            <i
+                              class="fa fa-reply-all"
+                              data-toggle="modal"
+                              data-target="#myModal3"
+                            ></i>
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div
+                      class="dataTables_info float-left"
+                      id="datatable-editable_info"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div
+                      class="dataTables_paginate paging_simple_numbers"
+                      id="datatable-editable_paginate"
+                    >
+                      <ul class="pagination" style="float: right">
+                        <li
+                          class="paginate_button previous"
+                          :class="{ disabled: currentPage == '0' }"
+                        >
+                          <a href="javascript:void(0)" @click="previousPage()"
+                            >上一页</a
+                          >
+                        </li>
+                        <li
+                          class="paginate_button"
+                          v-for="(item, index) in sumPage"
+                          :key="index"
+                          :class="{ active: currentPage == index }"
+                        >
+                          <a
+                            href="javascript:void(0)"
+                            @click="switchPage(index)"
+                            >{{ ++index }}</a
+                          >
+                        </li>
+                        <li
+                          class="paginate_button next"
+                          :class="{ disabled: currentPage == sumPage - 1 }"
+                        >
+                          <a href="javascript:void(0)" @click="nextPage()"
+                            >下一页</a
+                          >
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 指向公司转账 -->
+    <div
+      id="myModal2"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      v-if="currentStastics"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <h4
+              class="modal-title"
+              id="myModalLabel"
+              v-if="currentStastics.company"
+            >
+              指向公司转账 -- {{ currentStastics.company.name }}
+            </h4>
+          </div>
+          <div class="modal-body" align="center">
+            <form class="form-horizontal" role="form">
+              <div class="form-group">
+                <label class="col-sm-3 control-label">金额(万):</label>
+                <div class="col-sm-9">
+                  <input
+                    type="number"
+                    class="form-control"
+                    v-model="givePrice"
+                    placeholder="正值转入，负值扣款"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">备注:</label>
+                <div class="col-sm-9">
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="giveDetail"
+                    placeholder="请输入转账原因"
+                  />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-default waves-effect"
+              data-dismiss="modal"
+            >
+              关闭
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary waves-effect waves-light"
+              data-dismiss="modal"
+              @click="updateMoney()"
+            >
+              提交出价
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 矿区回收 -->
+    <div
+      id="myModal3"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      v-if="currentStastics"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
+            <h4
+              class="modal-title"
+              id="myModalLabel"
+              v-if="currentStastics.company"
+            >
+              公司矿区回收 -- {{ currentStastics.company.name }}
+            </h4>
+          </div>
+          <div class="modal-body" align="center">
+            <form class="form-horizontal" role="form">
+              <div class="form-group">
+                <div class="col-md-3 control-label" style="font-weight: 900">
+                  <strong>矿区编号</strong>
+                </div>
+                <div class="col-md-9">
+                  <select class="form-control" v-model="rep_mining">
+                    <option
+                      v-for="(item, index) in minings"
+                      :key="index"
+                      :value="item"
+                    >
+                      编号：#{{ item.id }} 、 {{ item.star | formatStar }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">回收金额（万）:</label>
+                <div class="col-sm-9">
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="rep_mining.repurchase"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div class="panel-heading">
+                <h3 class="panel-title">
+                  注意：请提醒参赛者将矿区下的挖掘机移动至其他矿区，否则将清空矿区下的挖掘机！
+                </h3>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-default waves-effect"
+              data-dismiss="modal"
+            >
+              关闭
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary waves-effect waves-light"
+              data-dismiss="modal"
+              @click="getmining()"
+            >
+              回购矿区
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -233,7 +379,7 @@ export default {
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null
+      sumPage: null,
     };
   },
   beforeMount() {
@@ -244,7 +390,7 @@ export default {
     this.init();
   },
   updated() {
-    $(function() {
+    $(function () {
       $("[data-toggle='tooltip']").tooltip();
     });
   },
@@ -258,7 +404,7 @@ export default {
       if (x == 3) return "三星矿区";
       if (x == 4) return "四星矿区";
       if (x == 5) return "五星矿区";
-    }
+    },
   },
   methods: {
     init() {
@@ -267,7 +413,7 @@ export default {
     },
     // 显示比赛信息
     getshowGameItems() {
-      apis.getGameByCondition("1").then(res => {
+      apis.getGameByCondition("1").then((res) => {
         print.log("显示比赛信息", res.data);
         this.showGameItems = res.data[0];
       });
@@ -286,9 +432,9 @@ export default {
         .post_Param("api/game", {
           judge: 2,
           Yearid: showGameItems.Yearid + 1,
-          id: showGameItems.id
+          id: showGameItems.id,
         })
-        .then(res => {
+        .then((res) => {
           print.log(res.data);
           if (res.data.success) {
             this.init();
@@ -298,7 +444,7 @@ export default {
     },
     // 获取参赛公司资产信息
     getStasticsItems() {
-      req.post_Param("api/ass/company_statistic", { judge: 4 }).then(res => {
+      req.post_Param("api/ass/company_statistic", { judge: 4 }).then((res) => {
         print.log(res.data);
         this.showStasticsItems = res.data;
         // 分页
@@ -321,7 +467,7 @@ export default {
       // 矿区
       let mining = await req.post_Param("api/mining", {
         judge: 6,
-        company_id: item.company_id
+        company_id: item.company_id,
       });
       print.log("当前选中矿区回收公司矿区信息", mining.data);
       this.minings = mining.data.rows;
@@ -338,7 +484,7 @@ export default {
       // 更新矿区状态 condition -3 矿区回收
       await req
         .post(`api/mining?judge=2&id=${this.rep_mining.id}&condition=-3`)
-        .then(res => {
+        .then((res) => {
           // 矿区回收
           let float =
             Number(this.rep_mining.repurchase) +
@@ -351,7 +497,7 @@ export default {
             judge: 2,
             id: this.currentStastics.id,
             float: float,
-            total: total
+            total: total,
           });
           // 写入交易信息
           req
@@ -365,9 +511,9 @@ export default {
               price: this.rep_mining.repurchase,
               number: 1,
               me: this.currentStastics.company_id,
-              detail: `矿区回收：资金流入${this.rep_mining.repurchase}`
+              detail: `矿区回收：资金流入${this.rep_mining.repurchase}`,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
               this.init();
@@ -383,7 +529,7 @@ export default {
         judge: 2,
         id: this.currentStastics.id,
         float: float,
-        total: total
+        total: total,
       });
       // 写入交易信息
       req
@@ -397,9 +543,9 @@ export default {
           price: this.givePrice,
           number: 1,
           me: this.currentStastics.company_id,
-          detail: `组委会转账：${this.giveDetail}`
+          detail: `组委会转账：${this.giveDetail}`,
         })
-        .then(res => {
+        .then((res) => {
           print.log(res.data);
           swal("资金信息更新成功!", "参赛者资产信息更新成功", "success");
           this.init();
@@ -427,16 +573,16 @@ export default {
         async.series(
           [
             //串行同时执行
-            function(callback) {
+            function (callback) {
               //计算挖掘机折旧
               that.getMiningDigger(index, cid, callback);
             },
-            function(callback) {
+            function (callback) {
               // 计算生产线折旧
               that.getInduslandFactory(index, cid, callback);
-            }
+            },
           ],
-          function(err, results) {
+          function (err, results) {
             //等上面两个执行完返回结果
             print.log("更新固定资产统计信息", results);
             if (i == that.showStasticsItems.length - 1) {
@@ -453,9 +599,9 @@ export default {
       req
         .post_Param("api/ass/mining_digger", {
           judge: 5,
-          company_id: cid
+          company_id: cid,
         })
-        .then(res => {
+        .then((res) => {
           // print.log('矿区 - 挖掘机',res.data)
           this.diggerDeprelief[index] = 0;
           for (let i = 0; i < res.data.length; i++) {
@@ -482,9 +628,9 @@ export default {
       req
         .post_Param("api/ass/indusland_factory", {
           judge: 4,
-          company_id: cid
+          company_id: cid,
         })
-        .then(res => {
+        .then((res) => {
           print.log("工业用地 - 工厂", res.data);
           this.lineDeprelief[index] = 0;
           if (res.data.length > 0) {
@@ -544,9 +690,9 @@ export default {
       req
         .post_Param("api/ass/indusland_factory_line", {
           judge: 8,
-          indusland_factory_id: infa
+          indusland_factory_id: infa,
         })
-        .then(res => {
+        .then((res) => {
           // print.log('工业用地 - 工厂 - 生产线',res.data)
           for (let i = 0; i < res.data.length; i++) {
             //对中间表-生产线 信息 循环，从而获取到 对应的生产线 & 数量
@@ -579,15 +725,15 @@ export default {
           judge: 4,
           company_id: cid,
           fixed: fixed,
-          total: total
+          total: total,
         })
-        .then(res => {
+        .then((res) => {
           if (res.data) {
             $.notify(
               {
                 message: `${re.company.name}->公司资产更新成功！减少${(
                   Number(result[0]) + Number(result[1])
-                ).toFixed(2)}w`
+                ).toFixed(2)}w`,
               },
               { type: "success" }
             );
@@ -602,7 +748,7 @@ export default {
               price: Number(result[0]) + Number(result[1]),
               number: 1,
               me: cid,
-              detail: `固定资产折旧：${Number(result[0]) + Number(result[1])}`
+              detail: `固定资产折旧：${Number(result[0]) + Number(result[1])}`,
             });
             this.init();
             if (judge == 1) {
@@ -666,11 +812,10 @@ export default {
         print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
-    }
+    },
     //结束分页
-  }
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

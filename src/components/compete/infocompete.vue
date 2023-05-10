@@ -29,21 +29,43 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="item.name" :class="{'important' : item.condition ==1}">
-                    <td>{{index}}</td>
-                    <td>C-{{item.id}}</td>
-                    <td>{{item.Yearid}}</td>
-                    <td>{{item.type|formatType}}</td>
-                    <td>#{{item.thingid}}</td>
-                    <td>{{item.auction}}</td>
-                    <td>{{item.condition | formatCondition}}</td>
-                    <td>{{item.updated_at|formatTime}}</td>
-                    <td class="actions" v-if="item.condition==1 && item.company_id==company_id">
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="确认验收" @click="accept(item)">
-                        <i class="fa  fa-check"></i>
+                  <tr
+                    class="gradeX"
+                    v-for="(item, index) in showItems"
+                    :key="item.name"
+                    :class="{ important: item.condition == 1 }"
+                  >
+                    <td>{{ index }}</td>
+                    <td>C-{{ item.id }}</td>
+                    <td>{{ item.Yearid }}</td>
+                    <td>{{ item.type | formatType }}</td>
+                    <td>#{{ item.thingid }}</td>
+                    <td>{{ item.auction }}</td>
+                    <td>{{ item.condition | formatCondition }}</td>
+                    <td>{{ item.updated_at | formatTime }}</td>
+                    <td
+                      class="actions"
+                      v-if="
+                        item.condition == 1 && item.company_id == company_id
+                      "
+                    >
+                      <a
+                        class="waves-effect waves-light"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="确认验收"
+                        @click="accept(item)"
+                      >
+                        <i class="fa fa-check"></i>
                       </a>
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="支付违约金" @click="reject(item)">
-                        <i class="fa  fa-times"></i>
+                      <a
+                        class="waves-effect waves-light"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="支付违约金"
+                        @click="reject(item)"
+                      >
+                        <i class="fa fa-times"></i>
                       </a>
                     </td>
                     <td v-else></td>
@@ -52,30 +74,56 @@
               </table>
             </div>
             <div class="row">
-            <div class="col-sm-6">
-              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-            </div>
-            <div class="col-sm-6">
-              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                <ul class="pagination" style="float:right">
-                  <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                    <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                  </li>
-                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                    <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                  </li>
-                  <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                    <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                  </li>
-                </ul>
+              <div class="col-sm-6">
+                <div
+                  class="dataTables_info float-left"
+                  id="datatable-editable_info"
+                  role="status"
+                  aria-live="polite"
+                >
+                  展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div
+                  class="dataTables_paginate paging_simple_numbers"
+                  id="datatable-editable_paginate"
+                >
+                  <ul class="pagination" style="float: right">
+                    <li
+                      class="paginate_button previous"
+                      :class="{ disabled: currentPage == '0' }"
+                    >
+                      <a href="javascript:void(0)" @click="previousPage()"
+                        >上一页</a
+                      >
+                    </li>
+                    <li
+                      class="paginate_button"
+                      v-for="(item, index) in sumPage"
+                      :key="index"
+                      :class="{ active: currentPage == index }"
+                    >
+                      <a href="javascript:void(0)" @click="switchPage(index)">{{
+                        ++index
+                      }}</a>
+                    </li>
+                    <li
+                      class="paginate_button next"
+                      :class="{ disabled: currentPage == sumPage - 1 }"
+                    >
+                      <a href="javascript:void(0)" @click="nextPage()"
+                        >下一页</a
+                      >
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -103,7 +151,7 @@ export default {
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null
+      sumPage: null,
     };
   },
   beforeMount() {
@@ -114,7 +162,7 @@ export default {
     this.init();
   },
   updated() {
-    $(function() {
+    $(function () {
       $("[data-toggle='tooltip']").tooltip();
     });
   },
@@ -133,7 +181,7 @@ export default {
       if (x == 1) return "矿区";
       if (x == 2) return "工业用地";
       if (x == 3) return "商业用地";
-    }
+    },
   },
   methods: {
     init() {
@@ -144,9 +192,9 @@ export default {
       req
         .post_Param("api/compete", {
           judge: 6,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           console.log(res.data);
           this.showCompete = res.data;
           // 分页
@@ -164,7 +212,7 @@ export default {
       );
       if (item.type == 1) {
         // 矿区
-        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+        apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
           print.log("获取个人资产", res.data);
           if (item.auction <= res.data.float) {
             // 更新资产
@@ -172,9 +220,7 @@ export default {
             this.updateFixedAssets(m, item);
             // 更新竞拍状态
             req.post(
-              `api/mining?judge=2&condition=3&id=${item.thingid}&company_id=${
-                this.company_id
-              }`
+              `api/mining?judge=2&condition=3&id=${item.thingid}&company_id=${this.company_id}`
             );
             // 写入交易信息
             req.post_Param("api/transaction", {
@@ -187,7 +233,7 @@ export default {
               price: item.auction,
               number: 1,
               me: this.company_id,
-              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`
+              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`,
             });
           } else {
             swal("竞拍失败!", "可用流动资金不足", "warning");
@@ -195,7 +241,7 @@ export default {
         });
       } else if (item.type == 2) {
         //工业用地
-        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+        apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
           print.log("获取个人资产", res.data);
           if (item.auction <= res.data.float) {
             // 更新资产
@@ -203,9 +249,7 @@ export default {
             this.updateFixedAssets(m, item);
             // 更新竞拍状态
             req.post(
-              `api/indusland?judge=2&condition=3&id=${
-                item.thingid
-              }&company_id=${this.company_id}`
+              `api/indusland?judge=2&condition=3&id=${item.thingid}&company_id=${this.company_id}`
             );
             // 写入交易信息
             req.post_Param("api/transaction", {
@@ -218,7 +262,7 @@ export default {
               price: item.auction,
               number: 1,
               me: this.company_id,
-              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`
+              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`,
             });
           } else {
             swal("竞拍失败!", "可用流动资金不足", "warning");
@@ -226,7 +270,7 @@ export default {
         });
       } else if (item.type == 3) {
         //商业用地
-        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+        apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
           print.log("获取个人资产", res.data);
           if (item.auction <= res.data.float) {
             // 更新资产
@@ -235,9 +279,7 @@ export default {
             this.updateFixedAssetsForCommerland(m, item);
             // 更新竞拍状态
             req.post(
-              `api/commerland?judge=2&condition=3&id=${
-                item.thingid
-              }&company_id=${this.company_id}`
+              `api/commerland?judge=2&condition=3&id=${item.thingid}&company_id=${this.company_id}`
             );
             // 写入交易信息
             req.post_Param("api/transaction", {
@@ -250,7 +292,7 @@ export default {
               price: item.auction,
               number: 1,
               me: this.company_id,
-              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`
+              detail: `竞拍：资产类别${item.type},资产编号${item.thingid}`,
             });
           } else {
             swal("竞拍失败!", "可用流动资金不足", "warning");
@@ -269,7 +311,7 @@ export default {
         )
       ) {
         // 获取个人资产
-        apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+        apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
           print.log("获取个人资产", res.data);
           // 更新自己资产信息
           let float = res.data.float - item.auction * 0.2;
@@ -279,7 +321,7 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: this.company_id
+            company_id: this.company_id,
           });
           // 更新竞拍状态
           if (item.type == 1) {
@@ -313,11 +355,9 @@ export default {
               price: item.auction * 0.2,
               number: 1,
               me: this.company_id,
-              detail: `竞拍拒绝接收：资产类别${item.type},资产编号${
-                item.thingid
-              }，物品流拍`
+              detail: `竞拍拒绝接收：资产类别${item.type},资产编号${item.thingid}，物品流拍`,
             })
-            .then(res => {
+            .then((res) => {
               swal("资金信息更新成功!", "资产信息更新成功", "success");
               // 更新竞拍单状态
               apis.updateOneCompeteConditionById(item.id, -1);
@@ -328,7 +368,7 @@ export default {
     },
     //更新固定资产
     updateFixedAssets(m, item) {
-      req.post(m).then(res => {
+      req.post(m).then((res) => {
         let float = res.data.float - item.auction;
         let total = res.data.total - item.auction;
         // 更新拍得公司资产信息
@@ -337,9 +377,9 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: item.company_id
+            company_id: item.company_id,
           })
-          .then(res => {
+          .then((res) => {
             swal("资金信息更新成功!", "资产信息更新成功", "success");
             // 更新竞拍单状态
             apis.updateOneCompeteConditionById(item.id, 2);
@@ -353,14 +393,14 @@ export default {
       req
         .post_Param("api/commerland", {
           judge: 6,
-          id: item.thingid
+          id: item.thingid,
         })
-        .then(res => {
+        .then((res) => {
           print.log("商业用地详细信息", res.data);
           let currentBrand = res.data.brand;
 
           // 获取资产信息
-          req.post(m).then(res => {
+          req.post(m).then((res) => {
             print.log("商业用地资产信息", res.data);
             // 计算资产差值
             let fix = item.auction; //this.chooseItem.startprice+(item.auction-this.chooseItem.startprice)*this.chooseItem.increment
@@ -380,9 +420,9 @@ export default {
                 total: total,
                 float: float,
                 brand: brand,
-                company_id: item.company_id
+                company_id: item.company_id,
               })
-              .then(res => {
+              .then((res) => {
                 print.log(res.data);
                 // 更新竞拍单状态
                 apis.updateOneCompeteConditionById(item.id, 2);
@@ -442,9 +482,9 @@ export default {
         print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
-    }
+    },
     //结束分页
-  }
+  },
 };
 </script>
 

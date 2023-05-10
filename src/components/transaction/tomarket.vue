@@ -50,7 +50,11 @@
                   </a>
                 </li>
                 <li class @click="transaction()">
-                  <a href="#transaction" data-toggle="tab" aria-expanded="false">
+                  <a
+                    href="#transaction"
+                    data-toggle="tab"
+                    aria-expanded="false"
+                  >
                     <span class="visible-xs">
                       <i class="fa fa-envelope-o"></i>
                     </span>
@@ -64,7 +68,11 @@
                 <div class="tab-pane active" id="home">
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table
+                        class="table table-striped"
+                        style
+                        id="datatable-editable"
+                      >
                         <thead>
                           <tr>
                             <th>唯一标识符</th>
@@ -77,19 +85,43 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showSourceItems" :key="index" v-if="item.source && item.company">
-                            <td>S{{item.id}}</td>
-                            <td>{{item.source.name}}</td>
-                            <td>{{item.company.name}}</td>
-                            <td>{{item.price}}万</td>
-                            <td>{{item.number}}</td>
-                            <td>{{item.updated_at|formatTime}}</td>
+                          <tr
+                            v-for="(item, index) in showSourceItems"
+                            :key="index"
+                            v-if="item.source && item.company"
+                          >
+                            <td>S{{ item.id }}</td>
+                            <td>{{ item.source.name }}</td>
+                            <td>{{ item.company.name }}</td>
+                            <td>{{ item.price }}万</td>
+                            <td>{{ item.number }}</td>
+                            <td>{{ item.updated_at | formatTime }}</td>
                             <td class="actions">
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品" v-if="item.me!=company_id">
-                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
+                              <a
+                                class="waves-effect waves-light"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="购买此产品"
+                                v-if="item.me != company_id"
+                              >
+                                <i
+                                  class="fa fa-tags"
+                                  data-toggle="modal"
+                                  data-target="#myModal"
+                                  @click="openSetting(item)"
+                                ></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="撤回订单" v-if="item.me==company_id">
-                                <i class="fa fa-times" @click="cancer(0,item)"></i>
+                              <a
+                                class="waves-effect waves-light"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="撤回订单"
+                                v-if="item.me == company_id"
+                              >
+                                <i
+                                  class="fa fa-times"
+                                  @click="cancer(0, item)"
+                                ></i>
                               </a>
                             </td>
                           </tr>
@@ -97,14 +129,21 @@
                       </table>
                     </div>
                   </div>
-                  <hr>
-                  <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
+                  <hr />
+                  <p>
+                    <strong>注意</strong
+                    >：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。
+                  </p>
                 </div>
                 <!-- 产品交易展示处 -->
                 <div class="tab-pane" id="profile">
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table
+                        class="table table-striped"
+                        style
+                        id="datatable-editable"
+                      >
                         <thead>
                           <tr>
                             <th>唯一标识符</th>
@@ -117,35 +156,69 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showGoodsItems" :key="index" v-if='item.commerresearch && item.company && item.type == 2'>
-                            <td>G{{item.id}}</td>
-                            <td>{{item.commerresearch.name}}</td>
-                            <td>{{item.company.name}}</td>
-                            <td>{{item.number}}</td>
-                            <td>{{item.price}}万</td>
-                            <td>{{item.updated_at|formatTime}}</td>
+                          <tr
+                            v-for="(item, index) in showGoodsItems"
+                            :key="index"
+                            v-if="
+                              item.commerresearch &&
+                              item.company &&
+                              item.type == 2
+                            "
+                          >
+                            <td>G{{ item.id }}</td>
+                            <td>{{ item.commerresearch.name }}</td>
+                            <td>{{ item.company.name }}</td>
+                            <td>{{ item.number }}</td>
+                            <td>{{ item.price }}万</td>
+                            <td>{{ item.updated_at | formatTime }}</td>
                             <td class="actions">
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="购买此产品" v-if="item.me!=company_id">
-                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)"></i>
+                              <a
+                                class="waves-effect waves-light"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="购买此产品"
+                                v-if="item.me != company_id"
+                              >
+                                <i
+                                  class="fa fa-tags"
+                                  data-toggle="modal"
+                                  data-target="#myModal"
+                                  @click="openSetting(item)"
+                                ></i>
                               </a>
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="撤回订单" v-if="item.me==company_id">
-                                <i class="fa fa-times" @click="cancer(1,item)"></i>
+                              <a
+                                class="waves-effect waves-light"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="撤回订单"
+                                v-if="item.me == company_id"
+                              >
+                                <i
+                                  class="fa fa-times"
+                                  @click="cancer(1, item)"
+                                ></i>
                               </a>
                             </td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
-                    
                   </div>
-                  <hr>
-                  <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
+                  <hr />
+                  <p>
+                    <strong>注意</strong
+                    >：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。
+                  </p>
                 </div>
                 <!-- 已有贷款信息展示 -->
                 <div class="tab-pane" id="loan">
                   <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
-                      <table class="table table-striped" style id="datatable-editable">
+                      <table
+                        class="table table-striped"
+                        style
+                        id="datatable-editable"
+                      >
                         <thead>
                           <tr>
                             <th>#</th>
@@ -161,19 +234,33 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(item,index) in showLoanItem" :key="index">
-                            <td>{{index}}</td>
-                            <td>{{item.money}}万</td>
-                            <td>{{item.from}}</td>
-                            <td>{{item.end}}</td>
-                            <td>{{item.rate}}</td>
-                            <td>{{item.send}}万</td>
-                            <td>{{item.condition|formatLoanCondition}}</td>
-                            <td>{{item.created_at|formatTime}}</td>
-                            <td>{{item.detail}}</td>
+                          <tr
+                            v-for="(item, index) in showLoanItem"
+                            :key="index"
+                          >
+                            <td>{{ index }}</td>
+                            <td>{{ item.money }}万</td>
+                            <td>{{ item.from }}</td>
+                            <td>{{ item.end }}</td>
+                            <td>{{ item.rate }}</td>
+                            <td>{{ item.send }}万</td>
+                            <td>{{ item.condition | formatLoanCondition }}</td>
+                            <td>{{ item.created_at | formatTime }}</td>
+                            <td>{{ item.detail }}</td>
                             <td class="actions">
-                              <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="还清贷款">
-                                <i class="fa fa-tags" data-toggle="modal" data-target="#myModal" @click="openSetting(item)" v-if="item.condition==0"></i>
+                              <a
+                                class="waves-effect waves-light"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="还清贷款"
+                              >
+                                <i
+                                  class="fa fa-tags"
+                                  data-toggle="modal"
+                                  data-target="#myModal"
+                                  @click="openSetting(item)"
+                                  v-if="item.condition == 0"
+                                ></i>
                               </a>
                             </td>
                           </tr>
@@ -181,203 +268,390 @@
                       </table>
                     </div>
                   </div>
-                  <hr>
-                  <p><strong>注意</strong>：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。</p>
+                  <hr />
+                  <p>
+                    <strong>注意</strong
+                    >：交易前请先确认可用流动资金足够，以上价格单位均为<strong>万元</strong>。
+                  </p>
                 </div>
                 <!-- 政府贷款展示处 -->
                 <div class="tab-pane" id="doloan">
                   <div class="panel-body">
                     <form class="form-horizontal" role="form">
-                        <div class="form-group" v-if="currentCompanyName">
-                            <label class="col-md-2 control-label">公司名称</label>
-                            <div class="col-md-10">
-                                <input type="text" disabled class="form-control" :placeholder="this.currentCompanyName">
-                            </div>
+                      <div class="form-group" v-if="currentCompanyName">
+                        <label class="col-md-2 control-label">公司名称</label>
+                        <div class="col-md-10">
+                          <input
+                            type="text"
+                            disabled
+                            class="form-control"
+                            :placeholder="this.currentCompanyName"
+                          />
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="example-email">贷款金额</label>
-                            <div class="col-md-10">
-                                <input type="number" class="form-control" placeholder="xxx万元" v-model="money" @input="checkLoanNumber()">
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label
+                          class="col-md-2 control-label"
+                          for="example-email"
+                          >贷款金额</label
+                        >
+                        <div class="col-md-10">
+                          <input
+                            type="number"
+                            class="form-control"
+                            placeholder="xxx万元"
+                            v-model="money"
+                            @input="checkLoanNumber()"
+                          />
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="example-email">贷款周期</label>
-                            <div class="col-md-10">
-                                <input type="number" class="form-control" placeholder="0" v-model="stay" @input="getRate()">
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label
+                          class="col-md-2 control-label"
+                          for="example-email"
+                          >贷款周期</label
+                        >
+                        <div class="col-md-10">
+                          <input
+                            type="number"
+                            class="form-control"
+                            placeholder="0"
+                            v-model="stay"
+                            @input="getRate()"
+                          />
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="example-email">贷款利率</label>
-                            <div class="col-md-10">
-                                <input class="form-control " type="number" disabled v-model="rate">
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label
+                          class="col-md-2 control-label"
+                          for="example-email"
+                          >贷款利率</label
+                        >
+                        <div class="col-md-10">
+                          <input
+                            class="form-control"
+                            type="number"
+                            disabled
+                            v-model="rate"
+                          />
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">备注</label>
-                            <div class="col-md-10">
-                                <textarea class="form-control" v-model="other" rows="5" placeholder=""></textarea>
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-md-2 control-label">备注</label>
+                        <div class="col-md-10">
+                          <textarea
+                            class="form-control"
+                            v-model="other"
+                            rows="5"
+                            placeholder=""
+                          ></textarea>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label"></label>
-                            <div class="col-md-10">
-                            <button type="button" class="btn btn-block btn-lg btn-success waves-effect waves-light" @click="submitForm()">申请贷款</button>
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                          <button
+                            type="button"
+                            class="btn btn-block btn-lg btn-success waves-effect waves-light"
+                            @click="submitForm()"
+                          >
+                            申请贷款
+                          </button>
                         </div>
+                      </div>
                     </form>
-                  </div> 
-                  <hr>
-                  <strong align='center' style="color:red">注意：表格中贷款金额单位为万元，当前贷款额度为{{maxLoan}}万元。允许提前还款、但利息不变，当上一次贷款还清时才能进行第二次贷款。</strong><br>
-                  <hr>
+                  </div>
+                  <hr />
+                  <strong align="center" style="color: red"
+                    >注意：表格中贷款金额单位为万元，当前贷款额度为{{
+                      maxLoan
+                    }}万元。允许提前还款、但利息不变，当上一次贷款还清时才能进行第二次贷款。</strong
+                  ><br />
+                  <hr />
                   <p>
-                    <strong>注意：</strong><br>
-                    贷款额度为公司固定资产的80%，公司品牌价值超过100的部分对可贷上限有百分比提升。<br>
-                    <strong>可贷额度</strong>=<strong>(固定资产 - 已贷资金)*0.8*（品牌价值）/100</strong><br>
-                    利率：一年8%、两年12%、三年16%，利息计算方法为单利计算<br>                  
+                    <strong>注意：</strong><br />
+                    贷款额度为公司固定资产的80%，公司品牌价值超过100的部分对可贷上限有百分比提升。<br />
+                    <strong>可贷额度</strong>=<strong
+                      >(固定资产 - 已贷资金)*0.8*（品牌价值）/100</strong
+                    ><br />
+                    利率：一年8%、两年12%、三年16%，利息计算方法为单利计算<br />
                   </p>
                 </div>
                 <!-- 公司间转账 -->
                 <div class="tab-pane" id="transaction">
                   <div class="panel-body">
                     <form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">公司名称</label>
-                            <!-- <div class="col-md-10">
+                      <div class="form-group">
+                        <label class="col-md-2 control-label">公司名称</label>
+                        <!-- <div class="col-md-10">
                                 <input type="text" disabled class="form-control" :placeholder="this.currentCompanyName">
                             </div> -->
-                            <div class="col-md-10">
-                                <select class="form-control" v-model="toCompany">
-                                    <option v-for="(item,index) in allCompany" :key="index" :value="item.id">{{item.name}}</option>
-                                </select>
-                            </div>
+                        <div class="col-md-10">
+                          <select class="form-control" v-model="toCompany">
+                            <option
+                              v-for="(item, index) in allCompany"
+                              :key="index"
+                              :value="item.id"
+                            >
+                              {{ item.name }}
+                            </option>
+                          </select>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label" for="example-email">转账金额</label>
-                            <div class="col-md-10">
-                                <input type="number" class="form-control" placeholder="xxx万元" v-model="tmoney">
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label
+                          class="col-md-2 control-label"
+                          for="example-email"
+                          >转账金额</label
+                        >
+                        <div class="col-md-10">
+                          <input
+                            type="number"
+                            class="form-control"
+                            placeholder="xxx万元"
+                            v-model="tmoney"
+                          />
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">备注</label>
-                            <div class="col-md-10">
-                                <textarea class="form-control" v-model="tother" rows="5" placeholder="请注明原因、事件。"></textarea>
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-md-2 control-label">备注</label>
+                        <div class="col-md-10">
+                          <textarea
+                            class="form-control"
+                            v-model="tother"
+                            rows="5"
+                            placeholder="请注明原因、事件。"
+                          ></textarea>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label"></label>
-                            <div class="col-md-10">
-                            <button type="button" class="btn btn-block btn-lg btn-success waves-effect waves-light" :disabled='tmoney<=0 || toCompany==company_id' @click="transactionToCompany()">转账到公司</button>
-                            </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                          <button
+                            type="button"
+                            class="btn btn-block btn-lg btn-success waves-effect waves-light"
+                            :disabled="tmoney <= 0 || toCompany == company_id"
+                            @click="transactionToCompany()"
+                          >
+                            转账到公司
+                          </button>
                         </div>
+                      </div>
                     </form>
-                </div> 
-                  <hr>
-                  <strong align='center' style="color:red">注意：上述转账金额单位为万元（w）</strong><br>
-                  <hr>
+                  </div>
+                  <hr />
+                  <strong align="center" style="color: red"
+                    >注意：上述转账金额单位为万元（w）</strong
+                  ><br />
+                  <hr />
                   <p>
-                    <strong>注意：</strong><br>
-                    公司间转账涉及到的场景为：<br>
-                    一、产品代工，根据两方公司合约， 转账给代工方首付以及尾款；<br>
-                    二、双方产品交易、原料交易(不通过市场交易，直接交易)，"遵循一手交钱、一手交货"的原则，东西到则钱到。                
+                    <strong>注意：</strong><br />
+                    公司间转账涉及到的场景为：<br />
+                    一、产品代工，根据两方公司合约，
+                    转账给代工方首付以及尾款；<br />
+                    二、双方产品交易、原料交易(不通过市场交易，直接交易)，"遵循一手交钱、一手交货"的原则，东西到则钱到。
                   </p>
                 </div>
               </div>
-            </div>            
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 原料Modal -->
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="judgeChoose==0">
+    <div
+      id="myModal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      v-if="judgeChoose == 0"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <!-- 头部 -->
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
             <h4 class="modal-title" id="myModalLabel">交易清单</h4>
           </div>
           <!-- 内容 -->
-          <div class="modal-body" align='center'>
-            <h4>原料情况介绍</h4>  
+          <div class="modal-body" align="center">
+            <h4>原料情况介绍</h4>
             <!-- <h5> {{model}}</h5> -->
             <address class="ng-scope" v-if="model">
-              <strong>原料类型:</strong>{{model.source.name}}<br> 
-              <strong>出售公司名称:</strong>{{model.company.name}}<br> 
-              <strong>单价:</strong>{{model.price}}<br> 
-              <strong>数量:</strong>{{model.number}}<br> 
-              <strong>分布时间:</strong>{{model.updated_at|formatTime}}<br> <hr>
-              <strong>订单总额为:</strong><strong style="color:green">{{model.number|sumPrice(model.price)}}万元</strong><br> 
-              <textarea v-model="detail" placeholder="产品交易备注"></textarea><br>
-            </address>             
+              <strong>原料类型:</strong>{{ model.source.name }}<br />
+              <strong>出售公司名称:</strong>{{ model.company.name }}<br />
+              <strong>单价:</strong>{{ model.price }}<br />
+              <strong>数量:</strong>{{ model.number }}<br />
+              <strong>分布时间:</strong>{{ model.updated_at | formatTime
+              }}<br />
+              <hr />
+              <strong>订单总额为:</strong
+              ><strong style="color: green"
+                >{{ model.number | sumPrice(model.price) }}万元</strong
+              ><br />
+              <textarea v-model="detail" placeholder="产品交易备注"></textarea
+              ><br />
+            </address>
           </div>
           <div class="modal-footer">
-          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(0,model)">提交订单</button>
+            <button
+              type="button"
+              class="btn btn-default waves-effect"
+              data-dismiss="modal"
+            >
+              关闭
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary waves-effect waves-light"
+              data-dismiss="modal"
+              @click="sendPrice(0, model)"
+            >
+              提交订单
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 产品Modal -->
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="judgeChoose==1">
+    <div
+      id="myModal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      v-if="judgeChoose == 1"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <!-- 头部 -->
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
             <h4 class="modal-title" id="myModalLabel">交易清单</h4>
           </div>
           <!-- 内容 -->
-          <div class="modal-body" align='center' v-if="model.commerresearch">
-            <h4>产品情况介绍</h4>  
+          <div class="modal-body" align="center" v-if="model.commerresearch">
+            <h4>产品情况介绍</h4>
             <!-- <h5> {{model}}</h5> -->
             <address class="ng-scope" v-if="model">
-              <strong>产品唯一标识符:</strong>{{model.commerresearch.id}}<br>
-              <strong>出售公司名称:</strong>{{model.company.name}}<br> 
-              <strong>产品名称:</strong>{{model.commerresearch.name}}<br> 
-              <strong>产品介绍:</strong>{{model.commerresearch.introduction}}<br> 
-              <strong>产品单价:</strong>{{model.commerresearch.price}}<br> 
-              <strong>产品数量:</strong>{{model.number}}<br> 
-              <strong>发布时间:</strong>{{model.updated_at | formatTime}}<br> <hr>
-              <strong>订单总额为:</strong><strong style="color:green">{{model.number|sumPrice(model.commerresearch.price)}}万元</strong><br> 
-              <textarea v-model="detail" placeholder="产品交易备注"></textarea><br>
+              <strong>产品唯一标识符:</strong>{{ model.commerresearch.id
+              }}<br />
+              <strong>出售公司名称:</strong>{{ model.company.name }}<br />
+              <strong>产品名称:</strong>{{ model.commerresearch.name }}<br />
+              <strong>产品介绍:</strong>{{ model.commerresearch.introduction
+              }}<br />
+              <strong>产品单价:</strong>{{ model.commerresearch.price }}<br />
+              <strong>产品数量:</strong>{{ model.number }}<br />
+              <strong>发布时间:</strong>{{ model.updated_at | formatTime
+              }}<br />
+              <hr />
+              <strong>订单总额为:</strong
+              ><strong style="color: green"
+                >{{
+                  model.number | sumPrice(model.commerresearch.price)
+                }}万元</strong
+              ><br />
+              <textarea v-model="detail" placeholder="产品交易备注"></textarea
+              ><br />
             </address>
           </div>
           <div class="modal-footer">
-          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(1,model)" >提交订单</button>
+            <button
+              type="button"
+              class="btn btn-default waves-effect"
+              data-dismiss="modal"
+            >
+              关闭
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary waves-effect waves-light"
+              data-dismiss="modal"
+              @click="sendPrice(1, model)"
+            >
+              提交订单
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 贷款信息model -->
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" v-if="judgeChoose==2">
+    <div
+      id="myModal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      v-if="judgeChoose == 2"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <!-- 头部 -->
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
             <h4 class="modal-title" id="myModalLabel">贷款清单</h4>
           </div>
           <!-- 内容 -->
-          <div class="modal-body" align='center'>
-            <h4>贷款情况介绍</h4>  
+          <div class="modal-body" align="center">
+            <h4>贷款情况介绍</h4>
             <!-- <h5> {{model}}</h5> -->
             <address class="ng-scope">
-              <strong>贷款金额:</strong>{{model.money}}<br>
-              <strong>开始财年:</strong>{{model.from}}<br> 
-              <strong>应还财年:</strong>{{model.end}}<br> 
-              <strong>贷款利率:</strong>{{model.rate}}<br> 
-              <strong>应还金额:</strong>{{model.send}}<br> 
-              <strong>贷款状态:</strong>{{model.condition | formatLoanCondition}}<br> <hr> 
-              <strong>贷款备注:</strong>{{model.detail}}<br> 
+              <strong>贷款金额:</strong>{{ model.money }}<br />
+              <strong>开始财年:</strong>{{ model.from }}<br />
+              <strong>应还财年:</strong>{{ model.end }}<br />
+              <strong>贷款利率:</strong>{{ model.rate }}<br />
+              <strong>应还金额:</strong>{{ model.send }}<br />
+              <strong>贷款状态:</strong
+              >{{ model.condition | formatLoanCondition }}<br />
+              <hr />
+              <strong>贷款备注:</strong>{{ model.detail }}<br />
             </address>
           </div>
           <div class="modal-footer">
-          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-          <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice(2,model)" v-if="model.condition==0">还清贷款</button>
+            <button
+              type="button"
+              class="btn btn-default waves-effect"
+              data-dismiss="modal"
+            >
+              关闭
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary waves-effect waves-light"
+              data-dismiss="modal"
+              @click="sendPrice(2, model)"
+              v-if="model.condition == 0"
+            >
+              还清贷款
+            </button>
           </div>
         </div>
       </div>
@@ -436,7 +710,7 @@ export default {
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null
+      sumPage: null,
     };
   },
   beforeMount() {
@@ -447,7 +721,7 @@ export default {
     this.init();
   },
   updated() {
-    $(function() {
+    $(function () {
       $("[data-toggle='tooltip']").tooltip();
     });
   },
@@ -462,7 +736,7 @@ export default {
     formatLoanCondition(x) {
       if (x == 0) return "未还款";
       if (x == 1) return "已还款";
-    }
+    },
   },
   methods: {
     init() {
@@ -488,9 +762,9 @@ export default {
               judge: 1,
               source_id: item.source_id,
               company_id: this.company_id,
-              sum: item.number
+              sum: item.number,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               if (!res.data[1]) {
                 // 追加数量
@@ -499,9 +773,9 @@ export default {
                   .post_Param("api/miniyield", {
                     judge: 2,
                     id: res.data[0].id,
-                    sum: Number(res.data[0].sum) + Number(item.number)
+                    sum: Number(res.data[0].sum) + Number(item.number),
                   })
-                  .then(res => {
+                  .then((res) => {
                     this.init();
                     s_alert.Success(
                       "撤销此订单成功,物品追加成功",
@@ -524,9 +798,9 @@ export default {
               judge: 1,
               commerresearch_id: item.commerresearch_id,
               company_id: this.company_id,
-              sum: item.number
+              sum: item.number,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               if (!res.data[1]) {
                 // 追加数量
@@ -535,9 +809,9 @@ export default {
                   .post_Param("api/industryyield", {
                     judge: 2,
                     id: res.data[0].id,
-                    sum: Number(res.data[0].sum) + Number(item.number)
+                    sum: Number(res.data[0].sum) + Number(item.number),
                   })
-                  .then(res => {
+                  .then((res) => {
                     this.init();
                     s_alert.Success(
                       "撤销此订单成功,物品追加成功",
@@ -562,16 +836,16 @@ export default {
       if (index == 0) {
         //购买 原料
         if (model.me != this.company_id) {
-          apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
             if (res.data.float >= price) {
               req
                 .post_Param("api/transaction", {
                   judge: 2,
                   detail: this.detail,
                   other: this.company_id,
-                  id: model.id
+                  id: model.id,
                 })
-                .then(res => {
+                .then((res) => {
                   print.log(res.data);
                   s_alert.Success("下单成功", "正在加载……", "success");
                   //追加到 库存
@@ -595,16 +869,16 @@ export default {
       if (index == 1) {
         //购买 产品
         if (model.me != this.company_id) {
-          apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+          apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
             if (res.data.float >= price) {
               req
                 .post_Param("api/transaction", {
                   judge: 2,
                   detail: this.detail,
                   other: this.company_id,
-                  id: model.id
+                  id: model.id,
                 })
-                .then(res => {
+                .then((res) => {
                   print.log(res.data);
                   s_alert.Success("下单成功", "正在加载……", "success");
                   //追加到 库存
@@ -631,9 +905,9 @@ export default {
           .post_Param("api/loan", {
             judge: 2,
             id: model.id,
-            condition: 1
+            condition: 1,
           })
-          .then(res => {
+          .then((res) => {
             print.log(res.data);
             s_alert.Success("还清贷款成功", "正在加载……", "success");
             // 刷新页面
@@ -652,9 +926,9 @@ export default {
             judge: 1,
             source_id: model.source_id,
             company_id: this.company_id,
-            sum: model.number
+            sum: model.number,
           })
-          .then(res => {
+          .then((res) => {
             print.log(res.data);
             if (!res.data[1]) {
               //已有此原料 更新其库存数量
@@ -674,9 +948,9 @@ export default {
             judge: 1,
             commerresearch_id: model.commerresearch_id,
             company_id: this.company_id,
-            sum: model.number
+            sum: model.number,
           })
-          .then(res => {
+          .then((res) => {
             print.log(res.data);
             if (!res.data[1]) {
               //已有此产品 更新其库存数量
@@ -696,9 +970,9 @@ export default {
         .post_Param("api/statistic", {
           //获取买方资产信息
           judge: 5,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           let float = Number(res.data.float) - model.price * model.number;
           let total = Number(res.data.total) - model.price * model.number;
           // 更新资产
@@ -706,7 +980,7 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: this.company_id
+            company_id: this.company_id,
           });
         });
 
@@ -714,9 +988,9 @@ export default {
         .post_Param("api/statistic", {
           //获取卖方资产信息
           judge: 5,
-          company_id: model.me
+          company_id: model.me,
         })
-        .then(res => {
+        .then((res) => {
           let float = Number(res.data.float) + model.price * model.number;
           let total = Number(res.data.total) + model.price * model.number;
           // 更新资产
@@ -724,7 +998,7 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: model.me
+            company_id: model.me,
           });
         });
     },
@@ -739,9 +1013,9 @@ export default {
             .post_Param("api/miniyield", {
               judge: 2,
               id: data.id,
-              sum: addNumber
+              sum: addNumber,
             })
-            .then(res => {
+            .then((res) => {
               s_alert.Success("下单成功", "正在加载……", "success");
             });
         } catch (error) {
@@ -751,9 +1025,9 @@ export default {
             .post_Param("api/miniyield", {
               judge: 2,
               id: data.id,
-              sum: addNumber
+              sum: addNumber,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               s_alert.Success("下单成功", "正在加载……", "success");
             });
@@ -768,9 +1042,9 @@ export default {
             .post_Param("api/industryyield", {
               judge: 2,
               id: data.id,
-              sum: addNumber
+              sum: addNumber,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               s_alert.Success("下单成功", "正在加载……", "success");
             });
@@ -781,9 +1055,9 @@ export default {
             .post_Param("api/industryyield", {
               judge: 2,
               id: data.id,
-              sum: addNumber
+              sum: addNumber,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               s_alert.Success("下单成功", "正在加载……", "success");
             });
@@ -792,7 +1066,7 @@ export default {
     },
     //市场交易 - 原料
     showSource() {
-      req.post_Param("api/transaction", { judge: 7 }).then(res => {
+      req.post_Param("api/transaction", { judge: 7 }).then((res) => {
         print.log(res.data);
         this.showSourceItems = res.data;
         this.judgeChoose = 0;
@@ -800,7 +1074,7 @@ export default {
     },
     //市场交易 - 产品
     showGoods() {
-      req.post_Param("api/transaction", { judge: 6 }).then(res => {
+      req.post_Param("api/transaction", { judge: 6 }).then((res) => {
         print.log(res.data);
         this.showGoodsItems = res.data;
         this.judgeChoose = 1;
@@ -811,7 +1085,7 @@ export default {
       // 公司名称
       this.currentCompanyName = JSON.parse(ses.getSes("userinfo")).company.name;
       // 公司资产信息
-      apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+      apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
         print.log("当前公司资产信息", res.data);
         this.currentCompanyStatistic = res.data;
         if (this.currentCompanyStatistic.fixed >= 0) {
@@ -831,9 +1105,9 @@ export default {
       req
         .post_Param("api/loan", {
           judge: 4,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           print.log(res.data);
           this.showLoanItem = res.data;
           this.judgeChoose = 2;
@@ -873,9 +1147,9 @@ export default {
             money: this.money,
             send: send,
             condition: 0,
-            company_id: this.company_id
+            company_id: this.company_id,
           })
-          .then(res => {
+          .then((res) => {
             print.log(res.data);
             if (res.data[1]) {
               s_alert.Success("贷款信息提交成功", "正在加载……", "success");
@@ -900,9 +1174,9 @@ export default {
       req
         .post_Param("api/statistic", {
           judge: 5,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           let float = Number(res.data.float) + Number(money);
           let total = Number(res.data.total) + Number(money);
           // 更新个人资产
@@ -911,7 +1185,7 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: this.company_id
+            company_id: this.company_id,
           });
           // 写入交易信息
           req
@@ -925,9 +1199,9 @@ export default {
               price: money,
               number: 1,
               me: this.company_id,
-              detail: `贷款：${this.other}`
+              detail: `贷款：${this.other}`,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               this.init();
             });
@@ -939,9 +1213,9 @@ export default {
       req
         .post_Param("api/statistic", {
           judge: 5,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           print.log("个人信息-->", res.data);
           let float = Number(res.data.float) - Number(model.send);
           let total = Number(res.data.total) - Number(model.send);
@@ -950,7 +1224,7 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: this.company_id
+            company_id: this.company_id,
           });
           // 写入交易信息
           req.post_Param("api/transaction", {
@@ -963,7 +1237,7 @@ export default {
             price: model.send,
             number: 1,
             me: this.company_id,
-            detail: `还清贷款：${model.send}`
+            detail: `还清贷款：${model.send}`,
           });
         });
     },
@@ -986,7 +1260,7 @@ export default {
     transaction() {
       apis
         .getAllCompany() // 获取公司列表
-        .then(res => {
+        .then((res) => {
           this.allCompany = res.data;
         });
       // 初始化数据
@@ -1000,7 +1274,7 @@ export default {
 
       apis
         .getOneStatisticByCompanyId(this.company_id) //获取己方资产信息
-        .then(res => {
+        .then((res) => {
           if (this.tmoney <= res.data.float) {
             // 更新己方资产信息
             let float = Number(res.data.float) - Number(this.tmoney);
@@ -1010,13 +1284,13 @@ export default {
               judge: 4,
               total: total,
               float: float,
-              company_id: this.company_id
+              company_id: this.company_id,
             });
 
             // 更新对方资产信息
             apis
               .getOneStatisticByCompanyId(this.toCompany) //获取卖方资产信息
-              .then(res => {
+              .then((res) => {
                 let float = Number(res.data.float) + Number(this.tmoney);
                 let total = Number(res.data.total) + Number(this.tmoney);
                 // 更新资产
@@ -1025,21 +1299,15 @@ export default {
                     judge: 4,
                     total: total,
                     float: float,
-                    company_id: this.toCompany
+                    company_id: this.toCompany,
                   })
-                  .then(res => {
+                  .then((res) => {
                     // 写入交易
                     req
                       .post(
-                        `api/transaction?judge=1&id=0&Yearid=${
-                          this.Yearid
-                        }&inout=2&type=1&kind=3&number=1&price=${
-                          this.tmoney
-                        }&me=${this.toCompany}&other=${
-                          this.company_id
-                        }&detail=${this.tother}`
+                        `api/transaction?judge=1&id=0&Yearid=${this.Yearid}&inout=2&type=1&kind=3&number=1&price=${this.tmoney}&me=${this.toCompany}&other=${this.company_id}&detail=${this.tother}`
                       )
-                      .then(res => {
+                      .then((res) => {
                         print.log(res.data);
                         s_alert.Success(
                           "公司间转账成功！",
@@ -1057,10 +1325,9 @@ export default {
             );
           }
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

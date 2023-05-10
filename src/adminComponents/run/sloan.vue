@@ -13,7 +13,7 @@
             <h3 class="panel-title">Sway商战大赛-贷款情况</h3>
           </div>
           <div class="panel-body">
-            <h4 style="color:green">当前财年：{{Yearid}}</h4>
+            <h4 style="color: green">当前财年：{{ Yearid }}</h4>
             <div class="table-responsive">
               <table class="table table-striped" style id="datatable-editable">
                 <thead>
@@ -34,25 +34,45 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="item.name" v-if="item.company">
-                    <td>{{index}}</td>
-                    <td>L{{item.id}}</td>
-                    <td>{{item.company.name}}</td>
-                    <td>{{item.from}}</td>
-                    <td>{{item.stay}}</td>
-                    <td>{{item.end}}</td>
-                    <td>{{item.rate}}</td>
-                    <td>{{item.detail}}</td>
-                    <td>{{item.money}}</td>
-                    <td>{{item.send}}</td>
-                    <td>{{item.condition | formatCondition}}</td>
-                    <td>{{item.updated_at|formatTime}}</td>
-                    <td class="actions" v-if="item.condition==0 && item.end<=Yearid">
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="强制还款" @click="force(item)">
-                        <i class="fa  fa-check"></i>
+                  <tr
+                    class="gradeX"
+                    v-for="(item, index) in showItems"
+                    :key="item.name"
+                    v-if="item.company"
+                  >
+                    <td>{{ index }}</td>
+                    <td>L{{ item.id }}</td>
+                    <td>{{ item.company.name }}</td>
+                    <td>{{ item.from }}</td>
+                    <td>{{ item.stay }}</td>
+                    <td>{{ item.end }}</td>
+                    <td>{{ item.rate }}</td>
+                    <td>{{ item.detail }}</td>
+                    <td>{{ item.money }}</td>
+                    <td>{{ item.send }}</td>
+                    <td>{{ item.condition | formatCondition }}</td>
+                    <td>{{ item.updated_at | formatTime }}</td>
+                    <td
+                      class="actions"
+                      v-if="item.condition == 0 && item.end <= Yearid"
+                    >
+                      <a
+                        class="waves-effect waves-light"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="强制还款"
+                        @click="force(item)"
+                      >
+                        <i class="fa fa-check"></i>
                       </a>
-                      <a class="waves-effect waves-light" data-toggle="tooltip" data-placement="top" title="免费结清" @click="free(item)">
-                        <i class="fa  fa-times"></i>
+                      <a
+                        class="waves-effect waves-light"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="免费结清"
+                        @click="free(item)"
+                      >
+                        <i class="fa fa-times"></i>
                       </a>
                     </td>
                     <td v-else></td>
@@ -61,30 +81,56 @@
               </table>
             </div>
             <div class="row">
-            <div class="col-sm-6">
-              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-            </div>
-            <div class="col-sm-6">
-              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                <ul class="pagination" style="float:right">
-                  <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                    <a href="javascript:void(0)" @click="previousPage()">上一页</a>
-                  </li>
-                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                    <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
-                  </li>
-                  <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                    <a href="javascript:void(0)" @click="nextPage()">下一页</a>
-                  </li>
-                </ul>
+              <div class="col-sm-6">
+                <div
+                  class="dataTables_info float-left"
+                  id="datatable-editable_info"
+                  role="status"
+                  aria-live="polite"
+                >
+                  展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div
+                  class="dataTables_paginate paging_simple_numbers"
+                  id="datatable-editable_paginate"
+                >
+                  <ul class="pagination" style="float: right">
+                    <li
+                      class="paginate_button previous"
+                      :class="{ disabled: currentPage == '0' }"
+                    >
+                      <a href="javascript:void(0)" @click="previousPage()"
+                        >上一页</a
+                      >
+                    </li>
+                    <li
+                      class="paginate_button"
+                      v-for="(item, index) in sumPage"
+                      :key="index"
+                      :class="{ active: currentPage == index }"
+                    >
+                      <a href="javascript:void(0)" @click="switchPage(index)">{{
+                        ++index
+                      }}</a>
+                    </li>
+                    <li
+                      class="paginate_button next"
+                      :class="{ disabled: currentPage == sumPage - 1 }"
+                    >
+                      <a href="javascript:void(0)" @click="nextPage()"
+                        >下一页</a
+                      >
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -111,7 +157,7 @@ export default {
       showItems: [],
       PageShowSum: 10,
       currentPage: "0",
-      sumPage: null
+      sumPage: null,
     };
   },
   beforeMount() {
@@ -121,7 +167,7 @@ export default {
     this.init();
   },
   updated() {
-    $(function() {
+    $(function () {
       $("[data-toggle='tooltip']").tooltip();
     });
   },
@@ -132,7 +178,7 @@ export default {
     formatCondition(val) {
       if (val == 0) return "未还贷款";
       if (val == 1) return "贷款已结清";
-    }
+    },
   },
   methods: {
     init() {
@@ -142,9 +188,9 @@ export default {
     showAllLoan() {
       req
         .post_Param("api/ass/company_loan", {
-          judge: 4
+          judge: 4,
         })
-        .then(res => {
+        .then((res) => {
           console.log(res.data);
           this.showAllLoanItem = res.data;
           // 分页
@@ -155,7 +201,7 @@ export default {
     // 强制还款
     force(item) {
       print.log("强制还款", item);
-      apis.getOneStatisticByCompanyId(item.company_id).then(res => {
+      apis.getOneStatisticByCompanyId(item.company_id).then((res) => {
         let float = res.data.float - Number(item.send);
         let total = res.data.total - Number(item.send);
         if (res.data.float < item.send) {
@@ -169,7 +215,7 @@ export default {
               judge: 4,
               total: total,
               float: float,
-              company_id: item.company_id
+              company_id: item.company_id,
             });
             // 写入交易信息
             req.post_Param("api/transaction", {
@@ -182,16 +228,16 @@ export default {
               price: item.send,
               number: 1,
               me: item.company_id,
-              detail: `组委会强制还清贷款：${item.send}`
+              detail: `组委会强制还清贷款：${item.send}`,
             });
             // 更新贷款状态
             req
               .post_Param("api/loan", {
                 judge: 2,
                 id: item.id,
-                condition: 1
+                condition: 1,
               })
-              .then(res => {
+              .then((res) => {
                 print.log(res.data);
                 s_alert.Success("还清贷款成功", "正在加载……", "success");
                 // 刷新页面
@@ -210,7 +256,7 @@ export default {
             judge: 4,
             total: total,
             float: float,
-            company_id: item.company_id
+            company_id: item.company_id,
           });
           // 写入交易信息
           req.post_Param("api/transaction", {
@@ -223,16 +269,16 @@ export default {
             price: item.send,
             number: 1,
             me: item.company_id,
-            detail: `组委会强制还清贷款：${item.send}`
+            detail: `组委会强制还清贷款：${item.send}`,
           });
           // 更新贷款状态
           req
             .post_Param("api/loan", {
               judge: 2,
               id: item.id,
-              condition: 1
+              condition: 1,
             })
-            .then(res => {
+            .then((res) => {
               print.log(res.data);
               s_alert.Success("还清贷款成功", "正在加载……", "success");
               // 刷新页面
@@ -255,16 +301,16 @@ export default {
         price: 0,
         number: 1,
         me: item.company_id,
-        detail: `组委会免费还清贷款：0`
+        detail: `组委会免费还清贷款：0`,
       });
       // 更新贷款状态
       req
         .post_Param("api/loan", {
           judge: 2,
           id: item.id,
-          condition: 1
+          condition: 1,
         })
-        .then(res => {
+        .then((res) => {
           print.log(res.data);
           s_alert.Success("还清贷款成功", "正在加载……", "success");
           // 刷新页面
@@ -321,11 +367,10 @@ export default {
         print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
-    }
+    },
     //结束分页
-  }
+  },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

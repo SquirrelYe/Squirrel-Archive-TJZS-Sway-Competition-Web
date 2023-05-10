@@ -27,53 +27,102 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
-                    <td>{{index}}</td>
-                    <td>T{{item.id}}</td>
-                    <td>{{item.Yearid}}</td>
-                    <td>{{item.price}}*{{item.number}}={{item.price*item.number}}</td>
+                  <tr
+                    class="gradeX"
+                    v-for="(item, index) in showItems"
+                    :key="index"
+                  >
+                    <td>{{ index }}</td>
+                    <td>T{{ item.id }}</td>
+                    <td>{{ item.Yearid }}</td>
+                    <td>
+                      {{ item.price }}*{{ item.number }}={{
+                        item.price * item.number
+                      }}
+                    </td>
                     <!-- 格式化收支 -->
-                    <td v-if="item.kind==1 || item.kind==2">
-                      <div v-if="item.me==company_id">收入</div>
-                      <div v-if="item.other==company_id">支出</div>                      
+                    <td v-if="item.kind == 1 || item.kind == 2">
+                      <div v-if="item.me == company_id">收入</div>
+                      <div v-if="item.other == company_id">支出</div>
                     </td>
-                    <td v-else-if="item.kind==3 && item.type==1">
-                      <div v-if="item.me==company_id">收入</div>
-                      <div v-if="item.other==company_id">支出</div>                      
+                    <td v-else-if="item.kind == 3 && item.type == 1">
+                      <div v-if="item.me == company_id">收入</div>
+                      <div v-if="item.other == company_id">支出</div>
                     </td>
-                    <td v-else>{{item.inout|formatInOut}}</td>
+                    <td v-else>{{ item.inout | formatInOut }}</td>
 
-                    <td v-if="item.source">{{item.source.name}}{{item.detail}}</td>
-                    <td v-else-if="item.commerresearch">{{item.commerresearch.name}}{{item.detail}}</td>
-                    <td v-else-if="item.mining">{{item.mining.star|formatStar}}</td>
-                    <td v-else-if="item.indusland">{{item.indusland.model|formatModel}}</td>
-                    <td v-else-if="item.commerland">{{item.commerland.level|formatLevel}}</td>
-                    <td v-else-if="item.digger">{{item.digger.model}}</td>
-                    <td v-else-if="item.factory">{{item.factory.model}}</td>
-                    <td v-else-if="item.line">{{item.line.model}}</td>
-                    <td v-else-if="item.research">{{item.research.model}}</td>
-                    <td v-else-if="item.detail && !item.source && !item.commerresearch">{{item.detail}}</td>
+                    <td v-if="item.source">
+                      {{ item.source.name }}{{ item.detail }}
+                    </td>
+                    <td v-else-if="item.commerresearch">
+                      {{ item.commerresearch.name }}{{ item.detail }}
+                    </td>
+                    <td v-else-if="item.mining">
+                      {{ item.mining.star | formatStar }}
+                    </td>
+                    <td v-else-if="item.indusland">
+                      {{ item.indusland.model | formatModel }}
+                    </td>
+                    <td v-else-if="item.commerland">
+                      {{ item.commerland.level | formatLevel }}
+                    </td>
+                    <td v-else-if="item.digger">{{ item.digger.model }}</td>
+                    <td v-else-if="item.factory">{{ item.factory.model }}</td>
+                    <td v-else-if="item.line">{{ item.line.model }}</td>
+                    <td v-else-if="item.research">{{ item.research.model }}</td>
+                    <td
+                      v-else-if="
+                        item.detail && !item.source && !item.commerresearch
+                      "
+                    >
+                      {{ item.detail }}
+                    </td>
                     <td v-else></td>
 
-                    <td>{{item.updated_at|formatTime}}</td>
+                    <td>{{ item.updated_at | formatTime }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <!-- 分页 -->
             <div class="col-sm-6">
-              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+              <div
+                class="dataTables_info float-left"
+                id="datatable-editable_info"
+                role="status"
+                aria-live="polite"
+              >
+                展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+              </div>
             </div>
             <div class="col-sm-6">
-              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                <ul class="pagination" style="float:right">
-                  <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                    <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+              <div
+                class="dataTables_paginate paging_simple_numbers"
+                id="datatable-editable_paginate"
+              >
+                <ul class="pagination" style="float: right">
+                  <li
+                    class="paginate_button previous"
+                    :class="{ disabled: currentPage == '0' }"
+                  >
+                    <a href="javascript:void(0)" @click="previousPage()"
+                      >上一页</a
+                    >
                   </li>
-                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                    <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                  <li
+                    class="paginate_button"
+                    v-for="(item, index) in sumPage"
+                    :key="index"
+                    :class="{ active: currentPage == index }"
+                  >
+                    <a href="javascript:void(0)" @click="switchPage(index)">{{
+                      ++index
+                    }}</a>
                   </li>
-                  <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                  <li
+                    class="paginate_button next"
+                    :class="{ disabled: currentPage == sumPage - 1 }"
+                  >
                     <a href="javascript:void(0)" @click="nextPage()">下一页</a>
                   </li>
                 </ul>
@@ -83,7 +132,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -102,8 +150,8 @@ export default {
   name: "resource",
   data() {
     return {
-      company_id:'',
-      Yearid:'',
+      company_id: "",
+      Yearid: "",
 
       showCompete: "",
       // 分页数据
@@ -119,51 +167,50 @@ export default {
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   mounted() {
-      this.showMyCompete()
+    this.showMyCompete();
   },
-  filters:{
+  filters: {
     formatTime(x) {
       return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatInOut(x){
-      if(x==1) return '支出';
-      if(x==2) return '收入';
+    formatInOut(x) {
+      if (x == 1) return "支出";
+      if (x == 2) return "收入";
     },
-    formatStar(x){
-      if(x==1) return '一星矿区';
-      if(x==2) return '二星矿区';
-      if(x==3) return '三星矿区';
-      if(x==4) return '四星矿区';
-      if(x==5) return '五星矿区';
+    formatStar(x) {
+      if (x == 1) return "一星矿区";
+      if (x == 2) return "二星矿区";
+      if (x == 3) return "三星矿区";
+      if (x == 4) return "四星矿区";
+      if (x == 5) return "五星矿区";
     },
-    formatModel(x){
-      if(x==1) return 'A';
-      if(x==2) return 'Z';
-      if(x==3) return 'C';
-      if(x==4) return 'S';
+    formatModel(x) {
+      if (x == 1) return "A";
+      if (x == 2) return "Z";
+      if (x == 3) return "C";
+      if (x == 4) return "S";
     },
-    formatLevel(x){
-      if(x==1) return '投契级';
-      if(x==2) return '机构级';
-      if(x==3) return '投资级';
-      if(x==4) return '地标级';
+    formatLevel(x) {
+      if (x == 1) return "投契级";
+      if (x == 2) return "机构级";
+      if (x == 3) return "投资级";
+      if (x == 4) return "地标级";
     },
   },
   methods: {
     showMyCompete() {
       // 获取自己公司交易情况
-      apis.getOneTransationByCompanyId(this.company_id)
-      .then(res => {
-          console.log('获取自己公司交易情况',res.data);
-          this.showCompete = res.data;
-          // 分页
-          this.currentPage='0'
-          this.show(res.data)
-      })
+      apis.getOneTransationByCompanyId(this.company_id).then((res) => {
+        console.log("获取自己公司交易情况", res.data);
+        this.showCompete = res.data;
+        // 分页
+        this.currentPage = "0";
+        this.show(res.data);
+      });
     },
-     // -----------------------------------------------------------分页模板-------------------------------------------------------------
+    // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
-      this.items=items;
+      this.items = items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let page = Number(this.currentPage) + 1;
@@ -210,11 +257,10 @@ export default {
         print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
-    }
+    },
     //结束分页
-  }
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

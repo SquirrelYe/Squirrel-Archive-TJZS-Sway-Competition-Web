@@ -8,16 +8,20 @@
       </div>
 
       <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Sway商战大赛-已有公司列表</h3>
-          </div>
+        <div class="panel-heading">
+          <h3 class="panel-title">Sway商战大赛-已有公司列表</h3>
+        </div>
         <!-- 外层div 判断是否隐藏 主list -->
-        <div v-if="mainList" style="margin-top:20px">
+        <div v-if="mainList" style="margin-top: 20px">
           <div class="panel-body">
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="table-responsive">
-                  <table class="table table-bordered table-striped" style id="datatable-editable">
+                  <table
+                    class="table table-bordered table-striped"
+                    style
+                    id="datatable-editable"
+                  >
                     <thead>
                       <tr>
                         <th>
@@ -35,18 +39,28 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="gradeX" v-for="(item,index) in showItems" :key="index">
-                        <td>{{index}}</td>
-                        <td>{{item.id}}</td>
-                        <td>{{item.name}}</td>
-                        <td>{{item.legal}}</td>
-                        <td>{{item.code}}</td>
-                        <td>{{item.area}}</td>
+                      <tr
+                        class="gradeX"
+                        v-for="(item, index) in showItems"
+                        :key="index"
+                      >
+                        <td>{{ index }}</td>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.legal }}</td>
+                        <td>{{ item.code }}</td>
+                        <td>{{ item.area }}</td>
                         <!-- <td>3</td> -->
-                        <td>{{item.condition | formatCondition}}</td>
-                        <td>{{item.created_at | formatTime}}</td>
+                        <td>{{ item.condition | formatCondition }}</td>
+                        <td>{{ item.created_at | formatTime }}</td>
                         <td class="actions" align="center">
-                          <a class="on-default edit-row" @click="joinCompany(item)" data-toggle="tooltip" data-placement="top" title="加入此公司">
+                          <a
+                            class="on-default edit-row"
+                            @click="joinCompany(item)"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="加入此公司"
+                          >
                             <i class="fa fa-paper-plane-o"></i>
                           </a>
                         </td>
@@ -56,19 +70,48 @@
                 </div>
                 <div class="row">
                   <div class="col-sm-6">
-                    <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+                    <div
+                      class="dataTables_info float-left"
+                      id="datatable-editable_info"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+                    </div>
                   </div>
                   <div class="col-sm-6">
-                    <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                      <ul class="pagination" style="float:right">
-                        <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                          <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+                    <div
+                      class="dataTables_paginate paging_simple_numbers"
+                      id="datatable-editable_paginate"
+                    >
+                      <ul class="pagination" style="float: right">
+                        <li
+                          class="paginate_button previous"
+                          :class="{ disabled: currentPage == '0' }"
+                        >
+                          <a href="javascript:void(0)" @click="previousPage()"
+                            >上一页</a
+                          >
                         </li>
-                        <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                          <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                        <li
+                          class="paginate_button"
+                          v-for="(item, index) in sumPage"
+                          :key="index"
+                          :class="{ active: currentPage == index }"
+                        >
+                          <a
+                            href="javascript:void(0)"
+                            @click="switchPage(index)"
+                            >{{ ++index }}</a
+                          >
                         </li>
-                        <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                          <a href="javascript:void(0)" @click="nextPage()">下一页</a>
+                        <li
+                          class="paginate_button next"
+                          :class="{ disabled: currentPage == sumPage - 1 }"
+                        >
+                          <a href="javascript:void(0)" @click="nextPage()"
+                            >下一页</a
+                          >
                         </li>
                       </ul>
                     </div>
@@ -77,16 +120,19 @@
               </div>
             </div>
             <div class="col-md-11">
-              注意：<br>
-              <strong>公司由选出的公司CEO创建，公司创建完成之后，公司其他成员找到并加入公司。</strong><br>
-              <strong>比赛准备中可以加入公司，比赛正式开始后无法加入公司。</strong>
+              注意：<br />
+              <strong
+                >公司由选出的公司CEO创建，公司创建完成之后，公司其他成员找到并加入公司。</strong
+              ><br />
+              <strong
+                >比赛准备中可以加入公司，比赛正式开始后无法加入公司。</strong
+              >
             </div>
           </div>
-          
         </div>
       </div>
     </div>
-    <div style="margin-top:100px"></div>
+    <div style="margin-top: 100px"></div>
   </div>
 </template>
 
@@ -97,11 +143,11 @@ const req = require("../../utils/axios");
 const print = require("../../utils/print");
 const apis = require("../../utils/api/apis");
 
-const async=require('async')
+const async = require("async");
 const notify = require("bootstrap-notify");
 
 import app from "../../App.vue";
-const moment = require('moment');
+const moment = require("moment");
 var App = app;
 
 export default {
@@ -120,81 +166,88 @@ export default {
     };
   },
   mounted() {
-    this.init()
+    this.init();
   },
-  updated() {    
-    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+  updated() {
+    $(function () {
+      $("[data-toggle='tooltip']").tooltip();
+    });
   },
-  filters:{
-    formatTime(val){
-      return moment(val).format('YYYY-MM-DD HH:mm:ss')
+  filters: {
+    formatTime(val) {
+      return moment(val).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatCondition(x){
-      if(x==0) return "正常营业";
-      if(x==1) return "存续";
-      if(x==2) return "注销"
-    }
+    formatCondition(x) {
+      if (x == 0) return "正常营业";
+      if (x == 1) return "存续";
+      if (x == 2) return "注销";
+    },
   },
   methods: {
-    init(){
+    init() {
       this.getAllCompany();
-    },    
+    },
     //获取所有公司列表
     getAllCompany() {
-      apis.getAllCompany()
-      .then(res => {
-        print.log('获取到 公司列表信息',res.data);
+      apis.getAllCompany().then((res) => {
+        print.log("获取到 公司列表信息", res.data);
         this.items = res.data;
         // 分页
-        this.currentPage='0'
-        this.show(res.data)
-      })
+        this.currentPage = "0";
+        this.show(res.data);
+      });
     },
     //加入公司流程
     joinCompany(item) {
-      if(confirm("你确定加入此公司？？？")) {
-        if(JSON.parse(ses.getSes("gameinfo")).condition != 0) s_alert.Success("未在准备中不能加入公司","公司加入在比赛准备中进行",'warning');
+      if (confirm("你确定加入此公司？？？")) {
+        if (JSON.parse(ses.getSes("gameinfo")).condition != 0)
+          s_alert.Success(
+            "未在准备中不能加入公司",
+            "公司加入在比赛准备中进行",
+            "warning"
+          );
         else this.judgeBlong(item);
-      } 
+      }
     },
     // 判断是否已有公司
-    judgeBlong(item){
-      let uid=JSON.parse(ses.getSes('userinfo')).id
-      req.post_Param('/api/sway',{
-        'judge':9,
-        'sway_id':uid
-      })
-      .then(res => {
-        print.log(res.data)
-        if(res.data.success) this.enterCompany(item,uid);
-        else s_alert.Timer("加入失败，只能加入一个公司……");
-      })
+    judgeBlong(item) {
+      let uid = JSON.parse(ses.getSes("userinfo")).id;
+      req
+        .post_Param("/api/sway", {
+          judge: 9,
+          sway_id: uid,
+        })
+        .then((res) => {
+          print.log(res.data);
+          if (res.data.success) this.enterCompany(item, uid);
+          else s_alert.Timer("加入失败，只能加入一个公司……");
+        });
     },
     // 加入公司
-    enterCompany(item,uid){
-      req.post_Param('/api/ass/company_sway',{
-        'judge':0,
-        'sway_id':uid,
-        'company_id':item.id
-      })
-      .then(res => {
-        if(res.data.success){
-          this.updateUserInfoSession(uid)
-        }else{
-          s_alert.Timer("加入失败，请检查……");
-        }
-      })
+    enterCompany(item, uid) {
+      req
+        .post_Param("/api/ass/company_sway", {
+          judge: 0,
+          sway_id: uid,
+          company_id: item.id,
+        })
+        .then((res) => {
+          if (res.data.success) {
+            this.updateUserInfoSession(uid);
+          } else {
+            s_alert.Timer("加入失败，请检查……");
+          }
+        });
     },
     // 更新用户 session信息
-    updateUserInfoSession(uid){
-        apis.getOneSwayById(uid)
-        .then(res=>{
-            ses.setSes("userinfo", JSON.stringify(res.data));
-            s_alert.Success("用户信息更新成功", "2秒后自动跳转到公司……", "success");
-            setTimeout(() => {                
-                this.$router.push({name:'infocompany'})
-            }, 2000);
-        })
+    updateUserInfoSession(uid) {
+      apis.getOneSwayById(uid).then((res) => {
+        ses.setSes("userinfo", JSON.stringify(res.data));
+        s_alert.Success("用户信息更新成功", "2秒后自动跳转到公司……", "success");
+        setTimeout(() => {
+          this.$router.push({ name: "infocompany" });
+        }, 2000);
+      });
     },
 
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
@@ -277,11 +330,9 @@ export default {
           }
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

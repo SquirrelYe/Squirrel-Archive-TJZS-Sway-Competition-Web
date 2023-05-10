@@ -17,7 +17,6 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -33,9 +32,8 @@ export default {
     var ses = window.sessionStorage;
     this.userinfo = JSON.parse(ses.getItem("userinfo"));
   },
-  methods: {}
+  methods: {},
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -1,160 +1,234 @@
 <template>
-    <div class="wrapper">
-        <div class="container">
-            
-            <div class="row">
-                <div class="col-sm-12">
-                    <h4 class="page-title"> 档案列表 </h4>
-                </div>
-            </div>
-
-            <div class="panel">
-
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="m-b-30">
-                                <button id="addToTable" class="btn btn-primary waves-effect waves-light" @click="toDocCreate()"> 新增植物档案 <i class="fa fa-plus"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="dataTables_length" id="datatable-editable_length">
-                                <label>显示 
-                                    <select class="form-control input-sm" v-model="PageShowSum" @change="changePageShowSum()">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select> 
-                                    项
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div id="datatable-editable_filter" class="dataTables_filter" style="margin-right:45px;">
-                                <label>搜索:
-                                    <input type="search" class="form-control input-sm search-input" placeholder="请输入植物书名" @input="doSearch($event)" v-model="doSearchText">
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 外层div 判断是否隐藏 主list -->
-                    <div v-if="mainList">
-                        <table class="table table-bordered table-striped" style="" id="datatable-editable">
-                            <thead>
-                                <tr>
-                                    <th><i @click="selcetAll()">选择</i></th>
-                                    <th>植株ID</th>
-                                    <th>书名</th>
-                                    <th>别名</th>
-                                    <th>拉丁名</th>
-                                    <th>科</th>
-                                    <th>属</th>
-                                    <th>种</th>
-                                    <th>形态</th>
-                                    <th>习性</th>
-                                    <th>用途</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="gradeX" v-for="(item,index) in showItems" :key="item.id">
-                                    <td align="center"> 
-                                        <input type="checkbox" v-model="select" @change="indexSelect(index)" :value="item.plantid" name="jc">
-                                    </td>
-                                    <td>{{item.plantid}}</td>
-                                    <td>{{item.aname}}</td>
-                                    <td>{{item.alias}}</td>
-                                    <td>{{item.lname}}</td>
-                                    <td>{{item.family}}</td>
-                                    <td>{{item.genera}}</td>
-                                    <td>{{item.specie}}</td>
-                                    <td>{{item.morphology}}</td>
-                                    <td>{{item.habit}}</td>
-                                    <td>{{item.purpose}}</td>
-                                    <td class="actions">
-                                        <a class="on-default edit-row" @click="editItem(index)"><i class="fa fa-pencil"></i></a>
-                                        <a class="on-default remove-row" @click="deleteItem(index)"><i class="fa fa-trash-o"></i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>    
-                        <div class="row">
-                        <div class="col-sm-6">
-                        <div class="dataTables_info" id="datatable-editable_info" role="status" aria-live="polite">展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate">
-                                <ul class="pagination">
-                                    <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                                        <a @click="previousPage()">上一页</a>
-                                    </li>
-                                    <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }">
-                                        <a @click="switchPage(index)">{{++index}}</a>
-                                    </li>
-                                    <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
-                                        <a @click="nextPage()">下一页</a>
-                                    </li>
-                                    <li>
-                                        <a @click="cs()">测试</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> 
-                    </div>    
-                    <!-- 外层div 判断是否隐藏 搜索list -->
-                    <div v-if="searchList">
-                        <table class="table table-bordered table-striped" style="" id="datatable-editable">
-                            <thead>
-                                <tr>
-                                    <th><i @click="selcetAll()">选择</i></th>
-                                    <th>植株ID</th>
-                                    <th>书名</th>
-                                    <th>别名</th>
-                                    <th>拉丁名</th>
-                                    <th>科</th>
-                                    <th>属</th>
-                                    <th>种</th>
-                                    <th>形态</th>
-                                    <th>习性</th>
-                                    <th>用途</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="gradeX" v-for="(item,index) in searchItems" :key="item.id">
-                                    <td align="center"> 
-                                        <input type="checkbox" v-model="select" @change="indexSelect(index)" :value="item.plantid" name="jc">
-                                    </td>
-                                    <td>{{item.plantid}}</td>
-                                    <td>{{item.aname}}</td>
-                                    <td>{{item.alias}}</td>
-                                    <td>{{item.lname}}</td>
-                                    <td>{{item.family}}</td>
-                                    <td>{{item.genera}}</td>
-                                    <td>{{item.specie}}</td>
-                                    <td>{{item.morphology}}</td>
-                                    <td>{{item.habit}}</td>
-                                    <td>{{item.purpose}}</td>
-                                    <td class="actions">
-                                        <a class="on-default edit-row" @click="editItem(index)"><i class="fa fa-pencil"></i></a>
-                                        <a class="on-default remove-row" @click="deleteItem(index)"><i class="fa fa-trash-o"></i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>     
-                    </div>               
-                    
-                </div>
-            </div>
-            <div style="margin-top:100px"></div>
-            
+  <div class="wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <h4 class="page-title">档案列表</h4>
         </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="m-b-30">
+                <button
+                  id="addToTable"
+                  class="btn btn-primary waves-effect waves-light"
+                  @click="toDocCreate()"
+                >
+                  新增植物档案 <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="dataTables_length" id="datatable-editable_length">
+                <label
+                  >显示
+                  <select
+                    class="form-control input-sm"
+                    v-model="PageShowSum"
+                    @change="changePageShowSum()"
+                  >
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  项
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div
+                id="datatable-editable_filter"
+                class="dataTables_filter"
+                style="margin-right: 45px"
+              >
+                <label
+                  >搜索:
+                  <input
+                    type="search"
+                    class="form-control input-sm search-input"
+                    placeholder="请输入植物书名"
+                    @input="doSearch($event)"
+                    v-model="doSearchText"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- 外层div 判断是否隐藏 主list -->
+          <div v-if="mainList">
+            <table
+              class="table table-bordered table-striped"
+              style=""
+              id="datatable-editable"
+            >
+              <thead>
+                <tr>
+                  <th><i @click="selcetAll()">选择</i></th>
+                  <th>植株ID</th>
+                  <th>书名</th>
+                  <th>别名</th>
+                  <th>拉丁名</th>
+                  <th>科</th>
+                  <th>属</th>
+                  <th>种</th>
+                  <th>形态</th>
+                  <th>习性</th>
+                  <th>用途</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="gradeX"
+                  v-for="(item, index) in showItems"
+                  :key="item.id"
+                >
+                  <td align="center">
+                    <input
+                      type="checkbox"
+                      v-model="select"
+                      @change="indexSelect(index)"
+                      :value="item.plantid"
+                      name="jc"
+                    />
+                  </td>
+                  <td>{{ item.plantid }}</td>
+                  <td>{{ item.aname }}</td>
+                  <td>{{ item.alias }}</td>
+                  <td>{{ item.lname }}</td>
+                  <td>{{ item.family }}</td>
+                  <td>{{ item.genera }}</td>
+                  <td>{{ item.specie }}</td>
+                  <td>{{ item.morphology }}</td>
+                  <td>{{ item.habit }}</td>
+                  <td>{{ item.purpose }}</td>
+                  <td class="actions">
+                    <a class="on-default edit-row" @click="editItem(index)"
+                      ><i class="fa fa-pencil"></i
+                    ></a>
+                    <a class="on-default remove-row" @click="deleteItem(index)"
+                      ><i class="fa fa-trash-o"></i
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="row">
+              <div class="col-sm-6">
+                <div
+                  class="dataTables_info"
+                  id="datatable-editable_info"
+                  role="status"
+                  aria-live="polite"
+                >
+                  展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div
+                  class="dataTables_paginate paging_simple_numbers"
+                  id="datatable-editable_paginate"
+                >
+                  <ul class="pagination">
+                    <li
+                      class="paginate_button previous"
+                      :class="{ disabled: currentPage == '0' }"
+                    >
+                      <a @click="previousPage()">上一页</a>
+                    </li>
+                    <li
+                      class="paginate_button"
+                      v-for="(item, index) in sumPage"
+                      :key="index"
+                      :class="{ active: currentPage == index }"
+                    >
+                      <a @click="switchPage(index)">{{ ++index }}</a>
+                    </li>
+                    <li
+                      class="paginate_button next"
+                      :class="{ disabled: currentPage == sumPage - 1 }"
+                    >
+                      <a @click="nextPage()">下一页</a>
+                    </li>
+                    <li>
+                      <a @click="cs()">测试</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 外层div 判断是否隐藏 搜索list -->
+          <div v-if="searchList">
+            <table
+              class="table table-bordered table-striped"
+              style=""
+              id="datatable-editable"
+            >
+              <thead>
+                <tr>
+                  <th><i @click="selcetAll()">选择</i></th>
+                  <th>植株ID</th>
+                  <th>书名</th>
+                  <th>别名</th>
+                  <th>拉丁名</th>
+                  <th>科</th>
+                  <th>属</th>
+                  <th>种</th>
+                  <th>形态</th>
+                  <th>习性</th>
+                  <th>用途</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class="gradeX"
+                  v-for="(item, index) in searchItems"
+                  :key="item.id"
+                >
+                  <td align="center">
+                    <input
+                      type="checkbox"
+                      v-model="select"
+                      @change="indexSelect(index)"
+                      :value="item.plantid"
+                      name="jc"
+                    />
+                  </td>
+                  <td>{{ item.plantid }}</td>
+                  <td>{{ item.aname }}</td>
+                  <td>{{ item.alias }}</td>
+                  <td>{{ item.lname }}</td>
+                  <td>{{ item.family }}</td>
+                  <td>{{ item.genera }}</td>
+                  <td>{{ item.specie }}</td>
+                  <td>{{ item.morphology }}</td>
+                  <td>{{ item.habit }}</td>
+                  <td>{{ item.purpose }}</td>
+                  <td class="actions">
+                    <a class="on-default edit-row" @click="editItem(index)"
+                      ><i class="fa fa-pencil"></i
+                    ></a>
+                    <a class="on-default remove-row" @click="deleteItem(index)"
+                      ><i class="fa fa-trash-o"></i
+                    ></a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top: 100px"></div>
     </div>
-        
+  </div>
 </template>
 
 <script>
@@ -176,7 +250,7 @@ export default {
       sumPage: null,
       doSearchText: null,
       mainList: true,
-      searchList: false
+      searchList: false,
     };
   },
   mounted() {
@@ -189,7 +263,7 @@ export default {
     selcetAll() {
       //$('[name="jc"]').prop('checked',true);
       if (!this.isSelectedAll) {
-        this.items.forEach(item => {
+        this.items.forEach((item) => {
           this.select.push(item.plantid);
           this.isSelectedAll = true;
         });
@@ -201,12 +275,12 @@ export default {
     mockcs() {
       this.axios
         .post("/news/api", { withCredentials: true })
-        .then(res => {
+        .then((res) => {
           // console.log(res.data)
           this.items = res.data;
           this.show();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         });
     },
@@ -297,8 +371,8 @@ export default {
       //测试跨页面传值，调用
       let random = Math.random();
       alert(App.methods.setGlobleUrlq(random));
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>

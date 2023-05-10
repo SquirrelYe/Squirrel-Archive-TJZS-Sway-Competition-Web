@@ -41,25 +41,32 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr class="gradeX" v-for="(item,index) in showItems" :key="index" :class="{'green' : item.type ==2}">
-                    <td>{{index}}</td>
-                    <td>T{{item.id}}</td>
-                    <td>{{item.Yearid}}</td>
+                  <tr
+                    class="gradeX"
+                    v-for="(item, index) in showItems"
+                    :key="index"
+                    :class="{ green: item.type == 2 }"
+                  >
+                    <td>{{ index }}</td>
+                    <td>T{{ item.id }}</td>
+                    <td>{{ item.Yearid }}</td>
                     <!-- <td>{{item.inout|formatInOut}}</td> -->
-                    <td v-if="company_id==item.me">卖出</td>
-                    <td v-if="company_id==item.other">买入</td>
-                    <td>{{item.type|formatType}}</td>
-                    <td>{{item.kind|formatKind}}</td>
-                    <td>{{item.price}}</td> 
-                    <td>{{item.number}}</td>
-                    <td>{{item.detail}}</td>
-                    <td v-if="item.me_1">{{item.me_1.name}}</td>
+                    <td v-if="company_id == item.me">卖出</td>
+                    <td v-if="company_id == item.other">买入</td>
+                    <td>{{ item.type | formatType }}</td>
+                    <td>{{ item.kind | formatKind }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.number }}</td>
+                    <td>{{ item.detail }}</td>
+                    <td v-if="item.me_1">{{ item.me_1.name }}</td>
                     <td v-else></td>
-                    <td v-if="item.other_1">{{item.other_1.name}}</td>
+                    <td v-if="item.other_1">{{ item.other_1.name }}</td>
                     <td v-else></td>
-                    <td v-if="item.source">{{item.source.name}}</td>
+                    <td v-if="item.source">{{ item.source.name }}</td>
                     <td v-else></td>
-                    <td v-if="item.commerresearch">{{item.commerresearch.name}}</td>
+                    <td v-if="item.commerresearch">
+                      {{ item.commerresearch.name }}
+                    </td>
                     <td v-else></td>
                     <!-- <td v-if="item.mining">{{item.mining.star|formatStar}}</td>
                     <td v-else></td>
@@ -75,35 +82,64 @@
                     <td v-else></td>
                     <td v-if="item.research">{{item.research.model}}</td>
                     <td v-else></td> -->
-                    <td>{{item.updated_at|formatTime}}</td>
+                    <td>{{ item.updated_at | formatTime }}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <!-- 分页 -->
             <div class="col-sm-6">
-              <div class="dataTables_info float-left" id="datatable-editable_info" role="status" aria-live="polite" >展示 {{PageShowSum}} 总共 {{items.length}} 项</div>
+              <div
+                class="dataTables_info float-left"
+                id="datatable-editable_info"
+                role="status"
+                aria-live="polite"
+              >
+                展示 {{ PageShowSum }} 总共 {{ items.length }} 项
+              </div>
             </div>
             <div class="col-sm-6">
-              <div class="dataTables_paginate paging_simple_numbers" id="datatable-editable_paginate" >
-                <ul class="pagination" style="float:right">
-                  <li class="paginate_button previous" :class="{ disabled: currentPage=='0' }">
-                    <a href="javascript:void(0)" @click="previousPage()">上一页</a>
+              <div
+                class="dataTables_paginate paging_simple_numbers"
+                id="datatable-editable_paginate"
+              >
+                <ul class="pagination" style="float: right">
+                  <li
+                    class="paginate_button previous"
+                    :class="{ disabled: currentPage == '0' }"
+                  >
+                    <a href="javascript:void(0)" @click="previousPage()"
+                      >上一页</a
+                    >
                   </li>
-                  <li class="paginate_button" v-for="(item,index) in sumPage" :key="index" :class="{ active: currentPage==index }" >
-                    <a href="javascript:void(0)" @click="switchPage(index)">{{++index}}</a>
+                  <li
+                    class="paginate_button"
+                    v-for="(item, index) in sumPage"
+                    :key="index"
+                    :class="{ active: currentPage == index }"
+                  >
+                    <a href="javascript:void(0)" @click="switchPage(index)">{{
+                      ++index
+                    }}</a>
                   </li>
-                  <li class="paginate_button next" :class="{ disabled: currentPage==sumPage-1 }">
+                  <li
+                    class="paginate_button next"
+                    :class="{ disabled: currentPage == sumPage - 1 }"
+                  >
                     <a href="javascript:void(0)" @click="nextPage()">下一页</a>
                   </li>
                 </ul>
               </div>
             </div>
-            <p><strong>注意:上图所示价格单位均为万元。黑色表示公司间交易，绿色表示市场交易。</strong></p>
+            <p>
+              <strong
+                >注意:上图所示价格单位均为万元。黑色表示公司间交易，绿色表示市场交易。</strong
+              >
+            </p>
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   </div>
 </template>
 
@@ -122,8 +158,8 @@ export default {
   name: "showtransaction",
   data() {
     return {
-      company_id:'',
-      showTransaction: '',
+      company_id: "",
+      showTransaction: "",
       // 分页数据
       items: [],
       showItems: [],
@@ -133,73 +169,73 @@ export default {
     };
   },
   beforeMount() {
-    this.company_id=JSON.parse(ses.getSes('userinfo')).company_id
+    this.company_id = JSON.parse(ses.getSes("userinfo")).company_id;
   },
   mounted() {
-      this.showMyCompete()
+    this.showMyCompete();
   },
-  filters:{
+  filters: {
     formatTime(x) {
       return moment(x).format("YYYY-MM-DD HH:mm:ss");
     },
-    formatInOut(x){
-      if(x==1) return '买入';
-      if(x==2) return '卖出';
+    formatInOut(x) {
+      if (x == 1) return "买入";
+      if (x == 2) return "卖出";
     },
-    formatType(x){
-      if(x==1) return '定向公司交易';
-      if(x==2) return '市场交易';
-      if(x==3) return '贷款';
-      if(x==4) return '固定资产支出';
+    formatType(x) {
+      if (x == 1) return "定向公司交易";
+      if (x == 2) return "市场交易";
+      if (x == 3) return "贷款";
+      if (x == 4) return "固定资产支出";
     },
-    formatKind(x){
-      if(x==1) return '原料订单';
-      if(x==2) return '产品订单';
-      if(x==3) return '现金交易';
+    formatKind(x) {
+      if (x == 1) return "原料订单";
+      if (x == 2) return "产品订单";
+      if (x == 3) return "现金交易";
     },
-    formatStar(x){
-      if(x==1) return '一星矿区';
-      if(x==2) return '二星矿区';
-      if(x==3) return '三星矿区';
-      if(x==4) return '四星矿区';
-      if(x==5) return '五星矿区';
+    formatStar(x) {
+      if (x == 1) return "一星矿区";
+      if (x == 2) return "二星矿区";
+      if (x == 3) return "三星矿区";
+      if (x == 4) return "四星矿区";
+      if (x == 5) return "五星矿区";
     },
-    formatModel(x){
-      if(x==1) return 'A';
-      if(x==2) return 'Z';
-      if(x==3) return 'C';
-      if(x==4) return 'S';
+    formatModel(x) {
+      if (x == 1) return "A";
+      if (x == 2) return "Z";
+      if (x == 3) return "C";
+      if (x == 4) return "S";
     },
-    formatLevel(x){
-      if(x==1) return '投契级';
-      if(x==2) return '机构级';
-      if(x==3) return '投资级';
-      if(x==4) return '地标级';
+    formatLevel(x) {
+      if (x == 1) return "投契级";
+      if (x == 2) return "机构级";
+      if (x == 3) return "投资级";
+      if (x == 4) return "地标级";
     },
-    formatDigger(x){
-      if(x==1) return 'A1型挖掘机';
-      if(x==2) return 'A2型挖掘机';
-      if(x==3) return 'D型挖掘机';
-      if(x==1) return 'E型挖掘机';
-      if(x==2) return 'R型挖掘机';
-
-    }
+    formatDigger(x) {
+      if (x == 1) return "A1型挖掘机";
+      if (x == 2) return "A2型挖掘机";
+      if (x == 3) return "D型挖掘机";
+      if (x == 1) return "E型挖掘机";
+      if (x == 2) return "R型挖掘机";
+    },
   },
   methods: {
     showMyCompete() {
-      print.log(this.company_id)
-      apis.getOneTransationByCompanyIdAndType(this.company_id,2)
-      .then(res => {
+      print.log(this.company_id);
+      apis
+        .getOneTransationByCompanyIdAndType(this.company_id, 2)
+        .then((res) => {
           console.log(res.data);
           this.showTransaction = res.data;
           // 分页
-          this.currentPage='0'
-          this.show(res.data)
-      })
+          this.currentPage = "0";
+          this.show(res.data);
+        });
     },
     // -----------------------------------------------------------分页模板-------------------------------------------------------------
     show(items) {
-      this.items=items;
+      this.items = items;
       this.sumPage = Math.ceil(this.items.length / this.PageShowSum);
       //页面加载完成，默认加载第一页
       let page = Number(this.currentPage) + 1;
@@ -246,15 +282,15 @@ export default {
         print.log("当前-->", p + 1);
         this.showEachPage(p + 1);
       }
-    }
+    },
     //结束分页
-  }
+  },
 };
 </script>
 
 <style>
-.green{
+.green {
   color: green;
-  font-weight: bolder
+  font-weight: bolder;
 }
 </style>

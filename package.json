@@ -9,7 +9,7 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "push":"git push origin dev_1.0"
+    "push": "git push origin dev_1.0"
   },
   "dependencies": {
     "async": "^2.6.1",

@@ -70,65 +70,65 @@ export default new Router({
     {
       path: "/init",
       name: "init",
-      component: init
+      component: init,
     },
     {
       path: "/login/:id",
       name: "login",
-      component: login
+      component: login,
     },
     {
       path: "/",
       name: "login",
       component: login,
       meta: {
-        needLogin: true
-      }
+        needLogin: true,
+      },
     },
     {
       path: "/register",
       name: "register",
-      component: register
+      component: register,
     },
     {
       path: "/recoverypw/",
       name: "recoverypw",
-      component: recoverypw
+      component: recoverypw,
     },
     {
       path: "/resetpwd/:id",
       name: "resetpwd",
-      component: resetpwd
+      component: resetpwd,
     },
     {
       path: "/game",
       name: "game",
-      component: game
+      component: game,
     },
     {
       path: "/sgame",
       name: "sgame",
-      component: sgame
+      component: sgame,
     },
     {
       path: "/welcome",
       name: "welcome",
-      component: welcome
+      component: welcome,
     },
     {
       path: "/ceshi",
       name: "ceshi",
-      component: ceshi
+      component: ceshi,
     },
     {
       path: "/pause",
       name: "pause",
-      component: pause
+      component: pause,
     },
     {
       path: "/end",
       name: "end",
-      component: end
+      component: end,
     },
     {
       path: "/menu",
@@ -137,171 +137,171 @@ export default new Router({
       children: [
         {
           path: "index",
-          component: index
+          component: index,
         },
         // ----------------------------------
         {
           path: "creatcompany", //创建公司
           name: "creatcompany",
-          component: creatCompany
+          component: creatCompany,
         },
         {
           path: "joincompany", //加入公司
           name: "joincompany",
-          component: joinCompany
+          component: joinCompany,
         },
         {
           path: "infocompany", //公司简介
           name: "infocompany",
-          component: infoCompany
+          component: infoCompany,
         },
         // ----------------------------------
         {
           path: "docompete", //开始竞拍
           name: "docompete",
-          component: doCompete
+          component: doCompete,
         },
         {
           path: "infocompete", //竞拍结果
           name: "infocompete",
-          component: infoCompete
+          component: infoCompete,
         },
         // ----------------------------------
         {
           path: "mine", //矿区配置
           name: "mine",
-          component: mine
+          component: mine,
         },
         {
           path: "industry", //工业用地配置
           name: "industry",
-          component: industry
+          component: industry,
         },
         {
           path: "commer", //商业用地配置
           name: "commer",
-          component: commer
+          component: commer,
         },
         // ----------------------------------
         {
           path: "exploit", //矿区-挖掘机-开采
           name: "exploit",
-          component: exploit
+          component: exploit,
         },
         {
           path: "product", //工业用地-厂房-生产线-生产
           name: "product",
-          component: product
+          component: product,
         },
         {
           path: "research", //商业用地-研究所-研发
           name: "research",
-          component: research
+          component: research,
         },
         // ----------------------------------
         {
           path: "goods", //公司产品
           name: "goods",
-          component: goods
+          component: goods,
         },
         {
           path: "stock", //产品库存
           name: "stock",
-          component: stock
+          component: stock,
         },
         {
           path: "resource", //原料库存
           name: "resource",
-          component: resource
+          component: resource,
         },
         // ----------------------------------
         {
           path: "tocompany", //指向 公司 交易
           name: "tocompany",
-          component: toCompany
+          component: toCompany,
         },
         {
           path: "tomarket", //市场交易
           name: "tomarket",
-          component: toMarket
+          component: toMarket,
         },
         {
           path: "loan", //贷款
           name: "loan",
-          component: loan
+          component: loan,
         },
         {
           path: "showtransaction", //订单详情
           name: "showtransaction",
-          component: showtransaction
+          component: showtransaction,
         },
         {
           path: "trade", //订单详情
           name: "trade",
-          component: trade
+          component: trade,
         },
         // -----------------------------------管理员端---------------------------------
         {
           path: "sway", //参赛者管理
           name: "sway",
-          component: sway
+          component: sway,
         },
         {
           path: "admin", //管理员管理
           name: "admin",
-          component: admin
+          component: admin,
         },
         {
           path: "company", //公司管理
           name: "company",
-          component: company
+          component: company,
         },
         {
           path: "creatgame", //新建比赛
           name: "creatgame",
-          component: creatgame
+          component: creatgame,
         },
         {
           path: "listgame", //赛事列表
           name: "listgame",
-          component: listgame
+          component: listgame,
         },
         {
           path: "currentgame", // 当前赛事信息
           name: "currentgame",
-          component: currentgame
+          component: currentgame,
         },
         {
           path: "scompete", //竞拍管理
           name: "scompete",
-          component: scompete
+          component: scompete,
         },
         {
           path: "stransation", //交易管理
           name: "stransation",
-          component: stransation
+          component: stransation,
         },
         {
           path: "sloan", //贷款管理
           name: "sloan",
-          component: sloan
+          component: sloan,
         },
         {
           path: "sgood", //产品管理
           name: "sgood",
-          component: sgood
+          component: sgood,
         },
         {
           path: "sstastics", //赛事数据
           name: "sstastics",
-          component: sstastics
+          component: sstastics,
         },
         {
           path: "syear", //赛事数据
           name: "syear",
-          component: syear
-        }
-      ]
-    }
-  ]
+          component: syear,
+        },
+      ],
+    },
+  ],
 });

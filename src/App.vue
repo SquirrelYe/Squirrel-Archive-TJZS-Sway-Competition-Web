@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
-const async=require('async')
+const async = require("async");
 const notify = require("bootstrap-notify");
 const s_alert = require("./utils/alert");
 
@@ -20,38 +20,32 @@ export default {
       globleUrl: "http://10.0.53.241:11111",
     };
   },
-  mounted() {
-    
-  },
+  mounted() {},
   beforeRouteUpdate(to, from, next) {
-      next();
+    next();
   },
-  methods: {
-    
-  },
+  methods: {},
 
   components: {
     remote: {
-      render: function(createElement) {
+      render: function (createElement) {
         var self = this;
         return createElement("script", {
           attrs: {
             type: "text/javascript",
-            src: this.src
-          }
+            src: this.src,
+          },
         });
       },
       props: {
         src: {
           type: String,
-          required: true
-        }
-      }
-    }
-  }
+          required: true,
+        },
+      },
+    },
+  },
 };
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -16,209 +16,441 @@
 
           <div class="panel-body">
             <div class="col-lg-12">
+              <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
                   <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12">                      
-                      <div class="row">
-                            <div class="col-lg-6" v-for="(item,index) in showCompeteIndusland" :key="index">
-                              <div class="panel panel-fill panel-inverse">
-                                  <div class="panel-heading" style="height:40px"> 
-                                      <h3 class="panel-title" style="float:left">工业用地编号  {{item.id}}、面积{{item.measure}}、类型{{item.model|formatmodel}}</h3> 
-                                      <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(null,item,0)">配置工厂</i>
-                                  </div> 
-                                  <div class="panel-body"> 
-                                    <!-- <p>
+                    <div
+                      class="col-lg-6"
+                      v-for="(item, index) in showCompeteIndusland"
+                      :key="index"
+                    >
+                      <div class="panel panel-fill panel-inverse">
+                        <div class="panel-heading" style="height: 40px">
+                          <h3 class="panel-title" style="float: left">
+                            工业用地编号 {{ item.id }}、面积{{
+                              item.measure
+                            }}、类型{{ item.model | formatmodel }}
+                          </h3>
+                          <i
+                            class="fa fa-pencil"
+                            style="float: right; font-weight: 900"
+                            data-toggle="modal"
+                            data-target="#accordion-modal"
+                            @click="openSetting(null, item, 0)"
+                            >配置工厂</i
+                          >
+                        </div>
+                        <div class="panel-body">
+                          <!-- <p>
                                       暂未配置工厂
                                     </p> -->
-                                    <div class="col-lg-12" v-for="(item1,index1) in showCompeteIndusland[index].factories" :key="index1">
-                                      <div class="panel panel-fill panel-default">
-                                          <div class="panel-heading" style="height:40px"> 
-                                              <h3 class="panel-title" style="float:left">工厂编号  {{item1.id}}、{{item1.model}}、面积{{item1.measure}}、数量*{{item1.indusland_factory.number}}</h3> 
-                                              <i class="fa fa-pencil" style="float:right;font-weight:900"  data-toggle="modal" data-target="#accordion-modal" @click="openSetting(item,item1,1)">配置生产线</i>
-                                          </div> 
-                                          <div class="panel-body"> 
-                                            <div class="row">           
-                                              <div class="col-lg-12">
-                                                <div v-for="(item2,index2) in showInduslandFactoryLineItem" :key="index2">
-                                                  <div v-if="item2.indusland_id==item.id && item2.factory_id==item1.id">
-                                                    <!-- 根据 生产线与工业用地&工厂对应关系的indusland_id和factory_id 来匹配 显示 -->
-                                                    <!-- <div style="color:green">已有当前工厂数量{{item2.number}}</div> -->
-                                                    <div v-if="item2.lines!=''">生产线信息如下：<br>  </div>
-                                                    <div v-if="item2.lines==''">暂未配置生产线信息：<br>  </div>
-                                                    <div class="btn-group col-lg-4"  v-for="(item3,index3) in item2.lines" :key="index3">
-                                                      <button type="button" class="btn dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="false" :class="{'btn-success' : item3.indusland_factory_line.condition ==0 ,'btn-warning' : item3.indusland_factory_line.condition ==1||item3.indusland_factory_line.condition ==2 }">
-                                                      {{item3.model}} * {{item3.indusland_factory_line.number}}
-                                                      <span class="caret"></span>
-                                                      </button>
-                                                      <ul class="dropdown-menu" role="menu" :class="{'free' : item3.indusland_factory_line.condition ==0 ,'using' : item3.indusland_factory_line.condition ==1||item3.indusland_factory_line.condition ==2 }">
-                                                        <li>
-                                                          <a>
-                                                            <div align='center'>
-                                                              <p>
-                                                                <strong>生产线型号：</strong>{{item3.model}}<br>
-                                                                <strong>产能：</strong>{{item3.capacity}}<br>
-                                                                <strong>产线价值折旧：</strong>{{item3.relief}}<br>
-                                                                <strong>良品率：</strong>{{item3.yield}}<br>
-                                                                <strong>购置价格：</strong>{{item3.price}}w<br>
-                                                                <strong>建设要求：</strong>{{item3.conrequire|formatConrequire}}<br>
-                                                                <strong>数量：</strong>{{item3.indusland_factory_line.number}}<br>  
-                                                              </p>  
-                                                            </div>
-                                                          </a>
-                                                        </li>
-                                                      </ul>
-                                                    </div>
-                                                  </div>
+                          <div
+                            class="col-lg-12"
+                            v-for="(item1, index1) in showCompeteIndusland[
+                              index
+                            ].factories"
+                            :key="index1"
+                          >
+                            <div class="panel panel-fill panel-default">
+                              <div class="panel-heading" style="height: 40px">
+                                <h3 class="panel-title" style="float: left">
+                                  工厂编号 {{ item1.id }}、{{
+                                    item1.model
+                                  }}、面积{{ item1.measure }}、数量*{{
+                                    item1.indusland_factory.number
+                                  }}
+                                </h3>
+                                <i
+                                  class="fa fa-pencil"
+                                  style="float: right; font-weight: 900"
+                                  data-toggle="modal"
+                                  data-target="#accordion-modal"
+                                  @click="openSetting(item, item1, 1)"
+                                  >配置生产线</i
+                                >
+                              </div>
+                              <div class="panel-body">
+                                <div class="row">
+                                  <div class="col-lg-12">
+                                    <div
+                                      v-for="(
+                                        item2, index2
+                                      ) in showInduslandFactoryLineItem"
+                                      :key="index2"
+                                    >
+                                      <div
+                                        v-if="
+                                          item2.indusland_id == item.id &&
+                                          item2.factory_id == item1.id
+                                        "
+                                      >
+                                        <!-- 根据 生产线与工业用地&工厂对应关系的indusland_id和factory_id 来匹配 显示 -->
+                                        <!-- <div style="color:green">已有当前工厂数量{{item2.number}}</div> -->
+                                        <div v-if="item2.lines != ''">
+                                          生产线信息如下：<br />
+                                        </div>
+                                        <div v-if="item2.lines == ''">
+                                          暂未配置生产线信息：<br />
+                                        </div>
+                                        <div
+                                          class="btn-group col-lg-4"
+                                          v-for="(item3, index3) in item2.lines"
+                                          :key="index3"
+                                        >
+                                          <button
+                                            type="button"
+                                            class="btn dropdown-toggle waves-effect"
+                                            data-toggle="dropdown"
+                                            aria-expanded="false"
+                                            :class="{
+                                              'btn-success':
+                                                item3.indusland_factory_line
+                                                  .condition == 0,
+                                              'btn-warning':
+                                                item3.indusland_factory_line
+                                                  .condition == 1 ||
+                                                item3.indusland_factory_line
+                                                  .condition == 2,
+                                            }"
+                                          >
+                                            {{ item3.model }} *
+                                            {{
+                                              item3.indusland_factory_line
+                                                .number
+                                            }}
+                                            <span class="caret"></span>
+                                          </button>
+                                          <ul
+                                            class="dropdown-menu"
+                                            role="menu"
+                                            :class="{
+                                              free:
+                                                item3.indusland_factory_line
+                                                  .condition == 0,
+                                              using:
+                                                item3.indusland_factory_line
+                                                  .condition == 1 ||
+                                                item3.indusland_factory_line
+                                                  .condition == 2,
+                                            }"
+                                          >
+                                            <li>
+                                              <a>
+                                                <div align="center">
+                                                  <p>
+                                                    <strong>生产线型号：</strong
+                                                    >{{ item3.model }}<br />
+                                                    <strong>产能：</strong
+                                                    >{{ item3.capacity }}<br />
+                                                    <strong
+                                                      >产线价值折旧：</strong
+                                                    >{{ item3.relief }}<br />
+                                                    <strong>良品率：</strong
+                                                    >{{ item3.yield }}<br />
+                                                    <strong>购置价格：</strong
+                                                    >{{ item3.price }}w<br />
+                                                    <strong>建设要求：</strong
+                                                    >{{
+                                                      item3.conrequire
+                                                        | formatConrequire
+                                                    }}<br />
+                                                    <strong>数量：</strong
+                                                    >{{
+                                                      item3
+                                                        .indusland_factory_line
+                                                        .number
+                                                    }}<br />
+                                                  </p>
                                                 </div>
-                                              </div>
-                                            </div>
-                                          </div> 
+                                              </a>
+                                            </li>
+                                          </ul>
+                                        </div>
                                       </div>
                                     </div>
-
-                                  </div> 
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                        </div>                      
-                      
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <hr>
-                  <p>
-                    <strong>注意：工业用地->工厂，工厂->生产线有相应限制，请根据赛制规定操作。</strong><br>
-                    <strong style="color:green">
-                      说明：配置生产线后，<block style="color:red">黄色方块</block>表示此挖掘机正在工作，<block style="color:red">绿色方块</block>表示未工作。<br>
-                    </strong>
-                    <strong style="color:red">
-                      重要：<br>
-                      ①、若某工厂下某种生产线正在生产中，则不能在此工厂下配置相同生产线。等待结束并加入库存后可以重新购买。<br>
-                      ②、同一个工业用地，相同的工厂下的相同生产线同时只能生产一种产品，也就是说只能起到加速的功能。<br>
-                    </strong>
-                  </p>
                 </div>
+              </div>
+              <hr />
+              <p>
+                <strong
+                  >注意：工业用地->工厂，工厂->生产线有相应限制，请根据赛制规定操作。</strong
+                ><br />
+                <strong style="color: green">
+                  说明：配置生产线后，<block style="color: red">黄色方块</block
+                  >表示此挖掘机正在工作，<block style="color: red"
+                    >绿色方块</block
+                  >表示未工作。<br />
+                </strong>
+                <strong style="color: red">
+                  重要：<br />
+                  ①、若某工厂下某种生产线正在生产中，则不能在此工厂下配置相同生产线。等待结束并加入库存后可以重新购买。<br />
+                  ②、同一个工业用地，相同的工厂下的相同生产线同时只能生产一种产品，也就是说只能起到加速的功能。<br />
+                </strong>
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 工业用地-工厂 -->
-    <div id="accordion-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
+    <div
+      id="accordion-modal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+      style="display: none"
+    >
       <div class="modal-dialog">
-          <div class="modal-content p-0">
-              <div class="panel-group panel-group-joined" id="accordion-test"> 
-
-                <!-- 配置工厂 -->
-                <div v-if="Number(chooseFunction)==0">
-                  <div class="panel panel-default" v-for="(item,index) in showFactoryItem" :key="index"> 
-                    <div class="panel-heading"> 
-                        <h4 class="panel-title"> 
-                            <a data-toggle="collapse" data-parent="#accordion-test" :href="'#'+index" class="collapsed">
-                                工厂编号 # {{item.id}}
-                            </a> 
-                        </h4> 
-                    </div> 
-                    <div :id="index" class="panel-collapse collapse" :class="{'in' : index==1}"> 
-                        <div class="modal-body" align="center">
-                          <table class="table table-bordered table-striped" style id="datatable-editable">
-                            <thead>
-                              <tr>
-                                <th>工厂型号</th>
-                                <th>占用面积</th>
-                                <th>容纳生产线</th>
-                                <th>建设成本</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr class="gradeX" >
-                                <td>{{item.model}}</td>
-                                <td>{{item.measure}}</td>
-                                <td>{{item.includeline}}</td>
-                                <td>{{item.price}}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
-                          <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>台</strong><br>
-                          <div v-for="(item,index) in currentIndustryHaveFactory.rows" :key="index">                            
-                            <strong>当前矿区已有工厂编号：{{item.factory_id}}</strong>                        
-                            <strong>、工厂数量：{{item.number}}</strong><br>
-                          </div>
-                          <strong>当前工业用地面积已使用:{{currentIndustryHaveUsedTotalMeasure}}</strong><br>
-                          <strong style="color:red" v-if="number*item.measure+currentIndustryHaveUsedTotalMeasure>temp.measure">工厂占用面积超过工业用地面积</strong>
-                        </div>
-
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                          <button
-                            type="button"
-                            class="btn btn-primary waves-effect waves-light"
-                            data-dismiss="modal"
-                            @click="sendPriceToFactory(item,number*item.price,number,item.id)"
-                            v-if="number!='' && number>0 && number*item.measure+currentIndustryHaveUsedTotalMeasure<=temp.measure"
-                          >提交订单</button>
-                        </div>
-                    </div> 
-                  </div> 
+        <div class="modal-content p-0">
+          <div class="panel-group panel-group-joined" id="accordion-test">
+            <!-- 配置工厂 -->
+            <div v-if="Number(chooseFunction) == 0">
+              <div
+                class="panel panel-default"
+                v-for="(item, index) in showFactoryItem"
+                :key="index"
+              >
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a
+                      data-toggle="collapse"
+                      data-parent="#accordion-test"
+                      :href="'#' + index"
+                      class="collapsed"
+                    >
+                      工厂编号 # {{ item.id }}
+                    </a>
+                  </h4>
                 </div>
+                <div
+                  :id="index"
+                  class="panel-collapse collapse"
+                  :class="{ in: index == 1 }"
+                >
+                  <div class="modal-body" align="center">
+                    <table
+                      class="table table-bordered table-striped"
+                      style
+                      id="datatable-editable"
+                    >
+                      <thead>
+                        <tr>
+                          <th>工厂型号</th>
+                          <th>占用面积</th>
+                          <th>容纳生产线</th>
+                          <th>建设成本</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="gradeX">
+                          <td>{{ item.model }}</td>
+                          <td>{{ item.measure }}</td>
+                          <td>{{ item.includeline }}</td>
+                          <td>{{ item.price }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <strong>订单总额为:</strong
+                    ><strong style="color: green"
+                      >{{ number | sumPrice(item.price) }}万元</strong
+                    ><br />
+                    <strong>请输入配置数量:</strong
+                    ><input type="number" v-model="number" /><strong>台</strong
+                    ><br />
+                    <div
+                      v-for="(item, index) in currentIndustryHaveFactory.rows"
+                      :key="index"
+                    >
+                      <strong
+                        >当前矿区已有工厂编号：{{ item.factory_id }}</strong
+                      >
+                      <strong>、工厂数量：{{ item.number }}</strong
+                      ><br />
+                    </div>
+                    <strong
+                      >当前工业用地面积已使用:{{
+                        currentIndustryHaveUsedTotalMeasure
+                      }}</strong
+                    ><br />
+                    <strong
+                      style="color: red"
+                      v-if="
+                        number * item.measure +
+                          currentIndustryHaveUsedTotalMeasure >
+                        temp.measure
+                      "
+                      >工厂占用面积超过工业用地面积</strong
+                    >
+                  </div>
 
-                <!-- 配置生产线 -->
-                <div v-if="Number(chooseFunction)==1">
-                  <div class="panel panel-default" v-for="(item,index) in showLineItem" :key="index" v-if="chooseLineByFactoryIdNumber>=item.conrequire"> 
-                    <div class="panel-heading"> 
-                        <h4 class="panel-title"> 
-                            <a data-toggle="collapse" data-parent="#accordion-test1" :href="'#'+index" class="collapsed">
-                                生产线编号 # {{item.id}}
-                            </a> 
-                        </h4> 
-                    </div> 
-                    <div :id="index" class="panel-collapse collapse" :class="{'in' : index==1}"> 
-                      <div class="modal-body" align="center">
-                        <table class="table table-bordered table-striped" style id="datatable-editable">
-                          <thead>
-                            <tr>
-                              <th>型号</th>
-                              <th>产能</th>
-                              <th>产线价值折旧折旧</th>
-                              <th>良品率</th>
-                              <th>价值</th>
-                              <th>建设要求</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr class="gradeX" >
-                              <td>{{item.model}}</td>
-                              <td>{{item.capacity}}</td>
-                              <td>{{item.relief}}</td>
-                              <td>{{item.yield}}</td>
-                              <td>{{item.price}}</td>
-                              <td>{{item.conrequire|formatConrequire}}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        <strong>订单总额为:</strong><strong style='color:green'>{{number|sumPrice(item.price)}}万元</strong><br>
-                        <strong>请输入配置数量:</strong><input type="number" v-model="number"><strong>条</strong><br>
-                        <strong style='color:green' v-if="temp.indusland_factory">当前工厂允许容纳的最大生产线数量:</strong><br>
-                        <strong style='color:green'>工厂数量{{temp.indusland_factory.number}}*单个工厂允许容纳生产线{{currentChoosedFactoryItem.includeline}}={{temp.indusland_factory.number*currentChoosedFactoryItem.includeline}}</strong><br>
-                        <strong style='color:red'>当前工厂已配置生产线数量:{{currentChoosedFactoryHaveLineTotal}}</strong><br>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                          <button
-                            type="button"
-                            class="btn btn-primary waves-effect waves-light"
-                            data-dismiss="modal"
-                            @click="sendPriceToLine(item,index,number*item.price,number,item.id)"
-                            v-if="number!='' && number>0 && Number(currentChoosedFactoryHaveLineTotal)+Number(number)<=Number(temp.indusland_factory.number*currentChoosedFactoryItem.includeline)"
-                          >提交订单</button>
-                        </div>
-                      </div>
-                    </div> 
-                  </div> 
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-default waves-effect"
+                      data-dismiss="modal"
+                    >
+                      关闭
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary waves-effect waves-light"
+                      data-dismiss="modal"
+                      @click="
+                        sendPriceToFactory(
+                          item,
+                          number * item.price,
+                          number,
+                          item.id
+                        )
+                      "
+                      v-if="
+                        number != '' &&
+                        number > 0 &&
+                        number * item.measure +
+                          currentIndustryHaveUsedTotalMeasure <=
+                          temp.measure
+                      "
+                    >
+                      提交订单
+                    </button>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <!-- 配置生产线 -->
+            <div v-if="Number(chooseFunction) == 1">
+              <div
+                class="panel panel-default"
+                v-for="(item, index) in showLineItem"
+                :key="index"
+                v-if="chooseLineByFactoryIdNumber >= item.conrequire"
+              >
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a
+                      data-toggle="collapse"
+                      data-parent="#accordion-test1"
+                      :href="'#' + index"
+                      class="collapsed"
+                    >
+                      生产线编号 # {{ item.id }}
+                    </a>
+                  </h4>
+                </div>
+                <div
+                  :id="index"
+                  class="panel-collapse collapse"
+                  :class="{ in: index == 1 }"
+                >
+                  <div class="modal-body" align="center">
+                    <table
+                      class="table table-bordered table-striped"
+                      style
+                      id="datatable-editable"
+                    >
+                      <thead>
+                        <tr>
+                          <th>型号</th>
+                          <th>产能</th>
+                          <th>产线价值折旧折旧</th>
+                          <th>良品率</th>
+                          <th>价值</th>
+                          <th>建设要求</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="gradeX">
+                          <td>{{ item.model }}</td>
+                          <td>{{ item.capacity }}</td>
+                          <td>{{ item.relief }}</td>
+                          <td>{{ item.yield }}</td>
+                          <td>{{ item.price }}</td>
+                          <td>{{ item.conrequire | formatConrequire }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <strong>订单总额为:</strong
+                    ><strong style="color: green"
+                      >{{ number | sumPrice(item.price) }}万元</strong
+                    ><br />
+                    <strong>请输入配置数量:</strong
+                    ><input type="number" v-model="number" /><strong>条</strong
+                    ><br />
+                    <strong style="color: green" v-if="temp.indusland_factory"
+                      >当前工厂允许容纳的最大生产线数量:</strong
+                    ><br />
+                    <strong style="color: green"
+                      >工厂数量{{
+                        temp.indusland_factory.number
+                      }}*单个工厂允许容纳生产线{{
+                        currentChoosedFactoryItem.includeline
+                      }}={{
+                        temp.indusland_factory.number *
+                        currentChoosedFactoryItem.includeline
+                      }}</strong
+                    ><br />
+                    <strong style="color: red"
+                      >当前工厂已配置生产线数量:{{
+                        currentChoosedFactoryHaveLineTotal
+                      }}</strong
+                    ><br />
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-default waves-effect"
+                      data-dismiss="modal"
+                    >
+                      关闭
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary waves-effect waves-light"
+                      data-dismiss="modal"
+                      @click="
+                        sendPriceToLine(
+                          item,
+                          index,
+                          number * item.price,
+                          number,
+                          item.id
+                        )
+                      "
+                      v-if="
+                        number != '' &&
+                        number > 0 &&
+                        Number(currentChoosedFactoryHaveLineTotal) +
+                          Number(number) <=
+                          Number(
+                            temp.indusland_factory.number *
+                              currentChoosedFactoryItem.includeline
+                          )
+                      "
+                    >
+                      提交订单
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
       </div>
     </div>
-
+  </div>
 </template>
 
 <script>
@@ -256,7 +488,7 @@ export default {
       temp: "", //-->item1
       temp1: "", //-->item
       currentIndustryHaveFactory: "",
-      currentIndustryHaveUsedTotalMeasure: ""
+      currentIndustryHaveUsedTotalMeasure: "",
     };
   },
   beforeMount() {
@@ -289,7 +521,7 @@ export default {
       if (x == 2) return "Z";
       if (x == 3) return "C";
       if (x == 4) return "S";
-    }
+    },
   },
   methods: {
     getInfo() {
@@ -315,7 +547,7 @@ export default {
       } else if (Number(choose) == 1) {
         //获取工厂ID进行选择 生产线 页面渲染
         this.chooseLineByFactoryIdNumber = item1.id;
-        this.showFactoryItem.forEach(e => {
+        this.showFactoryItem.forEach((e) => {
           //查找容纳生产线数量
           if (Number(item1.id) == Number(e.id)) {
             this.currentChoosedFactoryItem = e;
@@ -344,15 +576,15 @@ export default {
       req
         .post_Param("api/ass/indusland_factory", {
           judge: 6,
-          indusland_id: item1.id
+          indusland_id: item1.id,
         })
-        .then(res => {
+        .then((res) => {
           print.log(res.data);
           this.currentIndustryHaveFactory = res.data;
           //获取面积使用情况
           let tempMeasure = 0;
-          res.data.rows.forEach(e => {
-            this.temp.factories.forEach(el => {
+          res.data.rows.forEach((e) => {
+            this.temp.factories.forEach((el) => {
               if (el.id == e.factory_id) {
                 tempMeasure += el.measure * e.number;
               }
@@ -366,24 +598,20 @@ export default {
     sendPriceToFactory(item, money, number, factory_id) {
       let that = this;
       // 查询资产信息
-      apis.getOneStatisticByCompanyId(that.company_id).then(res => {
+      apis.getOneStatisticByCompanyId(that.company_id).then((res) => {
         if (res.data.float >= money) {
           let float = res.data.float - money;
           let fixed = Number(res.data.fixed) + Number(money);
           // 更新资产信息
           req.post(
-            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${
-              that.company_id
-            }`
+            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`
           );
           // 绑定工业用地
           req
             .post(
-              `api/ass/indusland_factory?judge=1&indusland_id=${
-                this.temp.id
-              }&factory_id=${factory_id}`
+              `api/ass/indusland_factory?judge=1&indusland_id=${this.temp.id}&factory_id=${factory_id}`
             ) // this.temp选择的工业用地
-            .then(res => {
+            .then((res) => {
               if (res) {
                 // 更新数量
                 that.sendNumber(item);
@@ -391,8 +619,9 @@ export default {
                 req.post(
                   `api/transaction?judge=1&id=0&Yearid=${
                     that.Yearid
-                  }&inout=1&type=4&kind=3&price=${money /
-                    number}&number=${number}&me=${
+                  }&inout=1&type=4&kind=3&price=${
+                    money / number
+                  }&number=${number}&me=${
                     that.company_id
                   }&factory_id=${factory_id}`
                 );
@@ -421,9 +650,9 @@ export default {
             judge: 5,
             indusland_id: that.temp.id,
             factory_id: item.id,
-            number: addNumber
+            number: addNumber,
           })
-          .then(res => {
+          .then((res) => {
             print.log(res.data);
             if (res) {
               s_alert.Success("下单成功", "正在加载……", "success");
@@ -440,9 +669,9 @@ export default {
             judge: 5,
             indusland_id: that.temp.id,
             factory_id: item.id,
-            number: addNumber
+            number: addNumber,
           })
-          .then(res => {
+          .then((res) => {
             print.log(res.data);
             if (res) {
               s_alert.Success("下单成功", "正在加载……", "success");
@@ -459,9 +688,9 @@ export default {
         .post_Param("api/ass/indusland_factory", {
           judge: 7,
           indusland_id: indusland_id,
-          factory_id: factory_id
+          factory_id: factory_id,
         })
-        .then(res => {
+        .then((res) => {
           if (res) {
             print.log(res.data);
             this.tempInduslandFactoryId = res.data.id;
@@ -478,9 +707,9 @@ export default {
     //获取当前工厂已有生产线总数
     getTotalFactoryHaveLine() {
       let total = 0;
-      this.showInduslandFactoryLineItem.forEach(el => {
+      this.showInduslandFactoryLineItem.forEach((el) => {
         if (Number(el.id) == Number(this.tempInduslandFactoryId)) {
-          el.lines.forEach(element => {
+          el.lines.forEach((element) => {
             total += element.indusland_factory_line.number;
           });
         }
@@ -492,9 +721,9 @@ export default {
       req
         .post_Param("api/ass/indusland_factory_line", {
           judge: 8,
-          indusland_factory_id: this.tempInduslandFactoryId
+          indusland_factory_id: this.tempInduslandFactoryId,
         })
-        .then(res => {
+        .then((res) => {
           print.log("已有", res.data[0].lines, "购买", item);
           if (res.data[0].lines.length == 0)
             this.getLine(item, index, money, number, line_id);
@@ -532,24 +761,20 @@ export default {
     getLine(item, index, money, number, line_id) {
       let that = this;
       // 获取资产信息
-      apis.getOneStatisticByCompanyId(that.company_id).then(res => {
+      apis.getOneStatisticByCompanyId(that.company_id).then((res) => {
         if (res.data.float >= money) {
           let float = res.data.float - money;
           let fixed = Number(res.data.fixed) + Number(money);
           // 更新个人资产
           req.post(
-            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${
-              that.company_id
-            }`
+            `api/statistic?judge=4&float=${float}&fixed=${fixed}&company_id=${that.company_id}`
           );
           // 绑定生产线
           req
             .post(
-              `api/ass/indusland_factory_line?judge=1&indusland_factory_id=${
-                this.tempInduslandFactoryId
-              }&line_id=${line_id}`
+              `api/ass/indusland_factory_line?judge=1&indusland_factory_id=${this.tempInduslandFactoryId}&line_id=${line_id}`
             )
-            .then(res => {
+            .then((res) => {
               if (res) {
                 // 更新页面
                 //   that.init()
@@ -565,7 +790,7 @@ export default {
                   price: money / number,
                   number: number,
                   me: that.company_id,
-                  line_id: line_id
+                  line_id: line_id,
                 });
               } else {
                 s_alert.Success("下单失败", "正在加载……", "warning");
@@ -622,9 +847,9 @@ export default {
           indusland_factory_id: this.tempInduslandFactoryId,
           line_id: item.id,
           number: addNumber,
-          condition: 0
+          condition: 0,
         })
-        .then(res => {
+        .then((res) => {
           that.init();
           print.log(res.data);
           if (res) {
@@ -639,23 +864,23 @@ export default {
       req
         .post_Param("api/ass/indusland_factory", {
           judge: 4,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           this.showCompeteIndusland = res.data;
           print.log("工业用地-工厂 对应关系", this.showCompeteIndusland);
         });
     },
     //显示 工厂
     showAllFactory() {
-      req.post_Param("api/factory", { judge: 0 }).then(res => {
+      req.post_Param("api/factory", { judge: 0 }).then((res) => {
         print.log("不同种类的生产线", res.data);
         this.showFactoryItem = res.data;
       });
     },
     //显示 生产线
     showAllLine() {
-      req.post_Param("api/line", { judge: 0 }).then(res => {
+      req.post_Param("api/line", { judge: 0 }).then((res) => {
         print.log("不同种类的生产线", res.data);
         this.showLineItem = res.data;
       });
@@ -664,12 +889,12 @@ export default {
     showInduslandFactoryLine() {
       req
         .post_Param("api/ass/indusland_factory_line", { judge: 5 })
-        .then(res => {
+        .then((res) => {
           print.log("工业用地-工厂对应 生产线", res.data);
           this.showInduslandFactoryLineItem = res.data;
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

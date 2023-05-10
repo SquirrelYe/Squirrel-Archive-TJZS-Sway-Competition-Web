@@ -46,10 +46,28 @@ File: Pages
   position: relative;
 }
 .bg-picture > .bg-picture-overlay {
-  background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0) 0, rgba(0, 0, 0, 0.4) 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0)), to(rgba(0, 0, 0, 0.4)));
-  background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0, rgba(0, 0, 0, 0.4) 100%);
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0, rgba(0, 0, 0, 0.4) 100%);
+  background-image: -o-linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) 0,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(rgba(255, 255, 255, 0)),
+    to(rgba(0, 0, 0, 0.4))
+  );
+  background-image: -webkit-linear-gradient(
+    top,
+    rgba(255, 255, 255, 0) 0,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0,
+    rgba(0, 0, 0, 0.4) 100%
+  );
   bottom: 0;
   left: 0;
   position: absolute;
@@ -99,7 +117,7 @@ File: Pages
   border-style: solid;
   border-width: 2px;
   bottom: 0;
-  content: '';
+  content: "";
   height: 14px;
   left: 0;
   margin-left: -8px;
@@ -123,7 +141,7 @@ File: Pages
   border-style: solid;
   border-width: 2px;
   bottom: 0;
-  content: '';
+  content: "";
   height: 14px;
   left: 0;
   margin-left: -8px;
@@ -333,8 +351,8 @@ button.confirm {
 }
 .notifyjs-metro-cool {
   color: #fafafa !important;
-  background-color: #4A525F;
-  border: 1px solid #4A525F;
+  background-color: #4a525f;
+  border: 1px solid #4a525f;
 }
 /* ==============
   Timeline
@@ -345,7 +363,7 @@ button.confirm {
   margin: 0 auto;
 }
 .cd-container::after {
-  content: '';
+  content: "";
   display: table;
   clear: both;
 }
@@ -357,7 +375,7 @@ button.confirm {
 }
 #cd-timeline::before {
   background: #ffffff;
-  content: '';
+  content: "";
   height: 100%;
   left: 18px;
   position: absolute;
@@ -407,7 +425,8 @@ button.confirm {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  box-shadow: 0 0 0 4px white, inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 4px white, inset 0 2px 0 rgba(0, 0, 0, 0.08),
+    0 3px 0 4px rgba(0, 0, 0, 0.05);
   text-align: center;
   line-height: 40px;
   font-size: 20px;
@@ -485,7 +504,7 @@ button.confirm {
   display: inline-block;
   float: right;
   font-size: 14px;
-  padding: .8em 1em;
+  padding: 0.8em 1em;
 }
 .cd-timeline-content .cd-date {
   display: inline-block;
@@ -500,11 +519,11 @@ button.confirm {
 }
 .cd-timeline-content .cd-date {
   float: left;
-  padding: .8em 0;
-  opacity: .7;
+  padding: 0.8em 0;
+  opacity: 0.7;
 }
 .cd-timeline-content::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 16px;
   right: 100%;
@@ -563,7 +582,9 @@ button.confirm {
   }
 }
 @media only screen and (min-width: 1170px) {
-  .cssanimations .cd-timeline-block:nth-child(even) .cd-timeline-content.bounce-in {
+  .cssanimations
+    .cd-timeline-block:nth-child(even)
+    .cd-timeline-content.bounce-in {
     -webkit-animation: cd-bounce-2-inverse 0.6s;
     -moz-animation: cd-bounce-2-inverse 0.6s;
     animation: cd-bounce-2-inverse 0.6s;
@@ -601,16 +622,16 @@ button.confirm {
   z-index: 2;
 }
 .percent:after {
-  content: '%';
+  content: "%";
   margin-left: 0.1em;
-  font-size: .8em;
+  font-size: 0.8em;
 }
 #flotTip {
   padding: 4px 8px;
   background-color: #000000;
   z-index: 100;
   color: #ffffff;
-  opacity: .7;
+  opacity: 0.7;
   font-size: 12px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -637,7 +658,7 @@ button.confirm {
   margin: 10% 0px;
 }
 .home-text {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 .lj-countdown {
   color: #6e8cd7;
@@ -813,5 +834,6 @@ button.confirm {
   font-size: 98px;
   font-weight: 700;
   line-height: 150px;
-  text-shadow: rgba(61, 61, 61, 0.3) 1px 1px, rgba(61, 61, 61, 0.2) 2px 2px, rgba(61, 61, 61, 0.3) 3px 3px;
+  text-shadow: rgba(61, 61, 61, 0.3) 1px 1px, rgba(61, 61, 61, 0.2) 2px 2px,
+    rgba(61, 61, 61, 0.3) 3px 3px;
 }

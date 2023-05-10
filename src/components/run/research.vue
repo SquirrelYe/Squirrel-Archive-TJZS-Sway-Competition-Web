@@ -10,215 +10,352 @@
       <div class="col-sm-12">
         <div class="panel panel-default" v-if="showCompeteCommer">
           <div class="panel-heading">
-            <h3 class="panel-title">Sway商战大赛-研究所研发管理</h3>            
+            <h3 class="panel-title">Sway商战大赛-研究所研发管理</h3>
           </div>
-          <div class="panel panel-body"> 
-            <div class="tabs-vertical-env"> 
-                <ul class="nav tabs-vertical"> 
-                    <li class="" v-for="(item,index) in showCompeteCommer" :key="index" :class="{'active' : index==1}">
-                        <a :href="'#'+index" data-toggle="tab" aria-expanded="false">商业用地 C{{item.id}}</a>
-                    </li> 
-                </ul> 
-                <div class="tab-content"> 
-                    <div class="tab-pane" :id="index" v-for="(item,index) in showCompeteCommer" :key="index" :class="{'active' : index==1}"> 
-                            <h3 class="panel-title">商业用地信息</h3>  
-                      <div class="tab-content">
-                        <div class="panel panel-default">
-                          <div class="panel-heading"> 
-                                <!-- {{item}} -->
-                              <table class="table table-striped" style id="datatable-editable">
-                                <thead>
-                                  <tr>
-                                    <th>土地编号</th>
-                                    <th>土地等级</th>
-                                    <th>品牌提升</th>
-                                    <th>增值空间</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr>
-                                    <td>C{{item.id}}</td>
-                                    <td>{{item.level|formatlevel}}</td>
-                                    <td>{{item.brand}}</td>
-                                    <td>{{item.increment}}</td>
-                                  </tr>
-                                </tbody>
-                            </table>
-                          </div>
+          <div class="panel panel-body">
+            <div class="tabs-vertical-env">
+              <ul class="nav tabs-vertical">
+                <li
+                  class=""
+                  v-for="(item, index) in showCompeteCommer"
+                  :key="index"
+                  :class="{ active: index == 1 }"
+                >
+                  <a :href="'#' + index" data-toggle="tab" aria-expanded="false"
+                    >商业用地 C{{ item.id }}</a
+                  >
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div
+                  class="tab-pane"
+                  :id="index"
+                  v-for="(item, index) in showCompeteCommer"
+                  :key="index"
+                  :class="{ active: index == 1 }"
+                >
+                  <h3 class="panel-title">商业用地信息</h3>
+                  <div class="tab-content">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <!-- {{item}} -->
+                        <table
+                          class="table table-striped"
+                          style
+                          id="datatable-editable"
+                        >
+                          <thead>
+                            <tr>
+                              <th>土地编号</th>
+                              <th>土地等级</th>
+                              <th>品牌提升</th>
+                              <th>增值空间</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>C{{ item.id }}</td>
+                              <td>{{ item.level | formatlevel }}</td>
+                              <td>{{ item.brand }}</td>
+                              <td>{{ item.increment }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-pane">
+                    <h3 class="panel-title">研究所信息</h3>
+                    <div class="tab-content">
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <!-- {{item}}   -->
+                          <table
+                            class="table table-striped"
+                            style
+                            id="datatable-editable"
+                          >
+                            <thead>
+                              <tr>
+                                <th>研究所编号:</th>
+                                <th>研究所类型:</th>
+                                <th>品牌提升:</th>
+                                <th>配方工艺:</th>
+                                <!-- <th>建设要求:</th> -->
+                                <th>操作:</th>
+                              </tr>
+                            </thead>
+                            <tbody v-if="item.research">
+                              <tr>
+                                <td>R{{ item.research.id }}</td>
+                                <td>{{ item.research.model }}</td>
+                                <td>{{ item.research.brand }}</td>
+                                <td>{{ item.research.formula }}量</td>
+                                <!-- <td>{{item.research.conrequire}}</td> -->
+                                <td
+                                  data-toggle="tooltip"
+                                  data-placement="top"
+                                  title="研发产品"
+                                >
+                                  <i
+                                    class="fa fa-wrench"
+                                    data-toggle="modal"
+                                    data-target="#myModal"
+                                    @click="openSetting(item)"
+                                  ></i>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
                         </div>
                       </div>
-                      <div class='tab-pane'>    
-                        <h3 class="panel-title">研究所信息</h3>                        
-                        <div class="tab-content">
-                          <div class="panel panel-default">
-                            <div class="panel-heading"> 
-                                <!-- {{item}}   -->
-                                <table class="table table-striped" style id="datatable-editable">
-                                <thead>
-                                  <tr>
-                                    <th>研究所编号:</th>
-                                    <th>研究所类型:</th>
-                                    <th>品牌提升:</th>
-                                    <th>配方工艺:</th>
-                                    <!-- <th>建设要求:</th> -->
-                                    <th>操作:</th>
-                                  </tr>
-                                </thead>
-                                <tbody v-if="item.research">
-                                  <tr>
-                                    <td>R{{item.research.id}}</td>
-                                    <td>{{item.research.model}}</td>
-                                    <td>{{item.research.brand}}</td>
-                                    <td>{{item.research.formula}}量</td>
-                                    <!-- <td>{{item.research.conrequire}}</td> -->
-                                    <td data-toggle="tooltip" data-placement="top" title="研发产品">
-                                      <i class="fa fa-wrench" data-toggle="modal" data-target="#myModal"  @click="openSetting(item)"></i>  
-                                    </td>
-                                  </tr>
-                                </tbody>
-                                </table>
-                                </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div> 
-                </div> 
-            </div> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <!-- StandardModal -->
-    <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div
+      id="myModal"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-hidden="true"
+            >
+              ×
+            </button>
             <h4 class="modal-title" id="myModalLabel">产品研发</h4>
           </div>
           <!-- 内容 -->
           <div class="modal-body">
-            
-            <div class="col-lg-12"> 
-              <div class="panel-group panel-group-joined" id="accordion-test"> 
-                  <div class="panel panel-default"> 
-                      <div class="panel-heading"> 
-                          <h4 class="panel-title"> 
-                              <a data-toggle="collapse" data-parent="#accordion-test" href="#collapseOne" aria-expanded="false" class="collapsed">
-                                  产品研发信息填写 #1
-                              </a> 
-                          </h4> 
-                      </div> 
-                      <div id="collapseOne" class="panel-collapse collapse" aria-expanded="false" style=""> 
-                          <div class="panel-body">
-                            <div class="panel panel-default">
-                              <div class="panel-body">
-                                  <form class="form-horizontal" role="form">                                    
-                                      <div class="form-group">
-                                          <label class="col-md-2 control-label" >名称</label>
-                                          <div class="col-md-10">
-                                              <input type="text" class="form-control" placeholder="xxx" v-model="name">
-                                          </div>
-                                      </div>
-                                      <div class="form-group">
-                                          <label class="col-md-2 control-label" for="example-email">原理</label>
-                                          <div class="col-md-10">
-                                              <input type="text" class="form-control" placeholder="xxx" v-model="func">
-                                          </div>
-                                      </div>
-                                      <div class="form-group">
-                                          <label class="col-md-2 control-label">介绍</label>
-                                          <div class="col-md-10">
-                                              <input type="text" class="form-control" placeholder="xxx" v-model="intro">
-                                          </div>
-                                      </div>
-                                      <!-- <div class="form-group">
+            <div class="col-lg-12">
+              <div class="panel-group panel-group-joined" id="accordion-test">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a
+                        data-toggle="collapse"
+                        data-parent="#accordion-test"
+                        href="#collapseOne"
+                        aria-expanded="false"
+                        class="collapsed"
+                      >
+                        产品研发信息填写 #1
+                      </a>
+                    </h4>
+                  </div>
+                  <div
+                    id="collapseOne"
+                    class="panel-collapse collapse"
+                    aria-expanded="false"
+                    style=""
+                  >
+                    <div class="panel-body">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">名称</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  placeholder="xxx"
+                                  v-model="name"
+                                />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label
+                                class="col-md-2 control-label"
+                                for="example-email"
+                                >原理</label
+                              >
+                              <div class="col-md-10">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  placeholder="xxx"
+                                  v-model="func"
+                                />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">介绍</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="text"
+                                  class="form-control"
+                                  placeholder="xxx"
+                                  v-model="intro"
+                                />
+                              </div>
+                            </div>
+                            <!-- <div class="form-group">
                                           <label class="col-md-2 control-label">单价</label>
                                           <div class="col-md-10">
                                               <input type="number" class="form-control" v-model="price">
                                           </div>
                                       </div>          -->
-                                  </form>
-                                  <div align='center'>
-                                    注意：价格单位 万元，不得超过最高单价<br>最高单价=配方元素量*根号（元素种类）*（1+品牌提升）*0.1
-                                  </div>
-                              </div>
+                          </form>
+                          <div align="center">
+                            注意：价格单位 万元，不得超过最高单价<br />最高单价=配方元素量*根号（元素种类）*（1+品牌提升）*0.1
                           </div>
-                          </div> 
-                      </div> 
-                  </div> 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                  <div class="panel panel-default"> 
-                      <div class="panel-heading"> 
-                          <h4 class="panel-title"> 
-                              <a data-toggle="collapse" data-parent="#accordion-test" href="#collapseTwo" aria-expanded="false" class="collapsed">
-                                  产品研发原料填写 #2
-                              </a> 
-                          </h4> 
-                      </div> 
-                      <div id="collapseTwo" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
-                          <div class="panel-body">
-                            <div class="panel panel-default">
-                              <div class="panel-body">                            
-                                <form class="form-horizontal" role="form">  
-                                  <div class="form-group">
-                                      <label class="col-md-2 control-label" >金</label>
-                                      <div class="col-md-10">
-                                          <input type="number" class="form-control" v-model="s1" @input="getMax()">
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <label class="col-md-2 control-label" >木</label>
-                                      <div class="col-md-10">
-                                          <input type="number" class="form-control" v-model="s2" @input="getMax()">
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <label class="col-md-2 control-label" >水</label>
-                                      <div class="col-md-10">
-                                          <input type="number" class="form-control" v-model="s3" @input="getMax()">
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <label class="col-md-2 control-label" >火</label>
-                                      <div class="col-md-10">
-                                          <input type="number" class="form-control" v-model="s4" @input="getMax()">
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <label class="col-md-2 control-label" >土</label>
-                                      <div class="col-md-10">
-                                          <input type="number" class="form-control" v-model="s5" @input="getMax()">
-                                      </div>
-                                  </div>
-                                </form>
-                                <div align='center'>
-                                  注意：元素单位 量，元素总量不得超过 研究所 规定的总量。<br>
-                                  <strong style="color:green" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<=sumSource && canICreatGood">
-                                    该产品未被其他公司申请专利，可以研发
-                                  </strong>
-                                  <strong style="color:red" v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<=sumSource && !canICreatGood">
-                                    该产品已被其他公司申请专利，不允许研发
-                                  </strong>
-                                </div>
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a
+                        data-toggle="collapse"
+                        data-parent="#accordion-test"
+                        href="#collapseTwo"
+                        aria-expanded="false"
+                        class="collapsed"
+                      >
+                        产品研发原料填写 #2
+                      </a>
+                    </h4>
+                  </div>
+                  <div
+                    id="collapseTwo"
+                    class="panel-collapse collapse"
+                    aria-expanded="false"
+                    style="height: 0px"
+                  >
+                    <div class="panel-body">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">金</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  v-model="s1"
+                                  @input="getMax()"
+                                />
                               </div>
                             </div>
-                          </div> 
-                      </div> 
-                  </div> 
-              </div> 
-          </div>   
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">木</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  v-model="s2"
+                                  @input="getMax()"
+                                />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">水</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  v-model="s3"
+                                  @input="getMax()"
+                                />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">火</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  v-model="s4"
+                                  @input="getMax()"
+                                />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-md-2 control-label">土</label>
+                              <div class="col-md-10">
+                                <input
+                                  type="number"
+                                  class="form-control"
+                                  v-model="s5"
+                                  @input="getMax()"
+                                />
+                              </div>
+                            </div>
+                          </form>
+                          <div align="center">
+                            注意：元素单位 量，元素总量不得超过 研究所
+                            规定的总量。<br />
+                            <strong
+                              style="color: green"
+                              v-if="
+                                Number(s1) +
+                                  Number(s2) +
+                                  Number(s3) +
+                                  Number(s4) +
+                                  Number(s5) <=
+                                  sumSource && canICreatGood
+                              "
+                            >
+                              该产品未被其他公司申请专利，可以研发
+                            </strong>
+                            <strong
+                              style="color: red"
+                              v-if="
+                                Number(s1) +
+                                  Number(s2) +
+                                  Number(s3) +
+                                  Number(s4) +
+                                  Number(s5) <=
+                                  sumSource && !canICreatGood
+                              "
+                            >
+                              该产品已被其他公司申请专利，不允许研发
+                            </strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div align="center">
+            注意：申请产品研发需支付60万元，申请专利保护需支付100万元。<br />
+            当前研究所支持的配方数：{{ sumSource }}
           </div>
-          
-          <div align='center'>
-            注意：申请产品研发需支付60万元，申请专利保护需支付100万元。<br>
-            当前研究所支持的配方数：{{sumSource}}
-          </div>
-          <div align='center'>
-            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)<=sumSource && canICreatGood">
-              当前最高单价为：{{max}}万元<br>
+          <div align="center">
+            <div
+              v-if="
+                Number(s1) +
+                  Number(s2) +
+                  Number(s3) +
+                  Number(s4) +
+                  Number(s5) <=
+                  sumSource && canICreatGood
+              "
+            >
+              当前最高单价为：{{ max }}万元<br />
               <!-- <div v-if="price<max">
                 你的出价为：{{price}}
               </div>
@@ -226,26 +363,66 @@
                 你的定价大于最高单价
               </div> -->
               <div class="checkbox checkbox-success checkbox-circle">
-                  <input id="checkbox-10" type="checkbox" v-model="law">
-                  <label for="checkbox-10">
-                      是否申请专利保护
-                  </label>
+                <input id="checkbox-10" type="checkbox" v-model="law" />
+                <label for="checkbox-10"> 是否申请专利保护 </label>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary waves-effect waves-light" data-dismiss="modal" @click="sendPrice()" v-if="price<max">提交申请</button>
+                <button
+                  type="button"
+                  class="btn btn-default waves-effect"
+                  data-dismiss="modal"
+                >
+                  关闭
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary waves-effect waves-light"
+                  data-dismiss="modal"
+                  @click="sendPrice()"
+                  v-if="price < max"
+                >
+                  提交申请
+                </button>
               </div>
             </div>
-            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)>sumSource" style="color:red">
+            <div
+              v-if="
+                Number(s1) + Number(s2) + Number(s3) + Number(s4) + Number(s5) >
+                sumSource
+              "
+              style="color: red"
+            >
               超过研究所能够容纳的最大量
               <div class="modal-footer">
-                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+                <button
+                  type="button"
+                  class="btn btn-default waves-effect"
+                  data-dismiss="modal"
+                >
+                  关闭
+                </button>
               </div>
             </div>
-            <div v-if="Number(s1)+Number(s2)+Number(s3)+Number(s4)+Number(s5)==0" style="color:green">
+            <div
+              v-if="
+                Number(s1) +
+                  Number(s2) +
+                  Number(s3) +
+                  Number(s4) +
+                  Number(s5) ==
+                0
+              "
+              style="color: green"
+            >
               请填写产品原料组成以获取最高单价
               <div class="modal-footer">
-                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">关闭</button>
+                <button
+                  type="button"
+                  class="btn btn-default waves-effect"
+                  data-dismiss="modal"
+                >
+                  关闭
+                </button>
               </div>
             </div>
           </div>
@@ -296,7 +473,7 @@ export default {
       law: false,
       //判断是否存在当前研发产品
       judgeGoodHave: "",
-      canICreatGood: true
+      canICreatGood: true,
     };
   },
   beforeMount() {
@@ -304,7 +481,7 @@ export default {
     this.Yearid = JSON.parse(ses.getSes("gameinfo")).Yearid;
   },
   updated() {
-    $(function() {
+    $(function () {
       $("[data-toggle='tooltip']").tooltip();
     });
   },
@@ -335,7 +512,7 @@ export default {
       if (x == 2) return "机构级";
       if (x == 3) return "投资级";
       if (x == 4) return "地标级";
-    }
+    },
   },
   methods: {
     getInfo() {
@@ -383,9 +560,9 @@ export default {
             s3: this.s3,
             s4: this.s4,
             s5: this.s5,
-            company_id: this.company_id
+            company_id: this.company_id,
           })
-          .then(res => {
+          .then((res) => {
             print.log("申请产品信息->", res.data);
             let commerresearch_id = res.data.id;
             s_alert.Success(
@@ -394,7 +571,7 @@ export default {
               "success"
             );
             // 查询个人资产
-            apis.getOneStatisticByCompanyId(this.company_id).then(res => {
+            apis.getOneStatisticByCompanyId(this.company_id).then((res) => {
               if (this.law) {
                 //申请专利
                 let float = res.data.float - 160;
@@ -404,7 +581,7 @@ export default {
                   judge: 4,
                   total: total,
                   float: float,
-                  company_id: this.company_id
+                  company_id: this.company_id,
                 });
                 // 写入交易表
                 req.post_Param("api/transaction", {
@@ -417,7 +594,7 @@ export default {
                   price: 160,
                   number: 1,
                   me: this.company_id,
-                  commerresearch_id: commerresearch_id
+                  commerresearch_id: commerresearch_id,
                 });
               } else {
                 //不申请专利
@@ -428,7 +605,7 @@ export default {
                   judge: 4,
                   total: total,
                   float: float,
-                  company_id: this.company_id
+                  company_id: this.company_id,
                 });
                 // 写入交易表
                 req.post_Param("api/transaction", {
@@ -441,7 +618,7 @@ export default {
                   price: 60,
                   number: 1,
                   me: this.company_id,
-                  commerresearch_id: commerresearch_id
+                  commerresearch_id: commerresearch_id,
                 });
               }
             });
@@ -453,9 +630,9 @@ export default {
       req
         .post_Param("api/ass/commerland_research", {
           judge: 4,
-          company_id: this.company_id
+          company_id: this.company_id,
         })
-        .then(res => {
+        .then((res) => {
           this.showCompeteCommer = res.data;
           print.log(this.showCompeteCommer);
         });
@@ -483,9 +660,9 @@ export default {
           s2: this.s2,
           s3: this.s3,
           s4: this.s4,
-          s5: this.s5
+          s5: this.s5,
         })
-        .then(res => {
+        .then((res) => {
           print.log(res.data);
           this.judgeGoodHave = res.data;
           if (res.data.rows.length != 0) {
@@ -500,10 +677,9 @@ export default {
             this.canICreatGood = true;
           }
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>
